@@ -4,6 +4,7 @@
 
 # Session Data files
 .RData
+/Data
 
 # Example code in package build process
 *-Ex.R
@@ -16,7 +17,7 @@
 
 # RStudio files
 .Rproj.user/
-
+.Renviron
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
@@ -34,3 +35,4 @@ vignettes/*.pdf
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
+.Rproj.user
