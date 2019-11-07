@@ -186,10 +186,10 @@ names(bioclim) <- c("Ann Mean Temp","Mean Diurnal Range","Isothermality",
 #   max(H.susp_xy$latitude)))
 
 bio_extent <- extent(x = c(
-  min(-117),
-  max(-106),
-  min(31),
-  max(39)))
+  min(-118),
+  max(-105),
+  min(30),
+  max(40)))
 
 
 bioclim_extent <- crop(x = bioclim, y = bio_extent)
