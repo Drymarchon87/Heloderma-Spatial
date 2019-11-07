@@ -7,5 +7,5 @@ Animal movements are often defined using the home range concept.  Consequently, 
 
 Spatial analyses for home range and movement data.
 
-http://Drymarchon87.github.io/Heloderma-Spatial
+https://drymarchon87.github.io/Heloderma-Spatial/
 
