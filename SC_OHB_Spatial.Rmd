@@ -179,11 +179,18 @@ names(bioclim) <- c("Ann Mean Temp","Mean Diurnal Range","Isothermality",
                     "Precip Wettest Qtr","Precip Driest Qtr","Precip Warmest Qtr",
                     "Precip Coldest Qtr")
 
+# bio_extent <- extent(x = c(
+#   min(H.susp_xy$longitude),
+#   max(H.susp_xy$longitude),
+#   min(H.susp_xy$latitude),
+#   max(H.susp_xy$latitude)))
+
 bio_extent <- extent(x = c(
-  min(H.susp_xy$longitude),
-  max(H.susp_xy$longitude),
-  min(H.susp_xy$latitude),
-  max(H.susp_xy$latitude)))
+  min(-117),
+  max(-106),
+  min(31),
+  max(39)))
+
 
 bioclim_extent <- crop(x = bioclim, y = bio_extent)
 bioclim_model <- bioclim(x = bioclim_extent, p = H.susp_xy)
