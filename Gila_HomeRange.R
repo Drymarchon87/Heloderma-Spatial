@@ -200,36 +200,37 @@ library(readr)
 
 # Function for running animal MCP:
 mcp_analysis("./F252/Emergence .csv", percentage=100)
-mcp_analysis("./M67/2007 .csv", percentage=100)
+mcp_analysis("./F36/Dry .csv", percentage=100)
+
 
 ###########################################################################################
 ## looping function for mcp ******BY YEAR******
 
-# mcp_analysis <- function(filename, percentage){
-#   data <- read.csv(file = filename)
-#   x <- as.data.frame(data$EASTING)
-#   y <- as.data.frame(data$NORTHING)
-#   xy <- c(x,y)
-#   data.proj <- SpatialPointsDataFrame(xy,data, proj4string = CRS.SC)
-#   xy <- SpatialPoints(data.proj@coords)
-#   mcp.out <- mcp(xy, percentage, unout="ha")
-#   area <- as.data.frame(round(mcp.out@data$area,4))
-#   .rowNamesDF(area, make.names=TRUE) <- data$YEAR
-#   write.table(area,file="MCP_Hectares.csv",
-#               append=TRUE,sep=",", col.names=FALSE, row.names=TRUE)
-#   mcp.points <- cbind((data.frame(xy)),data$YEAR)
-#   colnames(mcp.points) <- c("x","y", "year")
-#   mcp.poly <- fortify(mcp.out, region = "id")
-#   units <- grid.text(paste(round(mcp.out@data$area,2)," ha"), x=0.9,  y=0.95,
-#                      gp=gpar(fontface=4, cex=0.9), draw = FALSE)
-#   mcp.plot <- ggplot() +
-#     geom_polygon(data=mcp.poly, aes(x=mcp.poly$long, y=mcp.poly$lat), alpha=0.5) +
-#     geom_point(data=mcp.points, aes(x=x, y=y)) + theme_bw() +
-#     labs(x="Easting (m)", y="Northing (m)", title=mcp.points$year) +
-#     theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5)) +
-#     annotation_custom(units)
-#   mcp.plot
-# }
+mcp_analysis <- function(filename, percentage){
+  data <- read.csv(file = filename)
+  x <- as.data.frame(data$EASTING)
+  y <- as.data.frame(data$NORTHING)
+  xy <- c(x,y)
+  data.proj <- SpatialPointsDataFrame(xy,data, proj4string = CRS.SC)
+  xy <- SpatialPoints(data.proj@coords)
+  mcp.out <- mcp(xy, percentage, unout="ha")
+  area <- as.data.frame(round(mcp.out@data$area,4))
+  .rowNamesDF(area, make.names=TRUE) <- data$YEAR
+  write.table(area,file="MCP_Hectares.csv",
+              append=TRUE,sep=",", col.names=FALSE, row.names=TRUE)
+  mcp.points <- cbind((data.frame(xy)),data$YEAR)
+  colnames(mcp.points) <- c("x","y", "year")
+  mcp.poly <- fortify(mcp.out, region = "id")
+  units <- grid.text(paste(round(mcp.out@data$area,2)," ha"), x=0.9,  y=0.95,
+                     gp=gpar(fontface=4, cex=0.9), draw = FALSE)
+  mcp.plot <- ggplot() +
+    geom_polygon(data=mcp.poly, aes(x=mcp.poly$long, y=mcp.poly$lat), alpha=0.5) +
+    geom_point(data=mcp.points, aes(x=x, y=y)) + theme_bw() +
+    labs(x="Easting (m)", y="Northing (m)", title=mcp.points$year) +
+    theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5)) +
+    annotation_custom(units)
+  mcp.plot
+}
 
 ## looping function for mcp ******BY YEAR******
 ###########################################################################################
@@ -298,40 +299,41 @@ mapView(M112_MCP, zcol="id")
 # CRS.SC<-CRS("+proj=utm +zone=12 +ellps=WGS84 +units=m +no_defs") 
 
 # Function for running animal KDE:
-kde_analysis.href.plot("./F104/2009 .csv", percentage=95)
+kde_analysis.href.plot("./M255/2012 .csv", percentage=50)
 #lapply(files,kde_analysis.href.plot, percentage=95)
+
 
 #########################################
 ##  looping function for kde ****href****
 
 ################# looping function################### looping function ################
 
-# kde_analysis.href.plot <- function(filename, percentage){
-#   data <- read.csv(file = filename)
-#   x <- as.data.frame(data$EASTING)
-#   y <- as.data.frame(data$NORTHING)
-#   xy <- c(x,y)
-#   data.proj <- SpatialPointsDataFrame(xy,data, proj4string = CRS.SC)
-#   xy <- SpatialPoints(data.proj@coords)
-#   kde<-kernelUD(xy, h="href", kern="bivnorm", grid=1000)
-#   ver <- getverticeshr(kde, percentage)
-#   area <- as.data.frame(round(ver$area,4))
-#   .rowNamesDF(area, make.names=TRUE) <- data$YEAR
-#   write.table(area,file="KDE_Hectares.csv",
-#               append=TRUE,sep=",", col.names=FALSE, row.names=TRUE)
-#   kde.points <- cbind((data.frame(data.proj@coords)),data$YEAR)
-#   colnames(kde.points) <- c("x","y","year")
-#   kde.poly <- fortify(ver, region = "id")
-#   units <- grid.text(paste(round(ver$area,2)," ha"), x=0.9,  y=0.95,
-#                      gp=gpar(fontface=4, cex=0.9), draw = FALSE)
-#   kde.plot <- ggplot() +
-#     geom_polygon(data=kde.poly, aes(x=kde.poly$long, y=kde.poly$lat), alpha = 0.5) +
-#     geom_point(data=kde.points, aes(x=x, y=y)) + theme_bw() +
-#     labs(x="Easting (m)", y="Northing (m)", title=kde.points$year) +
-#     theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5)) +
-#     annotation_custom(units)
-#   kde.plot
-# }
+kde_analysis.href.plot <- function(filename, percentage){
+  data <- read.csv(file = filename)
+  x <- as.data.frame(data$EASTING)
+  y <- as.data.frame(data$NORTHING)
+  xy <- c(x,y)
+  data.proj <- SpatialPointsDataFrame(xy,data, proj4string = CRS.SC)
+  xy <- SpatialPoints(data.proj@coords)
+  kde<-kernelUD(xy, h="href", kern="bivnorm", grid=1000)
+  ver <- getverticeshr(kde, percentage)
+  area <- as.data.frame(round(ver$area,4))
+  .rowNamesDF(area, make.names=TRUE) <- data$LIZARDNUMBER
+  write.table(area,file="KDE_Hectares.csv",
+              append=TRUE,sep=",", col.names=FALSE, row.names=TRUE)
+  kde.points <- cbind((data.frame(data.proj@coords)),data$LIZARDNUMBER)
+  colnames(kde.points) <- c("x","y","lizardnumber")
+  kde.poly <- fortify(ver, region = "id")
+  units <- grid.text(paste(round(ver$area,2)," ha"), x=0.9,  y=0.95,
+                     gp=gpar(fontface=4, cex=0.9), draw = FALSE)
+  kde.plot <- ggplot() +
+    geom_polygon(data=kde.poly, aes(x=kde.poly$long, y=kde.poly$lat), alpha = 0.5) +
+    geom_point(data=kde.points, aes(x=x, y=y)) + theme_bw() +
+    labs(x="Easting (m)", y="Northing (m)", title=kde.points$lizardnumber) +
+    theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5)) +
+    annotation_custom(units)
+  kde.plot
+}
 
 # individual kde with ***href*** run Plot, with change to "percentage"
 #kde_analysis.href.plot("./2008 .csv", percentage=95)
@@ -1123,6 +1125,9 @@ mcp.shift.TEST5 <- ggplot() +
 mcp.shift.TEST5 
 
 
+
+
+
 #################################
 ##
 ##     SEASONAL REFUGE USE
@@ -1166,3 +1171,48 @@ spplot(Refugia.spdf, zcol="SEASON", cex=.5, col.regions=rainbow(4))
 
 
 
+
+
+#############################################
+##       MCP and KDE with raster maps       :
+#############################################
+F104_MCP<-mcp_analysis.POLY('./F104/F104 .csv', percentage= 100)
+
+F104.a <- read_csv("./F104/F104 .csv")
+F104_mcp.F <- fortify(F104_MCP, region = "id")
+
+utm_points <- cbind(F104.a$EASTING, F104.a$NORTHING)
+F104.latlong <- cbind(F104_mcp.F$long, F104_mcp.F$lat)
+
+utm_locations <- SpatialPoints(utm_points, proj4string=CRS.SC)
+F104MCP_locations <- SpatialPolygons(F104.latlong, proj4string=CRS.SC)
+
+
+proj_lat.lon <- as.data.frame(spTransform(utm_locations, CRS("+proj=longlat +datum=WGS84")))
+colnames(proj_lat.lon) <- c("x","y")
+# raster <- openmap(c(max(proj_lat.lon$y)+0.01, min(proj_lat.lon$x)-0.01), 
+#                   c(min(proj_lat.lon$y)-0.01, max(proj_lat.lon$x)+0.01), 
+#                   type = "bing")
+
+raster_myMap<- ggmap(myMap, projection = CRS.SC)
+
+## FORTIGY SPATIAL SPATIAL POINTS FOR PLOTTING:
+proj_lat.lon <- fortify(proj_lat.lon, region = "Type")
+
+
+myMap <- get_stamenmap(bbox = c(left = -110.990,
+                                bottom = 32.460,
+                                right = -110.970,
+                                top = 32.472),
+                       maptype = "terrain", 
+                       crop = FALSE,
+                       zoom = 15)
+F104_mcp.F <- fortify(F104_MCP, region = "id")
+F104_mcp.F
+
+# plot map
+ggmap(myMap)+geom_point(data=proj_lat.lon, aes(x=x, y=y))+
+  geom_polygon(data=F104_mcp.F, aes(x=F104_mcp.F$long, y=F104_mcp.F$lat),
+               alpha=0.1,colour="blue",linetype=2)
+
+                        

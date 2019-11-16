@@ -56,6 +56,7 @@ library(lsmeans)
 library(emmeans)
 library(mapview)
 library(adehabitatHR)
+# library(OpenStreetMap)
 library(ggmap)
 #knitr::opts_chunk$set(fig.width = 5, fig.asp = 1/3) #force figures to be certain size and aspect ratio
 ```
@@ -66,9 +67,9 @@ library(ggmap)
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, cache=TRUE}
 # ggmap::register_google(key = "AIzaSyBjhhE9peRBmS1h9WYQx1k5MF_XAXqUfSs")
 
-p3<- ggmap(get_googlemap(center = c(lon = -110.99088, lat = 32.46878),
-                         zoom = 15, scale = 2,maptype ='satellite',archiving = TRUE,
-                         color = 'color'))
+# p3<- ggmap(get_googlemap(center = c(lon = -110.99088, lat = 32.46878),
+#                          zoom = 15, scale = 2,maptype ='satellite',archiving = TRUE,
+#                          color = 'color'))
 
 # p3
 
@@ -175,7 +176,7 @@ ggplot(data = H.susp_info, aes(x=longitude, y=latitude)) +
 
 
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 bioclim <- getData(name = "worldclim", res = 2.5, var = "bio", path = "./Data/")
 
 names(bioclim) <- c("Ann Mean Temp","Mean Diurnal Range","Isothermality",
@@ -254,7 +255,7 @@ Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp,group=Environment))+
   xlab("Number of Relocations")+
   ylab("Area (ha) using 100% MCP")+
   geom_smooth(method = "lm",se=FALSE)+
-  labs(caption = "Figure 2 | Non-Subsidized (Owl Head Buttes) vs. Subsidized (Stone Canyon) population 100% MCPs against number \n of fixes for entire data set.")+
+  labs(caption = "Figure 2 | Non-Subsidized (Owl Head Buttes) vs. Subsidized (Stone Canyon) population 100% MCPs against number \n of fixes of the complete data set.")+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
   # theme_bw()
 
@@ -329,31 +330,6 @@ kable(YR_GRP_Means95, format = "pandoc", caption = 'Group Means of Overall 95% M
       Ranges')
 ```
 
-
-
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-pd_RM <- position_dodge(0.1)
-
-Raw.YearHR<-ggplot(YR_GRP_Means, aes(x=Sex,y=Home_Range_100mcp,group=Environment))+
-  geom_point(aes(shape = factor(Environment)), size = 2,position=position_dodge(.1))+
-  geom_errorbar(aes(ymin=Home_Range_100mcp-se, ymax=Home_Range_100mcp+se),
-                width=.1,position=position_dodge())+
-  # ggtitle("Overall Home Ranges by Sex and Population (100% MCP)")+
-  xlab("Sex")+
-  ylab("Area (ha)")+
-  # theme(plot.title = element_text(hjust = 0.5, color="black", size=14, face="bold"))
-  labs(caption = "Figure 3 | Raw overall mean home ranges between environment and sex using 100% MCPs. Note, that before adjusted \n home ranges, males exhibit smaller overall home ranges at Stone Canyon, than males of Owl Head Buttes.")+
-  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
-
-yr.mean.raw<-Raw.YearHR + theme(legend.title = element_blank(),
-                     legend.justification=c(0,1),
-                     legend.position=c(0.05, 0.95),
-                     legend.background = element_blank(),
-                     legend.key = element_blank(),
-                     legend.box.background = element_rect(colour = "black"))
-yr.mean.raw
-```
 
 
 
@@ -570,23 +546,53 @@ refRM_sex <- lsmeans(RMmod.year100, specs = c("Environment","Sex"))
 ref_dfRM_sex <- as.data.frame(summary(refRM_sex))
 pd_RM <- position_dodge(0.1)
 
-LSM.YearHR<-ggplot(ref_dfRM_sex, aes(x=Sex,y=lsmean,group=Environment))+
-  geom_point(aes(shape = factor(Environment)), size = 2,position=position_dodge(.1))+
+yr.mean.adj<-ggplot(ref_dfRM_sex, aes(x=Sex,y=lsmean,group=Environment))+
+  geom_point(aes(shape = factor(Environment)), size = 2,position=position_dodge(.1), 
+            show.legend = FALSE)+
   geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), width=.1,position=position_dodge())+
   # ggtitle("Adjusted Home Ranges by Sex and Population (100% MCP)")+
   xlab("Sex")+
-  ylab("Area (ha)")+
-  labs(caption = "Figure 5  |  Adjusted home ranges using 100% MCPs between sexes of non-subsidized and subsidized populations. \n Adjusted for environment, year, sex, and sample size. Male home ranges remained smaller than those of females at \n Owl Head Buttes.")+
-  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
+  ylab("")
+  # labs(caption = "Figure 5  |  Adjusted home ranges using 100% MCPs between sexes of non-subsidized and subsidized populations. \n Adjusted for environment, year, sex, and sample size. Male home ranges remained smaller than those of females at \n Owl Head Buttes.")+
+  # theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
   # theme(plot.title = element_text(hjust = 0.5, color="black", size=14, face="bold"))
 
-yr.mean.adj<-LSM.YearHR + theme(legend.title = element_blank(),
+# yr.mean.adj<-yr.mean.adj + theme(legend.title = element_blank(),
+#                      legend.justification=c(0,1),
+#                      legend.position=c(0.05, 0.95),
+#                      legend.background = element_blank(),
+#                      legend.key = element_blank(),
+#                      legend.box.background = element_rect(colour = "black"))
+# yr.mean.adj
+# rm(LSM.YearHR)
+
+pd_RM <- position_dodge(0.1)
+
+Raw.YearHR<-ggplot(YR_GRP_Means, aes(x=Sex,y=Home_Range_100mcp,group=Environment))+
+  geom_point(aes(shape = factor(Environment)), size = 2,position=position_dodge(.1))+
+  geom_errorbar(aes(ymin=Home_Range_100mcp-se, ymax=Home_Range_100mcp+se),
+                width=.1,position=position_dodge())+
+  # ggtitle("Overall Home Ranges by Sex and Population (100% MCP)")+
+  xlab("Sex")+
+  ylab("100% MCP Area (ha)")
+  # theme(plot.title = element_text(hjust = 0.5, color="black", size=14, face="bold"))
+  # labs(caption = "Figure 3 | Raw overall mean home ranges between environment and sex using 100% MCPs. Note, that before adjusted \n home ranges, males exhibit smaller overall home ranges at Stone Canyon, than males of Owl Head Buttes.")+
+  # theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
+
+yr.mean.raw<-Raw.YearHR + theme(legend.title = element_blank(),
                      legend.justification=c(0,1),
                      legend.position=c(0.05, 0.95),
                      legend.background = element_blank(),
                      legend.key = element_blank(),
                      legend.box.background = element_rect(colour = "black"))
-yr.mean.adj
+# yr.mean.raw
+
+library(gridExtra)
+library(grid)
+
+grid.arrange(yr.mean.raw, yr.mean.adj, nrow = 1,  
+             bottom = textGrob("Figure x | a. Raw group means of overall yearly home ranges between males and females. Note that the male \n home range of the subsidized population is smaller than that of the female home range in the non-subsidized \n population. b. Group means of home ranges after being adjusted for environment, year, sex, and sample size.",
+                               gp = gpar(fontface = 1,fontsize = 10),hjust = 0, x = 0))
 ```
 
 
@@ -617,7 +623,7 @@ emm_s.t2
 
 Graphical Comparisons of Sex Within Each Environment:
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-plot(emm_s.t2, comparisons = TRUE, xlab = "Mean Home Range", ylab = "Sex")
+plot(emm_s.t2, comparisons = TRUE, xlab = "Least Square Mean (ha)", ylab = "Environment")
 ```
 Figure 6 | Pairwise comparisons of home range between sexes within each environment. If red arrows overlap those of others, then  there is no significant statistical difference. 
 
@@ -633,15 +639,17 @@ emm_s.t3
 
 Graphical Comparisons of Sex between the two populations:
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-plot(emm_s.t3, comparisons = TRUE, xlab = "Mean Home Range", ylab = "Sex")
+plot(emm_s.t3, comparisons = TRUE, xlab = "Least Square Mean (ha)", ylab = "Environment")
 ```
 Figure 7 | Paiwise comparisons of sex between environments. If red arrows overlap those of others, then  there is no significant statistical difference. 
  
  
  
- At Stone Canyon, mean male Gila Monster home range was 11.8 ± 1.6 S.E. ha (100% MCP), 9.0 ± 1.1 S.E. Ha (95% MCP), with a mean female home range at 9.8 ± 1.1 S.E. ha (100% MCP), 7.1 ± 0.7 S.E. ha (95% MCP). Mean home ranges of male and females at Owl Head Buttes were 43.2 ± S.E. 5.7 ha (100% MCP), 41.9 ± 4.9 S.E. ha (95% MCP), and 22.0 ± 3.7 S.E. ha (100% MCP), 20.6 ± 2.5 S.E. ha (95% MCP) respectively. In the pooled data of both populations, there was no effect of year on the analyses (F = 0.41, P = 0.52), while a significant difference between the two populations was detected (F = 8.69, P = 0.004), and a significance in sex (F = 16.33, P = 0.0004). Using the 95% MCPs, revealed similar results. Post-Hoc analyses between sexes indicated that there was a significant difference in male home ranges between the two environments (df = 68.3, P = 0.0008).  However, the difference in female home ranges between the two environments was not significant (df = 68.3, P = 0.06). At stone canyon there was no significant difference between male and female home ranges (df = 36.4, P = 0.20) with male home ranges being only 3% larger than females, while males at Owl Head Buttes had significantly larger home ranges than did females (df = 31.6, P = 0.0003) with males having 65% larger home ranges than females. Interestingly, males at Stone Canyon had smaller home ranges than did the females at Owl Head Buttes (Tables 2-3), suggesting that Gila Monster home ranges in a resource subsidized population is greatly influenced by environmental factors of both populations.  When using 95% MCPs, male home ranging reduced by 25% and female range by 31%. At Owl Head Buttes, Gila Monsters showed a similar behavior with male home ranges reduced by 20% and female ranges reduced by 26% using 95% MCPs. 
  
  
+ 
+At Stone Canyon, male yearly home ranges ranged from 1.91 - 25.1 ha, with a mean of 11.7 ± 1.7 S.E. ha (100% MCP), 9.1 ± 1.3 S.E. Ha (95% MCP). Female home ranges ranged from 2.06 – 38.81 ha and a mean of 9.8 ± 1.1 S.E. ha (100% MCP), 7.1 ± 0.71 S.E. ha (95% MCP). Male Gila Monsters at Owl head Buttes had home ranges that ranged from 10.6 – 82.7 ha with a mean of 43.2 ± 5.7 S.E. ha (100% MCP), 41.9 ± 4.9 S.E. ha (95% MCP). Female home ranges ranged from 7.1 – 47.6 with a mean of 22.0 ± 3.7 S.E. ha (100% MCP), 20.6 ± 2.5 S.E. ha (95% MCP). In the analyses of both populations, year had no effect on home range sizes (F = 0.50, P = 0.48), while there was a detected significant difference in home ranges between the two populations (F = 8.86, P = 0.003), as well as sex (F = 15.75, P = 0.0004). Post-Hoc analyses between sexes indicated that there was a significant difference in male home ranges between the two environments (df = 70.4, P = 0.0007). There was a slight difference of female home ranges between the two environments, however it was not statistically significant (df = 68.9, P = 0.06). At stone canyon there was no major difference between male and female home ranges (df = 36.9, P = 0.23) with male home range being only 3% larger than females. Males at Owl Head Buttes had a 65% larger home range than did females, and was statistically significant (df = 31.3, P = 0.0003). Interestingly, males at Stone Canyon had smaller home ranges than did the females at Owl Head Buttes (Table x) When using 95% MCPs, male home ranges reduced by 25% and female range by 31%. At Owl Head Buttes, Gila Monsters showed a similar behavior with male home ranges reduced by 20% and female ranges reduced by 26% using 95% MCPs. 
+  
  
  
  
@@ -651,8 +659,7 @@ Figure 7 | Paiwise comparisons of sex between environments. If red arrows overla
 ## Overall Yearly Home Ranges (KDE)
 
 
-Home range estimation on the Stone Canyon data using 95% KDEs with href bandwidth produced a male home range at 33.9 ± 3.27 S.E. ha, and a female home range at 23.06 ± 1.86 S.E. KDE estimates for male and female home ranges were 96% and 80% larger than MCP estimates. Repeated Measures analysis of KDEs suggested that there was a small significant difference between male and female home ranges at Stone Canyon 
-(F = 4.52, P = 0.04). 
+Home range estimation on the Stone Canyon Gila Monsters using 95% KDEs with href bandwidth produced male home ranges ranging from 14.52 – 55.25 ha with a mean of 33.9 ± 3.27 S.E. ha. Female home ranges ranged from 10.09 – 47.77 ha with a mean of 23.06 ± 1.86 S.E. KDE estimates for male and female home ranges were 96% and 80% larger than MCP estimates. Repeated Measures analysis of KDEs suggested that there was a small significant difference between male and female home ranges at Stone Canyon (F = 4.52, P = 0.04). Year did not have an effect on home ranges (F = 0.67, P = 0.41). 
 
 
 
@@ -660,6 +667,9 @@ Home range estimation on the Stone Canyon data using 95% KDEs with href bandwidt
 year.kde<-read_csv('yearly kde table.csv')
 kable(year.kde, format = "pandoc", caption = 'Yearly KDE Home Ranges')
 ```
+
+
+
 
 
 
@@ -674,31 +684,8 @@ kable(YR_GRP_Means.KDE, format = "pandoc", caption = 'Raw Group Means of Overall
       Ranges')
 ```
  
- 
- 
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
 
-Raw.KDE.HR<-ggplot(YR_GRP_Means.KDE, aes(x=Sex,y=Home_Range_95kde))+
-  geom_point(size = 2, position=position_dodge(.1))+
-  geom_errorbar(aes(ymin=Home_Range_95kde-se, ymax=Home_Range_95kde+se),
-                width=.1,position=position_dodge())+
-  # ggtitle("Overall Home Ranges by Sex and Population (100% MCP)")+
-  xlab("Sex")+
-  ylab("Area (ha)")+
-   labs(caption = "Figure 8  |  Raw 95% KDE home ranges between male and femal home ranges at Stone Canyon.")+
-  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
-  # theme(plot.title = element_text(hjust = 0.5, color="black", size=14, face="bold"))
-
-Raw.KDE.HR<-Raw.KDE.HR + theme(legend.title = element_blank(),
-                     legend.justification=c(0,1),
-                     legend.position=c(0.05, 0.95),
-                     legend.background = element_blank(),
-                     legend.key = element_blank(),
-                     legend.box.background = element_rect(colour = "black"))
-Raw.KDE.HR
-```
-Figure   | Raw 95% KDE home ranges between male and femal home ranges at Stone Canyon. 
  
  
  
@@ -724,6 +711,26 @@ anova(RM.KDEmod.year)
  
  
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+Raw.KDE.HR<-ggplot(YR_GRP_Means.KDE, aes(x=Sex,y=Home_Range_95kde))+
+  geom_point(size = 2, position=position_dodge(.1))+
+  geom_errorbar(aes(ymin=Home_Range_95kde-se, ymax=Home_Range_95kde+se),
+                width=.1,position=position_dodge())+
+  # ggtitle("Overall Home Ranges by Sex and Population (100% MCP)")+
+  xlab("Sex")+
+  ylab("95% KDE Area (ha)")+
+   # labs(caption = "Figure 8  |  Raw 95% KDE home ranges between male and female home ranges at Stone Canyon.")+
+  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
+  # theme(plot.title = element_text(hjust = 0.5, color="black", size=14, face="bold"))
+
+Raw.KDE.HR<-Raw.KDE.HR + theme(legend.title = element_blank(),
+                     legend.justification=c(0,1),
+                     legend.position=c(0.05, 0.95),
+                     legend.background = element_blank(),
+                     legend.key = element_blank(),
+                     legend.box.background = element_rect(colour = "black"))
+# Raw.KDE.HR
+
 RM.KDEmod.year<-lmer(Home_Range_95kde~Year+Sex+N+(1|Gila),data = sub)
 
 KDE.marginal <- lsmeans(RM.KDEmod.year, 
@@ -742,18 +749,22 @@ LSM.KDE.HR<-ggplot(ref_dfRM_KDE, aes(x=Sex,y=lsmean))+
   geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), width=.1,position=position_dodge())+
   # ggtitle("Adjusted Home Ranges by Sex and Population (100% MCP)")+
   xlab("Sex")+
-  ylab("Area (ha)")+
-  labs(caption = "Figure 8  |  Adjusted 95% KDE home ranges between male and femal home ranges at Stone Canyon. Adjusted on year, \n sex, and sample size.")+
-  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
+  ylab("")
+  # labs(caption = "Figure 8  |  Adjusted 95% KDE home ranges between male and femal home ranges at Stone Canyon. Adjusted on year, \n sex, and sample size.")+
+  # theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
   # theme(plot.title = element_text(hjust = 0.5, color="black", size=14, face="bold"))
 
-LSM.KDE.HR<-LSM.KDE.HR + theme(legend.title = element_blank(),
-                     legend.justification=c(0,1),
-                     legend.position=c(0.05, 0.95),
-                     legend.background = element_blank(),
-                     legend.key = element_blank(),
-                     legend.box.background = element_rect(colour = "black"))
-LSM.KDE.HR
+# LSM.KDE.HR<-LSM.KDE.HR + theme(legend.title = element_blank(),
+#                      legend.justification=c(0,1),
+#                      legend.position=c(0.05, 0.95),
+#                      legend.background = element_blank(),
+#                      legend.key = element_blank(),
+#                      legend.box.background = element_rect(colour = "black"))
+# LSM.KDE.HR
+
+grid.arrange(Raw.KDE.HR, LSM.KDE.HR, nrow = 1,  
+             bottom = textGrob("Figure x | a. Raw group means of overall yearly KDEs between males and females at Stone Canyon.",
+                               gp = gpar(fontface = 1,fontsize = 10),hjust = 0, x = 0))
 ```
 
  
@@ -922,12 +933,11 @@ mcp.shift.TEST5 <- ggplot() +
                alpha=0.1,colour="black",linetype=5) +
   theme_bw() +
   labs(x="Easting (m)", y="Northing (m)") +
-  labs(caption = "Figure  |  Seasonal home range shifts of four lizards. Emergence and post-monsoon ranges stay realatively within \n each other. All seasonal polygons stay relatively stable without any major shifts away from other seasonal ranges.")+
+  labs(caption = "Figure  |  Seasonal home range shifts of five lizards. Emergence and post-monsoon ranges stay realatively within \n each other. All seasonal polygons stay relatively stable without any major shifts away from other seasonal ranges.")+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
   theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5))
 
 mcp.shift.TEST5
-
 ```
 
 
@@ -936,7 +946,10 @@ mcp.shift.TEST5
 
 
 
-Analysis indicated that there was no effect of sex on seasonal home ranges (df = 1, F = 2.42, P = 0.12), but there was an effect of season (df = 3, F = 15.41, P = <0.001) and an interaction of environment and season (df = 3, F = 6.84, P = <0.001). Seasonal home ranges at Stone Canyon varied in size between seasons but did not seem shift (Fig.x), with seasonal home ranges overlapping each other, only extending or collapsing between seasons. Post-Hoc analyses with home range means averaged across sex of the Stone Canyon population, suggested that there was no significant difference in home ranges between the emergence (4.32 ± 2.55 S.E. ha) and post-monsoon seasons (5.09 ± 2.07 S.E. ha) nor dry and monsoon (12.23 ± 1.74 S.E. ha and 9.04 ± 1.78 S.E. ha). There was also no significance between emergence and dry/monsoon seasons, but there was a difference between dry and post-monsoon (df = 80.2, P = 0.04). Gila monsters at our subsidized environment seemed to have home ranges that stayed rather small without major differences between sexes throughout the year with the exception of the dry season. During the dry season is where we see a significant increase in home range sizes between the sexes (Table x, Figure x).  Post-Hoc analyses on the Owl Head Buttes population indicated that there was no significant difference between emergence (3.33 ± 2.24 S.E. ha) and post-monsoon (2.36 ± 2.36 S.E.) nor dry and monsoon (18.86 ± 2.25 S.E. ha and 21.85 ± 2.03 S.E. ha) reflecting that of Stone Canyon. However, there was a significant difference between emergence and dry/monsoon (df = 69.4, P = <0.0001, and df = 68, P = <0.0001 respectively), as well as post-monsoon and dry/monsoon (df = 78.9, P = <0.0001, and df = 74, P = <0.0001). This shows a rather different pattern than seen at Stone Canyon. Gila Monster home ranges at Owl Head seem to have larger home range patterns during both the dry and monsoon seasons, with the largest increase in home range area taking place during the monsoon season (Table x; Figure x).  Pairwise analyses between the two populations indicated no difference between emergence (df = 87.7, P = 0.76) or post-monsoon (df = 89.4, P = 0.35). Differences in home range sizes between the two populations were between the dry and monsoon seasons (Fig.x).  Owl Head home ranges were 58% larger than those at Stone Canyon during the dry season, and 76% larger during the monsoon season. 
+Seasonal home ranges at Stone Canyon varied in size between seasons but did not seem shift (Fig.___), with seasonal home ranges overlapping each other, only expanding or collapsing between seasons. Home range patterns at Stone Canyon did not display the same seasonal variation in home range sizes that was observed at Owl Head Buttes. At Stone Canyon, Gila Monsters had relatively smaller home ranges throughout the year, where the highest inflation of range size was observed during the dry season from an increase in male home ranges, 18.2 ± 5.4 S.E. ha to that of female home range sizes at 10.1 ± 2.4 S.E. ha. Females at Stone Canyon displayed similar home ranges during the monsoon season, 10.6 ± 2.5 S.E. ha. Home range sizes at Owl Head Buttes had a much larger amount of variation across seasons than did those at Stone Canyon. There were still slightly larger ranges observed during the dry season, primarily due to increased home range sizes exhibited by males 29.4 ± 4.7 S.E. ha versus females at 15.6 ± 3.8 S.E. ha. During the monsoon season, there was still yet a large influx of home ranges sizes where female home ranges increased to 22.9 ± 4.0 S.E. ha.  For both populations, home ranges during the emergence and post-monsoon seasons were small, marking the beginning and ending of overwintering periods, where minimal movement is observed in both groups. 
+  
+Analysis indicated that there was an effect of season (df = 3, F = 15.41, P = <0.001) as well as an interaction of environment and season (df = 3, F = 6.84, P = <0.001), indicating that changes in seasonal home ranges sizes varied between each environment. Post-Hoc analyses on the Stone Canyon data set with home range means averaged across sex, suggested that there was no significant difference in home ranges between the emergence (4.32 ± 2.55 S.E. ha) and post-monsoon seasons (5.09 ± 2.07 S.E. ha) nor dry and monsoon (12.23 ± 1.74 S.E. ha and 9.04 ± 1.78 S.E. ha). There was also no significance between emergence and dry/monsoon seasons, but there was a difference between dry and post-monsoon (df = 80.2, P = 0.04). Post-Hoc analyses on the Owl Head Buttes population indicated that there was no significant difference between emergence (3.33 ± 2.24 S.E. ha) and post-monsoon (2.36 ± 2.36 S.E.) nor dry and monsoon (18.86 ± 2.25 S.E. ha and 21.85 ± 2.03 S.E. ha) reflecting the same pattern at Stone Canyon. However, there was a significant difference between emergence and dry/monsoon (df = 69.4, P = <0.0001, and df = 68, P = <0.0001 respectively), as well as post-monsoon and dry/monsoon (df = 78.9, P = <0.0001, and df = 74, P = <0.0001). This shows a rather different pattern than seen at Stone Canyon. Pairwise analyses between the two populations indicated no difference between emergence (df = 87.7, P = 0.76) or post-monsoon (df = 89.4, P = 0.35). Differences in home range sizes between the two populations were between the dry and monsoon seasons (Fig.___).  Owl Head home ranges were 58% larger than those at Stone Canyon during the dry season, and 76% larger during the monsoon season. 
+  
 
 
 
@@ -1030,6 +1043,33 @@ raw.seasonal
 
 Adjusted Seasonal Means
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+#############################################################################################
+## Raw seasonal means
+# pd <- position_dodge(0.3) # move them .05 to the left and right ('dodges')
+# 
+## TEST 3
+# raw.seasonal<-ggplot(SEAS_GRP_TEST,aes(x=Environment, y=Home_Range_100mcp, shape=Sex)) +
+#   geom_point(aes(shape=Sex), size = 2, position=pd) +
+#   geom_errorbar(aes(ymin=Home_Range_100mcp-se, ymax=Home_Range_100mcp+se), position = pd,
+#                 width=0.3, size=0.5, lty=1) +
+#   # scale_colour_manual(values = c('black','red')) +
+#   facet_grid(~Season) +
+#   # # scale_shape_manual(values = c(8,19))+
+#   # labs(caption = "Figure  |  Raw seasonal means of sexes between each environment. Home ranges of the subsidezed population remain \n relatively small throughout the seasons, with the exception during the dry season where we observe increased male \n home ranges. The non-subsidized population exhibits a large amount of variation across seasons.")+
+#   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
+#   # scale_x_discrete(limits=c('Emergence','Dry','Monsoon','Post_Monsoon')) +
+#   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
+#         plot.title = element_text(lineheight=1.5, face="bold", size=rel(1.5), hjust = 0.5),
+#         axis.text.x  = element_text(vjust=0.5, size=8),
+#         axis.text.y  = element_text(vjust=0.5, size=8),
+#         axis.title.y  = element_text(size=10),
+#         axis.title.x  = element_text(size=10),
+#         legend.text = element_text(size = 12, face = "bold"),
+#         strip.text = element_text(size=12)) +
+#   xlab("") + ylab("")
+
+#############################################################################################
+## Ajusted seasonal means
 RM.mod.Season <- lmer(Home_Range_100mcp~Environment+Season+Sex+N+Environment*Season+(1|Gila),
                       data=seasonal)
 
@@ -1045,11 +1085,11 @@ ref_dfRM_season <- as.data.frame(summary(refRM_season))
 pd_RM <- position_dodge(0.2)
 
 adj.seasonal<-ggplot(ref_dfRM_season,aes(x=Environment, y=lsmean, shape=Sex)) + 
-  geom_point(aes(shape=Sex), size = 2, position=pd) +
+  geom_point(aes(shape=Sex), size = 2, position=pd, show.legend=FALSE) +
   geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), position = pd,
                 width=0.3, size=0.5, lty=1) + 
   facet_grid(~Season) +
-   labs(caption = "Figure  | Adjusted seasonal home range means of sexes between environments. Home ranges of the subsidezed \n population remain relatively small throughout the seasons. After adjustment male home reanges were reduced, \n but still remained slightly larger then females.")+
+labs(caption = "Figure  | Adjusted seasonal home range means of sexes between environments. Home ranges of the subsidezed \n population remain relatively small throughout the seasons. After adjustment male home reanges were reduced, \n but still remained slightly larger then females.")+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
   # scale_shape_manual(values = c(8,19))+
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
@@ -1062,6 +1102,20 @@ adj.seasonal<-ggplot(ref_dfRM_season,aes(x=Environment, y=lsmean, shape=Sex)) +
         strip.text = element_text(size=12)) +
   xlab("Environment") + ylab("Area (ha) using 100% MCP")
 adj.seasonal
+
+# Combine raw and adjusted seasonal home ranges with a single caption:
+grid.arrange(raw.seasonal, adj.seasonal, nrow = 2,heights=unit(c(2,2), c("in", "in")),
+             bottom = textGrob("",
+                               gp = gpar(fontface = 1,fontsize = 10),hjust = 0, x = 0))
+
+# library(gtable)
+# g2 <- ggplotGrob(raw.seasonal)
+# g3 <- ggplotGrob(adj.seasonal)
+# g <- rbind(g2, g3, size = "first")
+# g$widths <- unit.pmax(g2$widths, g3$widths)
+# grid.newpage()
+# grid.draw(g)
+
 ```
 
 
@@ -1123,7 +1177,7 @@ plot(emm_s.t5, comparisons = TRUE)
    
    
                                                                                        
-Table 7 | Mean individual seasoanl home ranges pooled from the entire study period. Missing values are depicted where no locations for that animal during that period were successfull.
+Table 7 | Mean individual seasonal home ranges pooled from the entire study period. Missing values are depicted where no locations for that animal during that period were successfull.
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 Seas.Ind.Means<-read.csv("Seasonal HR Table.csv")
 kable(Seas.Ind.Means, format = "pandoc", caption = 'Seasonal Individual Home Ranges (MCP).')
@@ -1371,17 +1425,17 @@ Figure 14 | Interactive map: Home Range overlap by sex of 95% KDEs at Stone Cany
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
 
-kde_analysis.href.raster <- function(filename){
-  data <- read.csv(file = filename)
-  x <- as.data.frame(data$EASTING)
-  y <- as.data.frame(data$NORTHING)
-  xy <- c(x,y)
-  data.proj <- SpatialPointsDataFrame(xy,data, proj4string = CRS.SC)
-  xy <- SpatialPoints(data.proj@coords)
-  kde<-kernelUD(xy, h="href", kern="bivnorm", grid=1000)
-  kde@proj4string<- CRS.SC
-  kde
-}
+# kde_analysis.href.raster <- function(filename){
+#   data <- read.csv(file = filename)
+#   x <- as.data.frame(data$EASTING)
+#   y <- as.data.frame(data$NORTHING)
+#   xy <- c(x,y)
+#   data.proj <- SpatialPointsDataFrame(xy,data, proj4string = CRS.SC)
+#   xy <- SpatialPoints(data.proj@coords)
+#   kde<-kernelUD(xy, h="href", kern="bivnorm", grid=1000)
+#   kde@proj4string<- CRS.SC
+#   kde
+# }
 
 M112.raster.output<-kde_analysis.href.raster("./M112/M112 .csv")
 F114.raster.output<-kde_analysis.href.raster("./F114/F114 .csv")
@@ -1403,7 +1457,7 @@ F200.bb <- F200_KDE@bbox
 
 
 # maps the raster within the bounding box
-tm_shape(M112.raster, bbox = M112.bb) + tm_raster("ud")
+# tm_shape(M112.raster, bbox = M112.bb) + tm_raster("ud")
 
 # mask the raster by the output area polygon
 M112.masked <- mask(M112.raster, M112_KDE)
@@ -1427,7 +1481,7 @@ tm_layout(main.title="M112 F114 and F200 KDE Overlap")+tm_shape(M112.masked) +
   tm_shape(F114_KDE) + 
   tm_borders(alpha=.3, col = "black") + 
   tm_shape(F200_KDE) + 
-  tm_borders(alpha=.3, col = "black")
+  tm_borders(alpha=.3, col = "black") +
   tm_layout(frame = FALSE)
   
 # , bbox = M112.bb
