@@ -1104,9 +1104,9 @@ labs(caption = "Figure  | Adjusted seasonal home range means of sexes between en
 adj.seasonal
 
 # Combine raw and adjusted seasonal home ranges with a single caption:
-grid.arrange(raw.seasonal, adj.seasonal, nrow = 2,heights=unit(c(2,2), c("in", "in")),
-             bottom = textGrob("",
-                               gp = gpar(fontface = 1,fontsize = 10),hjust = 0, x = 0))
+# grid.arrange(raw.seasonal, adj.seasonal, nrow = 2,heights=unit(c(2,2), c("in", "in")),
+#              bottom = textGrob("",
+#                                gp = gpar(fontface = 1,fontsize = 10),hjust = 0, x = 0))
 
 # library(gtable)
 # g2 <- ggplotGrob(raw.seasonal)
