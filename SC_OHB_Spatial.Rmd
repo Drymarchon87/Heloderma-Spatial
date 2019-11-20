@@ -239,6 +239,14 @@ GM_table <- read_csv("GM_table.csv")
 kable(GM_table,format="pandoc", caption='Home range sizes of Stone Canyon and Owl head Buttes using both 95 percent and 100 percent MCPs.')
 ```
 
+Overall combined mean:
+```{r}
+Means <- summarySE(year, measurevar="Home_Range_100mcp",
+                          groupvars=c("Environment"),na.rm = TRUE)
+
+Means
+```
+
 
 
 
@@ -1186,6 +1194,22 @@ kable(Seas.Ind.Means, format = "pandoc", caption = 'Seasonal Individual Home Ran
 ```
 
 
+
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+nonsub <- subset(seasonal, Environment == "nonsubsidized")
+
+RM.mod.NSub <- lmer(Home_Range_100mcp~Season+Sex+N+Season*Sex+(1|Gila), data=nonsub)
+
+emm_s.t6 <- emmeans(RM.mod.NSub, pairwise ~ Sex | Season)
+emm_s.t6 
+```
+
+Graphical Comparisons between sex within the non-subsidized population:
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plot(emm_s.t6, comparisons = TRUE)
+```   
 
 
 
