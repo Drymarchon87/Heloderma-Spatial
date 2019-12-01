@@ -1176,43 +1176,128 @@ spplot(Refugia.spdf, zcol="SEASON", cex=.5, col.regions=rainbow(4))
 #############################################
 ##       MCP and KDE with raster maps       :
 #############################################
-F104_MCP<-mcp_analysis.POLY('./F104/F104 .csv', percentage= 100)
+# mcp_analysis.POLY <- function(filename, percentage){
+  #   data <- read.csv(file = filename,stringsAsFactors = FALSE)
+  #   data.sp <- data[, c("LIZARDNUMBER", "EASTING", "NORTHING")]
+  #   coordinates(data.sp) <- c("EASTING", "NORTHING")
+  #   proj4string(data.sp) <- CRS.SC
+  #   mcp_out <- mcp(data.sp, percentage, unout="ha")
+  # }
 
-F104.a <- read_csv("./F104/F104 .csv")
-F104_mcp.F <- fortify(F104_MCP, region = "id")
+# F104_MCP<-mcp_analysis.POLY('./F104/F104 .csv', percentage= 100)
 
-utm_points <- cbind(F104.a$EASTING, F104.a$NORTHING)
-F104.latlong <- cbind(F104_mcp.F$long, F104_mcp.F$lat)
+# F104.a <- read_csv("./F104/F104 .csv")
+# F104_mcp.F <- fortify(F104_MCP, region = "id")
+All.Gilas <- read_csv("./GM_Final_Data.csv")
+View(All.Gilas)
+
+# utm_points <- cbind(F104.a$EASTING, F104.a$NORTHING)
+# F104.latlong <- cbind(F104_mcp.F$long, F104_mcp.F$lat)
+# colnames(F104.latlong) <- c("x","y")
+utm_points <- cbind(All.Gilas$EASTING, All.Gilas$NORTHING)
 
 utm_locations <- SpatialPoints(utm_points, proj4string=CRS.SC)
-F104MCP_locations <- SpatialPolygons(F104.latlong, proj4string=CRS.SC)
-
+# F104MCP_locations <- SpatialPolygons(F104.latlong, proj4string=CRS.SC)
+utm_locations <- SpatialPoints(utm_points, proj4string=CRS.SC)
 
 proj_lat.lon <- as.data.frame(spTransform(utm_locations, CRS("+proj=longlat +datum=WGS84")))
 colnames(proj_lat.lon) <- c("x","y")
-# raster <- openmap(c(max(proj_lat.lon$y)+0.01, min(proj_lat.lon$x)-0.01), 
-#                   c(min(proj_lat.lon$y)-0.01, max(proj_lat.lon$x)+0.01), 
-#                   type = "bing")
+# F104.MCP_lat.lon <- as.data.frame(spTransform(F104.latlong, CRS("+proj=longlat +datum=WGS84")))
+# colnames(F104.MCP_lat.lon) <- c("x","y")
 
-raster_myMap<- ggmap(myMap, projection = CRS.SC)
+# raster_myMap<- ggmap(myMap, projection = CRS.SC)
 
 ## FORTIGY SPATIAL SPATIAL POINTS FOR PLOTTING:
 proj_lat.lon <- fortify(proj_lat.lon, region = "Type")
 
 
-myMap <- get_stamenmap(bbox = c(left = -110.990,
-                                bottom = 32.460,
-                                right = -110.970,
-                                top = 32.472),
+# proj_lat.lon <- as.data.frame(spTransform(utm_locations, CRS("+proj=longlat +datum=WGS84")))
+# colnames(proj_lat.lon) <- c("x","y")
+
+## FORTIGY SPATIAL SPATIAL POLYGONS FOR PLOTTING:
+# F104_mcp.F <- fortify(F104.MCP_lat.lon, region = "id")
+
+
+
+myMap <- get_stamenmap(bbox = c(left = -111.009,
+                                bottom = 32.459,
+                                right = -110.969,
+                                top = 32.474),
                        maptype = "terrain", 
                        crop = FALSE,
                        zoom = 15)
-F104_mcp.F <- fortify(F104_MCP, region = "id")
-F104_mcp.F
+
 
 # plot map
-ggmap(myMap)+geom_point(data=proj_lat.lon, aes(x=x, y=y))+
-  geom_polygon(data=F104_mcp.F, aes(x=F104_mcp.F$long, y=F104_mcp.F$lat),
-               alpha=0.1,colour="blue",linetype=2)
+# ggmap(myMap)+geom_point(data=proj_lat.lon, aes(x=x, y=y), size=1)
+  # geom_polygon(data=F104_mcp.F, aes(x=F104_mcp.F$long, y=F104_mcp.F$lat),
+  #              alpha=0.1,colour="blue",linetype=2)
 
-                        
+ggmap(myMap)+geom_point(data=proj_lat.lon, aes(x=x, y=y), size=0.3)
+# geom_polygon(data=F104_mcp.F, aes(x=F104_mcp.F$long, y=F104_mcp.F$lat),
+#              alpha=0.1,colour="blue",linetype=2)
+
+
+
+#######################################################
+##
+##    DISTRIBUTION MAP WITH GEOGRAPHIC ATTRIBUTES    ##
+##
+#######################################################
+#Obtain FIPS Codes by county 
+fips <- county.fips
+
+#Create county polygons
+florida <- map(database = "county", regions = "florida", fill=T, plot=F)
+IDs <- sub("^florida,","",florida$names)
+
+#Add FIPS codes to the county polygons
+fips.codes <- separate(data = fips, col = polyname, into = c("state", "county"), sep = ",")
+fl_fips <- subset(fips.codes, state=="florida", select=fips)
+names <- fips.codes$county
+fl_IDs <- unique(fl_fips$fips)
+
+#Create spatial polygons
+fl_sp = map2SpatialPolygons(florida,fl_fips$fips,CRS("+proj=longlat"))
+names(fl_sp@polygons) <- fl_IDs
+
+###############################
+###############################
+
+world <- map_data("world")
+states <- map_data("state")
+counties <- map_data("county")
+
+counties$polyname <- paste(counties$region, counties$subregion, sep = ",")
+counties <- counties %>% left_join(fips, by = c("polyname" = "polyname"))
+counties$fips <- as.character(counties$fips)
+
+southwestern_states <- subset(states, region %in% 
+                            c("arizona", "california", "utah", "nevada", 
+                              "new mexico", "colorado"))
+
+southwestern_counties <- subset(counties, region %in% 
+                              c("arizona", "california", "utah", "nevada", 
+                                "new mexico", "colorado"))
+
+# florida_counties <- subset(southern_counties, region == "florida")
+
+dist_map <- ggplot() + 
+  geom_polygon(data = world, aes(x=long,y=lat, group=group), fill = "gray95", color = "white") +
+  geom_polygon(data = states, aes(x=long,y=lat, group=group), fill = "gray", color = "white") +
+  # geom_polygon(data = fl_poly, aes(x=long, y=lat, group=group, fill = fill))  
+  geom_polygon(data = southwestern_states, aes(x=long,y=lat, group=group), fill = NA, color = "white") +
+  geom_polygon(data = southwestern_counties, aes(x=long,y=lat, group=group), fill = NA, color = "black", size = 0.05) +
+  coord_map("conic", lat0 = 30, xlim=c(-120,-105), ylim=c(30,42)) +
+  scale_fill_identity() +
+  theme_grey() + theme(legend.position="right") + theme(legend.title.align=0.5) +
+  theme(panel.background = element_rect(fill = 'deepskyblue'),
+        panel.grid.major = element_line(colour = NA)) +
+  labs(x = "Longitude", y = "Latitude", fill = "Child Poverty", 
+       title = "U.S. Gila Monster Distribution") +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5))
+## use to preview the map
+dist_map
+
+
+

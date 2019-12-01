@@ -68,11 +68,11 @@ library(ggmap)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, cache=TRUE}
 # ggmap::register_google(key = "AIzaSyBjhhE9peRBmS1h9WYQx1k5MF_XAXqUfSs")
-
+# 
 # p3<- ggmap(get_googlemap(center = c(lon = -110.99088, lat = 32.46878),
 #                          zoom = 15, scale = 2,maptype ='satellite',archiving = TRUE,
 #                          color = 'color'))
-
+# 
 # p3
 
 Longitude<-c(-110.978,-110.978,-110.980,-110.983,-110.985,-110.988,-110.990,-110.994,-110.995,
@@ -85,8 +85,8 @@ mycoorddata <- as.data.frame(cbind(Longitude,Latitude))
 
 p3+geom_polygon(data=mycoorddata,aes(x=Longitude,y=Latitude),alpha=0.2,colour="red",
                 fill="red")+
-  geom_path(data=mycoorddata,aes(x=Longitude,y=Latitude),
-                                      colour="white",alpha=0.4,size=2)+
+  # geom_path(data=mycoorddata,aes(x=Longitude,y=Latitude),
+  #                                     colour="white",alpha=0.4,size=2)+
   annotate("text", x=-110.989,y=32.468,label="Stone Canyon Club",colour="white",size=3)+
   # scalebar(x.min = -111.005, x.max = -110.975,
   #         y.min = 32.455, y.max = 32.480, anchor = NULL,
@@ -759,7 +759,7 @@ anova(RM.KDEmod.year)
 
 
 Repeated Measure ANOVA for 50% KDE overall home ranges
-```{r Repeated Measures ANOVA KDE, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r Repeated Measures ANOVA50% KDE, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 # Get p-values from mixed model F values:
 
 RM.KDE.50.mod.year<-lmer(Home_Range_50kde~Year+Sex+N+(1|Gila),data = sub)
