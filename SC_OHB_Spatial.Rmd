@@ -109,7 +109,7 @@ library(viridis)
 library(rasterVis)
 
 ## USING DISMO:
-extent <- extent(-130,-70,20,60)
+# extent <- extent(-130,-70,20,60)
 
 H.susp <- gbif("heloderma", species = "suspectum", ext = extent,
              geo = TRUE, sp = TRUE, download = TRUE,
@@ -118,7 +118,7 @@ H.susp <- gbif("heloderma", species = "suspectum", ext = extent,
 H.susp_xy <- as.data.frame(cbind(H.susp@coords[,1],H.susp@coords[,2]))
 colnames(H.susp_xy) <- c("longitude","latitude")
 
-us <- map_data("state")
+# us <- map_data("state")
 
 # ggplot(data = H.susp_xy, aes(x=longitude, y=latitude)) +
 #   geom_polygon(data = us, aes(x=long, y = lat, group = group),
@@ -151,29 +151,68 @@ H.susp_info <- cbind(H.susp_df,coords)
 
 colnames(H.susp_info) <- c("species","dataset","state","location","longitude","latitude")
 
-library(grid)
-Navada <- grid.text(paste("Navada"),x=0.55,  y=0.81)
-Utah <- grid.text(paste("Utah"), x=0.19,  y=0.36)
-Arizona <- grid.text(paste("Arizona"), x=0.55,  y=0.81)
-California <- grid.text(paste("California"), x=0.19,  y=0.36)
-New.Mexico <- grid.text(paste("New.Mexico"), x=0.55,  y=0.81)
+# library(grid)
+# Navada <- grid.text(paste("Navada"),x=0.55,  y=0.81)
+# Utah <- grid.text(paste("Utah"), x=0.19,  y=0.36)
+# Arizona <- grid.text(paste("Arizona"), x=0.55,  y=0.81)
+# California <- grid.text(paste("California"), x=0.19,  y=0.36)
+# New.Mexico <- grid.text(paste("New.Mexico"), x=0.55,  y=0.81)
 
 
 ## Now we are ready to finalize the aesthetics and options for displaying the new gbif data.
-ggplot(data = H.susp_info, aes(x=longitude, y=latitude)) +
-  geom_polygon(data = us, aes(x=long, y = lat, group = group),
-               fill = "white", color="black") +
-  geom_point(aes(color = state)) +
-  coord_fixed(xlim = c(-119,-107), ylim = c(31,41)) +
-  xlab("Longitude") + ylab("Latitude") + ggtitle("US Gila Monster Distribution") + 
-  guides(color=guide_legend("Legend")) + 
-  theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + 
-  theme(legend.position = "right") +
-  theme(legend.title.align = 0.5, legend.box.just = "center") +
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank())
-      # annotation_custom(Navada) + annotation_custom(Utah) + annotation_custom(Arizona) +
-      # annotation_custom(California) + annotation_custom(New.Mexico))
+# ggplot(data = H.susp_info, aes(x=longitude, y=latitude)) + 
+#   geom_polygon(data = us, aes(x=long, y = lat, group = group),
+#                fill = "white", color="black") +
+#   geom_point(aes(color = state)) +
+#   coord_fixed(xlim = c(-119,-107), ylim = c(31,41)) +
+#   xlab("Longitude") + 
+#   ylab("Latitude") + 
+#   ggtitle("US Gila Monster Distribution") + 
+#   guides(color=guide_legend("Legend")) + 
+#   theme_bw() + 
+#   theme(plot.title = element_text(hjust = 0.5)) + 
+#   theme(legend.position = "right") +
+#   theme(legend.title.align = 0.5, legend.box.just = "center") +
+#   theme(panel.grid.major = element_blank(), 
+#         panel.grid.minor = element_blank())
+#       # annotation_custom(Navada) + annotation_custom(Utah) + annotation_custom(Arizona) +
+#       # annotation_custom(California) + annotation_custom(New.Mexico))
+
+world <- map_data("world")
+states <- map_data("state")
+counties <- map_data("county")
+
+counties$polyname <- paste(counties$region, counties$subregion, sep = ",")
+counties <- counties %>% left_join(fips, by = c("polyname" = "polyname"))
+counties$fips <- as.character(counties$fips)
+
+southwestern_states <- subset(states, region %in% 
+                            c("arizona", "california", "utah", "nevada", 
+                              "new mexico", "colorado"))
+
+southwestern_counties <- subset(counties, region %in% 
+                              c("arizona", "california", "utah", "nevada", 
+                                "new mexico", "colorado"))
+
+# florida_counties <- subset(southern_counties, region == "florida")
+
+ggplot(data = H.susp_info, aes(x=longitude, y=latitude)) + 
+  geom_polygon(data = world, aes(x=long,y=lat, group=group), fill = "gray95", color ="white")+
+  geom_polygon(data = states, aes(x=long,y=lat, group=group), fill = "gray", color = "white")+
+  # geom_polygon(data = fl_poly, aes(x=long, y=lat, group=group, fill = fill))  
+  geom_polygon(data = southwestern_states, aes(x=long,y=lat, group=group), fill = NA,
+               color="white") +
+  geom_polygon(data = southwestern_counties, aes(x=long,y=lat, group=group), fill = NA, 
+               color = "black", size = 0.05) +
+   geom_point(aes(color = state)) +
+  coord_map("conic", lat0 = 30, xlim=c(-120,-105), ylim=c(30,39)) +
+  scale_fill_identity() +
+  theme_grey() + theme(legend.position="right") + theme(legend.title.align=0.5) +
+  theme(panel.background = element_rect(fill = 'deepskyblue'),
+        panel.grid.major = element_line(colour = NA)) +
+  labs(x = "Longitude", y = "Latitude", fill = "Child Poverty", 
+       title = "U.S. Gila Monster Distribution") +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5))
 ```
 
 
@@ -651,7 +690,7 @@ Graphical Comparisons of Sex between the two populations:
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plot(emm_s.t3, comparisons = TRUE, xlab = "Least Square Mean (ha)", ylab = "Environment")
 ```
-Figure 7 | Paiwise comparisons of sex between environments. If red arrows overlap those of others, then  there is no significant statistical difference. 
+Figure 7 | Pairwise comparisons of sex between environments. If red arrows overlap those of others, then there is no significant statistical difference. 
  
  
  
@@ -716,11 +755,31 @@ ANOVA Table for 95% KDE (subsidized)
 anova(RM.KDEmod.year)
 ```
 
-  
+
+
+
+Repeated Measure ANOVA for 50% KDE overall home ranges
+```{r Repeated Measures ANOVA KDE, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+# Get p-values from mixed model F values:
+
+RM.KDE.50.mod.year<-lmer(Home_Range_50kde~Year+Sex+N+(1|Gila),data = sub)
+
+summary(RM.KDE.50.mod.year)
+```
+
+
+ANOVA Table for 50% KDE (subsidized)
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+anova(RM.KDE.50.mod.year)
+```
  
+ 
+
  
  
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(gridExtra)
+library(grid)
 
 Raw.KDE.HR<-ggplot(YR_GRP_Means.KDE, aes(x=Sex,y=Home_Range_95kde))+
   geom_point(size = 2, position=position_dodge(.1))+
@@ -773,7 +832,7 @@ LSM.KDE.HR<-ggplot(ref_dfRM_KDE, aes(x=Sex,y=lsmean))+
 # LSM.KDE.HR
 
 grid.arrange(Raw.KDE.HR, LSM.KDE.HR, nrow = 1,  
-             bottom = textGrob("Figure x | a. Raw group means of overall yearly KDEs between males and females at Stone Canyon.",
+             bottom = textGrob("Figure x | a. Raw group means of overall yearly 95% KDEs between males and females at Stone Canyon. \n b. Adjusted 95% KDEs after being adjusted for  year, sex, and sample size.",
                                gp = gpar(fontface = 1,fontsize = 10),hjust = 0, x = 0))
 ```
 
@@ -1095,7 +1154,7 @@ ref_dfRM_season <- as.data.frame(summary(refRM_season))
 pd_RM <- position_dodge(0.2)
 
 adj.seasonal<-ggplot(ref_dfRM_season,aes(x=Environment, y=lsmean, shape=Sex)) + 
-  geom_point(aes(shape=Sex), size = 2, position=pd, show.legend=FALSE) +
+  geom_point(aes(shape=Sex), size = 2, position=pd, show.legend=TRUE) +
   geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), position = pd,
                 width=0.3, size=0.5, lty=1) + 
   facet_grid(~Season) +
