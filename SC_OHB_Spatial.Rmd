@@ -241,7 +241,7 @@ Figure 1 | Stone Canyon Golf Club, located in Oro Valley, Arizona on the norther
 
 <br>
 
-![StoneCanyon](picture1.png)
+![StoneCanyon](picture1.png){width=300px}
 
 <br>
 
@@ -249,7 +249,7 @@ For the comparison site, the unsubsidized natural population was represented usi
 
 <br>
 
-![OwlHead](picture2.png)
+![OwlHead](picture2.png){width=300px}
 
 <br>
 
