@@ -34,6 +34,10 @@ h4.author { /* Header 4 - and the author and data headers use this too  */
 
 <br>
 
+![Gila Sunset](GILASUNSET.png)
+
+<br>
+
 # ABSTRACT 
 Animal movements are often defined using the home range concept. Consequently, home ranges are determined by temporal, spatial, and individual-level processes. Within the environment, one of the key factors influencing an animal’s range and how it uses the environment is that of resources. Alterations to the environment that affect resource distribution and availability can have profound consequences on an animal’s spatial patterns. One of the best examples of this is that of golf courses. Certain environmental modifications exhibited by some human altered environments can have positive effects on certain wildlife species by altering their movement patterns and foraging efforts. We analyzed data collected from 22 Gila Monsters *Heloderma suspectum* at a subsidized environment in Arizona from 2007 to 2013 and 15 Gila Monsters from a non-subsidized environment from 2000 to 2002. We performed both kernel density estimation and minimum convex polygons for comparability purposes. After adjusting area estimates for sex, number of fixes, and year, males in the subsidized environment had an average overall area of 13.6 ha while the females had an area of 8.3 ha. In the unsubsidized environment, males had an average overall area of 43.2 ha while females had an area of 23.6 ha. Gila Monsters between the two environments also exhibited seasonal differences, primarily in the dry and monsoon seasons. There were also differences in home range overlap within and between sexes. In the subsidized population, there was very little male-male overlap with only two occurances, more female-female overlap and male-female overlap was increased. Male home ranges often overlapped several female home ranges. This suggests that Gila monster home ranges may be smaller in subsidized resource environments than those of un-subsidized environments due to increases in available resources.
 
@@ -331,7 +335,7 @@ myMap <- get_stamenmap(bbox = c(left = -111.009,
 
 ggmap(myMap)+geom_point(data=proj_lat.lon, aes(x=x, y=y), size=0.3)
 ```
-Figure __ | Total relocations of 22 Gila Monsters throughout Stone Canyon for the entire study period.
+Figure 2 | Total relocations of 22 Gila Monsters throughout Stone Canyon for the entire study period.
 
 <br>
 
@@ -351,7 +355,7 @@ Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp,group=Environment))+
   xlab("Number of Relocations")+
   ylab("Area (ha) using 100% MCP")+
   geom_smooth(method = "lm",se=FALSE)+
-  labs(caption = "Figure 2 | Non-Subsidized (Owl Head Buttes) vs. Subsidized (Stone Canyon) population 100% MCPs against number \n of fixes of the complete data set.")+
+  labs(caption = "Figure 3 | Non-Subsidized (Owl Head Buttes) vs. Subsidized (Stone Canyon) population 100% MCPs against number \n of fixes of the complete data set.")+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
   # theme_bw()
 
@@ -371,7 +375,7 @@ SCOH.hr.fig
 
 <br>
 
-At Stone Canyon, home ranges appeared relatively stable, with no major shifts in areas of use (Fig. ___). Male yearly home ranges ranged from 1.91 - 25.1 ha, with a mean of 11.7 ± 1.7 S.E. ha (100% MCP), 9.1 ± 1.3 S.E. Ha (95% MCP). Female home ranges ranged from 2.1 – 38.8 ha and a mean of 9.8 ± 1.1 S.E. ha (100% MCP), 7.1 ± 0.7 S.E. ha (95% MCP). Male Gila Monsters at Owl head Buttes had home ranges that ranged from 10.6 – 82.7 ha with a mean of 43.2 ± 5.7 S.E. ha (100% MCP), 41.9 ± 4.9 S.E. ha (95% MCP). Female home ranges ranged from 7.1 – 47.6 with a mean of 22.0 ± 3.7 S.E. ha (100% MCP), 20.6 ± 2.5 S.E. ha (95% MCP).
+At Stone Canyon, home ranges appeared relatively stable, with no major shifts in areas of use (Fig. 4). Male yearly home ranges ranged from 1.91 - 25.1 ha, with a mean of 11.7 ± 1.7 S.E. ha (100% MCP), 9.1 ± 1.3 S.E. Ha (95% MCP). Female home ranges ranged from 2.1 – 38.8 ha and a mean of 9.8 ± 1.1 S.E. ha (100% MCP), 7.1 ± 0.7 S.E. ha (95% MCP). Male Gila Monsters at Owl head Buttes had home ranges that ranged from 10.6 – 82.7 ha with a mean of 43.2 ± 5.7 S.E. ha (100% MCP), 41.9 ± 4.9 S.E. ha (95% MCP). Female home ranges ranged from 7.1 – 47.6 with a mean of 22.0 ± 3.7 S.E. ha (100% MCP), 20.6 ± 2.5 S.E. ha (95% MCP).
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
@@ -576,7 +580,7 @@ YR_GRP_Means <- summarySE(year, measurevar="Home_Range_100mcp",
                           groupvars=c("Environment","Sex"),na.rm = TRUE)
 
 kable(YR_GRP_Means, format = "pandoc", 
-      caption = 'Table 2 | Raw group 100% MCP home range means of Stone Canyon and Owl Head Buttes. Grouped by environment and sex.')
+      caption = 'Table 1 | Raw group 100% MCP home range means of Stone Canyon and Owl Head Buttes. Grouped by environment and sex.')
 ```
 
 
@@ -584,7 +588,7 @@ kable(YR_GRP_Means, format = "pandoc",
 YR_GRP_Means95 <- summarySE(year, measurevar="Home_Range_95mcp",
                             groupvars=c("Environment","Sex"),na.rm = TRUE)
 
-kable(YR_GRP_Means95, format = "pandoc", caption = 'Table 3 | Raw group 95% MCP home range means of raw data of Stone Canyon and Owl Head Buttes. Grouped by environment and sex.')
+kable(YR_GRP_Means95, format = "pandoc", caption = 'Table 2 | Raw group 95% MCP home range means of raw data of Stone Canyon and Owl Head Buttes. Grouped by environment and sex.')
 ```
 
 
@@ -698,7 +702,7 @@ library(gridExtra)
 library(grid)
 
 grid.arrange(yr.mean.raw, yr.mean.adj, nrow = 1,  
-             bottom = textGrob("Figure x | a. Raw group means of overall yearly home ranges between males and females. Note that the male \n home range of the subsidized population is smaller than that of the female home range in the non-subsidized \n population. b. Group means of home ranges after being adjusted for environment, year, sex, and sample size.",
+             bottom = textGrob("Figure 5 | a. Raw group means of overall yearly home ranges between males and females. Note that the male \n home range of the subsidized population is smaller than that of the female home range in the non-subsidized \n population. b. Group means of home ranges after being adjusted for environment, year, sex, and sample size.",
                                gp = gpar(fontface = 1,fontsize = 10),hjust = 0, x = 0))
 ```
 
@@ -707,7 +711,7 @@ grid.arrange(yr.mean.raw, yr.mean.adj, nrow = 1,
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-kable(ref_dfRM_sex, format = "pandoc", caption = 'Table 4. Directional means of home range after being adjusted for year, sex and sample size.')
+kable(ref_dfRM_sex, format = "pandoc", caption = 'Table 3 | Directional means of home range after being adjusted for year, sex and sample size.')
 ```
 
 <br>
@@ -797,7 +801,7 @@ mapviewOptions(basemaps = c("OpenStreetMap","Esri.WorldImagery","OpenTopoMap"),
 mapview(Male.MCP, legend=F, zcol="id", col.regions = c("blue"), alpha.regions=0.3) + 
   mapview(Female.MCP, legend=F, zcol = "id", col.regions = c("red"), alpha.regions=0.3)
 ```
-Figure 13 | Interactive map: Home Range overlap by sex of 100% MCPs at Stone Canyon. Red polygons represent female lizards, and blue represents male lizards. 
+Figure 8 | Interactive map: Home Range overlap by sex of 100% MCPs at Stone Canyon. Red polygons represent female lizards, and blue represents male lizards. 
 
 
 <br>
@@ -825,7 +829,7 @@ sub <- subset(year, Environment == "subsidized")
 YR_GRP_Means.KDE <- summarySE(sub, measurevar="Home_Range_95kde",
                             groupvars=c("Sex"),na.rm = TRUE)
 
-kable(YR_GRP_Means.KDE, format = "pandoc", caption = 'Table  | Raw Group 95% KDE home range means male and female home ranges at Stone Canyon.')
+kable(YR_GRP_Means.KDE, format = "pandoc", caption = 'Table 4 | Raw Group 95% KDE home range means male and female home ranges at Stone Canyon.')
 ```
  
 <br>
@@ -865,7 +869,7 @@ summary(RM.KDE.50.mod.year)
 YR_GRP_Means.KDE <- summarySE(sub, measurevar="Home_Range_50kde",
                             groupvars=c("Sex"),na.rm = TRUE)
 
-kable(YR_GRP_Means.KDE, format = "pandoc", caption = 'Table  | Raw Group 50% KDE home range means male and female home ranges at Stone Canyon.')
+kable(YR_GRP_Means.KDE, format = "pandoc", caption = 'Table 5 | Raw Group 50% KDE home range means male and female home ranges at Stone Canyon.')
 ```
 
 
@@ -933,7 +937,7 @@ LSM.KDE.HR<-ggplot(ref_dfRM_KDE, aes(x=Sex,y=lsmean))+
 # LSM.KDE.HR
 
 grid.arrange(Raw.KDE.HR, LSM.KDE.HR, nrow = 1,  
-             bottom = textGrob("Figure x | a. Raw group means of overall yearly 95% KDEs between males and females at Stone Canyon. \n b. Adjusted 95% KDEs after being adjusted for  year, sex, and sample size.",
+             bottom = textGrob("Figure 9 | a. Raw group means of overall yearly 95% KDEs between males and females at Stone Canyon. \n b. Adjusted 95% KDEs after being adjusted for  year, sex, and sample size.",
                                gp = gpar(fontface = 1,fontsize = 10),hjust = 0, x = 0))
 ```
 
@@ -986,7 +990,7 @@ mapviewOptions(basemaps = c("OpenStreetMap","Esri.WorldImagery","OpenTopoMap"),
 mapview(Male.KDE, legend=F, zcol="id", col.regions = c("blue"), alpha.regions=0.3) + 
   mapview(Female.KDE, legend=F, zcol = "id", col.regions = c("red"), alpha.regions=0.3)
 ```
-Figure 14 | Interactive map: Home Range overlap by sex of 95% KDEs at Stone Canyon. Red polygons represent female lizards, and blue represents male lizards. 
+Figure 10 | Interactive map: Home Range overlap by sex of 95% KDEs at Stone Canyon. Red polygons represent female lizards, and blue represents male lizards. 
 
 <br>
 
@@ -1142,7 +1146,7 @@ mcp.shift.TEST5 <- ggplot() +
                alpha=0.1,colour="black",linetype=5) +
   theme_bw() +
   labs(x="Easting (m)", y="Northing (m)") +
-  labs(caption = "Figure  |  Seasonal home range shifts of five lizards. Emergence and post-monsoon ranges stay realatively within \n each other. All seasonal polygons stay relatively stable without any major shifts away from other seasonal ranges.")+
+  labs(caption = "Figure 11 |  Seasonal home range shifts of five lizards. Emergence and post-monsoon ranges stay realatively within \n each other. All seasonal polygons stay relatively stable without any major shifts away from other seasonal ranges.")+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
   theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5))
 
@@ -1153,7 +1157,7 @@ mcp.shift.TEST5
 <br>
 
 
-Seasonal home ranges at Stone Canyon varied in size between seasons but did not seem shift (Fig.___), with seasonal home ranges overlapping each other, only expanding or collapsing between seasons. Home range patterns at Stone Canyon did not display the same seasonal variation in home range sizes that was observed at Owl Head Buttes. At Stone Canyon, Gila Monsters had relatively smaller home ranges throughout the year, where the highest inflation of range size was observed during the dry season from an increase in male home ranges, 18.3 ± 5.4 S.E. ha to that of female home range sizes at 10.2 ± 2.4 S.E. ha. Females at Stone Canyon displayed similar home ranges during the monsoon season, 10.6 ± 2.5 S.E. ha. Home range sizes at Owl Head Buttes had a much larger amount of variation across seasons than did those at Stone Canyon. There were still slightly larger ranges observed during the dry season, primarily due to increased home range sizes exhibited by males 29.4 ± 4.7 S.E. ha versus females at 15.6 ± 3.8 S.E. ha. During the monsoon season, there was still yet a large influx of home ranges sizes where female home ranges increased to 22.9 ± 4.0 S.E. ha.  For both populations, home ranges during the emergence and post-monsoon seasons were small, marking the beginning and ending of overwintering periods, where minimal movement is observed in both groups. 
+Seasonal home ranges at Stone Canyon varied in size between seasons but did not seem shift (Fig. 11), with seasonal home ranges overlapping each other, only expanding or collapsing between seasons. Home range patterns at Stone Canyon did not display the same seasonal variation in home range sizes that was observed at Owl Head Buttes. At Stone Canyon, Gila Monsters had relatively smaller home ranges throughout the year, where the highest inflation of range size was observed during the dry season from an increase in male home ranges, 18.3 ± 5.4 S.E. ha to that of female home range sizes at 10.2 ± 2.4 S.E. ha. Females at Stone Canyon displayed similar home ranges during the monsoon season, 10.6 ± 2.5 S.E. ha. Home range sizes at Owl Head Buttes had a much larger amount of variation across seasons than did those at Stone Canyon. There were still slightly larger ranges observed during the dry season, primarily due to increased home range sizes exhibited by males 29.4 ± 4.7 S.E. ha versus females at 15.6 ± 3.8 S.E. ha. During the monsoon season, there was still yet a large influx of home ranges sizes where female home ranges increased to 22.9 ± 4.0 S.E. ha.  For both populations, home ranges during the emergence and post-monsoon seasons were small, marking the beginning and ending of overwintering periods, where minimal movement is observed in both groups. 
 
 Analysis indicated that there was an effect of season (df = 3, F = 15.41, P = <0.001) as well as an interaction of environment and season (df = 3, F = 6.84, P = <0.001), indicating that changes in seasonal home ranges sizes varied between each environment. 
   
@@ -1171,7 +1175,7 @@ SEAS_GRP_Means <- summarySE(seasonal, measurevar="Home_Range_100mcp",
                             groupvars=c("Environment","Season"), na.rm = TRUE)
 
 # SEAS_GRP_Means
-kable(SEAS_GRP_Means, format = "pandoc", caption = 'Table 5 | Group means of seasonal home ranges between Stone Canyon (subsidized) and Owl Head Buttes (non-subsidized). These means are averaged across sex.')
+kable(SEAS_GRP_Means, format = "pandoc", caption = 'Table 6 | Group means of seasonal home ranges between Stone Canyon (subsidized) and Owl Head Buttes (non-subsidized). These means are averaged across sex.')
 ```
 
 
@@ -1211,7 +1215,7 @@ SEAS_GRP_TEST <- summarySE(seasonal, measurevar="Home_Range_100mcp",
                            groupvars=c("Environment","Season","Sex"), na.rm = TRUE)
 
 # SEAS_GRP_Means
-kable(SEAS_GRP_TEST, format = "pandoc", caption = 'Table 6 | Seasonal home range means between Stone Canyon (subsidized) and Owl Head Buttes (non-subsidized) popuations for males and females. These are raw means before being adjusted for environment, season, sex, and sample size.')
+kable(SEAS_GRP_TEST, format = "pandoc", caption = 'Table 7 | Seasonal home range means between Stone Canyon (subsidized) and Owl Head Buttes (non-subsidized) popuations for males and females. These are raw means before being adjusted for environment, season, sex, and sample size.')
 ```
 
 
@@ -1228,7 +1232,7 @@ raw.seasonal<-ggplot(SEAS_GRP_TEST,aes(x=Environment, y=Home_Range_100mcp, shape
   # scale_colour_manual(values = c('black','red')) +
   facet_grid(~Season) +
   # scale_shape_manual(values = c(8,19))+
-  labs(caption = "Figure  |  Raw seasonal means of sexes between each environment. Home ranges of the subsidezed population remain \n relatively small throughout the seasons, with the exception during the dry season where we observe increased male \n home ranges. The non-subsidized population exhibits a large amount of variation across seasons.")+
+  labs(caption = "Figure 12 |  Raw seasonal means of sexes between each environment. Home ranges of the subsidezed population remain \n relatively small throughout the seasons, with the exception during the dry season where we observe increased male \n home ranges. The non-subsidized population exhibits a large amount of variation across seasons.")+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
   # scale_x_discrete(limits=c('Emergence','Dry','Monsoon','Post_Monsoon')) +
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
@@ -1295,7 +1299,7 @@ adj.seasonal<-ggplot(ref_dfRM_season,aes(x=Environment, y=lsmean, shape=Sex)) +
   geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), position = pd,
                 width=0.3, size=0.5, lty=1) + 
   facet_grid(~Season) +
-labs(caption = "Figure  | Adjusted seasonal home range means of sexes between environments. Home ranges of the subsidezed \n population remain relatively small throughout the seasons. After adjustment male home reanges were reduced, \n but still remained slightly larger then females.")+
+labs(caption = "Figure 13 | Adjusted seasonal home range means of sexes between environments. Home ranges of the subsidezed \n population remain relatively small throughout the seasons. After adjustment male home reanges were reduced, \n but still remained slightly larger then females.")+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
   # scale_shape_manual(values = c(8,19))+
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
@@ -1332,7 +1336,7 @@ adj.seasonal
 
 ## Post-Hoc Analyses                                                                        
 
-Post-Hoc analyses on the Stone Canyon data set, with home range means averaged across sex, suggested that there was no significant difference in home ranges between the emergence (4.3 ± 2.6 S.E. ha) and post-monsoon seasons (5.1 ± 2.1 S.E. ha) nor dry and monsoon (12.2 ± 1.7 S.E. ha and 9.0 ± 1.8 S.E. ha). There was also no significance between emergence and dry/monsoon seasons, but there was a difference between dry and post-monsoon (df = 80.2, P = 0.04). Post-Hoc analyses on the Owl Head Buttes population indicated that there was no significant difference between emergence (3.3 ± 2.2 S.E. ha) and post-monsoon (2.4 ± 2.4 S.E.) nor dry and monsoon (18.9 ± 2.3 S.E. ha and 21.9 ± 2.0 S.E. ha) reflecting the same pattern at Stone Canyon. However, there was a significant difference between emergence and dry/monsoon (df = 69.4, P = <0.0001, and df = 68, P = <0.0001 respectively), as well as post-monsoon and dry/monsoon (df = 78.9, P = <0.0001, and df = 74, P = <0.0001). This shows a rather different pattern than seen at Stone Canyon. Pairwise analyses between the two populations indicated no difference between emergence (df = 87.7, P = 0.76) or post-monsoon (df = 89.4, P = 0.35). Differences in home range sizes between the two populations were between the dry and monsoon seasons (Fig.___).  Owl Head home ranges were 58% larger than those at Stone Canyon during the dry season, and 76% larger during the monsoon season. 
+Post-Hoc analyses on the Stone Canyon data set, with home range means averaged across sex, suggested that there was no significant difference in home ranges between the emergence (4.3 ± 2.6 S.E. ha) and post-monsoon seasons (5.1 ± 2.1 S.E. ha) nor dry and monsoon (12.2 ± 1.7 S.E. ha and 9.0 ± 1.8 S.E. ha). There was also no significance between emergence and dry/monsoon seasons, but there was a difference between dry and post-monsoon (df = 80.2, P = 0.04). Post-Hoc analyses on the Owl Head Buttes population indicated that there was no significant difference between emergence (3.3 ± 2.2 S.E. ha) and post-monsoon (2.4 ± 2.4 S.E.) nor dry and monsoon (18.9 ± 2.3 S.E. ha and 21.9 ± 2.0 S.E. ha) reflecting the same pattern at Stone Canyon. However, there was a significant difference between emergence and dry/monsoon (df = 69.4, P = <0.0001, and df = 68, P = <0.0001 respectively), as well as post-monsoon and dry/monsoon (df = 78.9, P = <0.0001, and df = 74, P = <0.0001). This shows a rather different pattern than seen at Stone Canyon. Pairwise analyses between the two populations indicated no difference between emergence (df = 87.7, P = 0.76) or post-monsoon (df = 89.4, P = 0.35). Differences in home range sizes between the two populations were between the dry and monsoon seasons (Fig. 14).  Owl Head home ranges were 58% larger than those at Stone Canyon during the dry season, and 76% larger during the monsoon season. 
 
 <br>
 
@@ -1348,7 +1352,7 @@ Graphical Comparisons of seasons between the two populatins:
 # plot(Sex.emm.seas, comparisons = TRUE)
 plot(emm_s.t, comparisons = TRUE)
 ```                                                                                             
-Figure 11 | Pairwise comparisons of each season between environments. Overlapping red bars indicate no statistical difference. 
+Figure 14 | Pairwise comparisons of each season between environments. Overlapping red bars indicate no statistical difference. 
 
 
 
@@ -1366,7 +1370,7 @@ Graphical Comparisons between seasons within the two populations:
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plot(emm_s.t4, comparisons = TRUE)
 ```
-Figure 12 | Pairwise comparisons between seasons within each environment against estimated marginal means. Overlapping red bars indicate no statistical difference. 
+Figure 15 | Pairwise comparisons between seasons within each environment against estimated marginal means. Overlapping red bars indicate no statistical difference. 
 
 
 
@@ -1386,7 +1390,7 @@ Graphical Comparisons between sex within the subsidized population:
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plot(emm_s.t5, comparisons = TRUE)
 ```   
-   
+Figure 16 | Stone Canyon pairwise comparisons of male and female home ranges of each season.
 
 <br>
 
@@ -1410,6 +1414,8 @@ Graphical Comparisons between sex within the non-subsidized population:
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plot(emm_s.t6, comparisons = TRUE)
 ```   
+Figure 17 | Owl Head pairwise comparisons of male and female home ranges of each season.
+
 
 <br>
 
@@ -1502,9 +1508,9 @@ plot(emm_sex_KDE, comparisons=TRUE)
 
 # Home Range Overlap (MCP)
 
-The Stone Canyon population seems to exhibit greater female-female overlap as well as considerable overlap of male-female home ranges. There appears to be limited male-male overlap, with occurance happening in only two male-male home range polygons. This finding is in contrast to the Owl Head buttes study which revealed that there was a large degree of overlap among male-female and male-male overlaps (Table x). Gillardo concluded that, in their study, the high degree of overlap in males-males interactions may be due to having larger home ranges for mate searching activities. Males may have and increased home range size to maximize their access to multiple females. She concluded that the lack of female-female overlap may be due to smaller home range sizes. 
+The Stone Canyon population seems to exhibit greater female-female overlap as well as considerable overlap of male-female home ranges. There appears to be limited male-male overlap, with occurance happening in only two male-male home range polygons. This finding is in contrast to the Owl Head buttes study which revealed that there was a large degree of overlap among male-female and male-male overlaps (Table 8). Gillardo concluded that, in their study, the high degree of overlap in males-males interactions may be due to having larger home ranges for mate searching activities. Males may have and increased home range size to maximize their access to multiple females. She concluded that the lack of female-female overlap may be due to smaller home range sizes. 
 
-At Stone Canyon, males have reduced home range sizes (Table 6; Fig. 4). However, males still retain home range overlap with multiple females while having reduced contact with other males. This may be in response to nutrient subsidies that reduce the need to have expanded home range sizes for foraging activities for both males and females. There may also be a higher density of females as a response to resource availability and reduced range requirements. Males are not forced to expand home ranges for mate searching to the extant that individuals at Owl Head Buttes may be subject to. 
+At Stone Canyon, males have reduced home range sizes (Table 3; Fig. 5). However, males still retain home range overlap with multiple females while having reduced contact with other males. This may be in response to nutrient subsidies that reduce the need to have expanded home range sizes for foraging activities for both males and females. There may also be a higher density of females as a response to resource availability and reduced range requirements. Males are not forced to expand home ranges for mate searching to the extant that individuals at Owl Head Buttes may be subject to. 
 
 
 <br>
@@ -1525,7 +1531,7 @@ hr.overlap.anal <- summarySE(hr.overlap, measurevar="OL",
                             groupvars=c("Interaction"), na.rm = TRUE)
 
 # SEAS_GRP_Means
-kable(hr.overlap.anal, format = "pandoc", caption = 'Table 10 | Summary of home range overlap.')
+kable(hr.overlap.anal, format = "pandoc", caption = 'Table 9 | Summary of home range overlap.')
 ```
 
 
