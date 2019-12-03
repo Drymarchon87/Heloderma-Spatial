@@ -1525,7 +1525,7 @@ At Stone Canyon, males have reduced home range sizes (Table 3; Fig. 5). However,
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 OL_Table<-read.csv("./Overlap/OverLap_Table.csv")
 
-kable(OL_Table, format = "pandoc", caption = 'Table 8 | Home range overlap of Gila Monsters at the nutrient subsidized site. Male-male overlaps only occured between two pairs of males: M14-M69 and M119-M215 at 0.5 ha. and 19.5 ha. respectively and were therefore not included in the table..')
+kable(OL_Table, format = "pandoc", caption = 'Table 8 | Home range overlap of Gila Monsters at the nutrient subsidized site. Male-male overlaps only occured between two pairs of males: M14-M69 and M119-M215 at 0.5 ha. and 19.5 ha. respectively and were therefore not included in the table..') 
 ```
 
 
