@@ -241,11 +241,17 @@ Figure 1 | Stone Canyon Golf Club, located in Oro Valley, Arizona on the norther
 
 <br>
 
+![StoneCanyon](picture1.png)
+
+<br>
+
 For the comparison site, the unsubsidized natural population was represented using spatial data that was collected on 15 Gila Monsters, 6 males, 6 females and 3 sub-adults from 2000-2002 using radio-telemetry at Owl Head Buttes, Arizona. Located in Arizona upland Sonoran Desert approximately 19 km north northeast of Stone Canyon, the Owl Head Buttes study site was an area of approximately 200 hectares, with an elevation range of 800m-900m, and discontinuous southern buttes of rocky outcrops. Owl Head harbors no urbanized development or other human altered environments aside from highly spaced unpaved dirt access roads throughout the surrounding area. 
 
 <br>
 
+![OwlHead](picture2.png)
 
+<br>
 
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
