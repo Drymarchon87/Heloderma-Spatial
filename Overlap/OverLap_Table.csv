@@ -1,20 +1,34 @@
-﻿ID,F36,F66,F104,F135,F137,F146,F147,,M14,M67,M69,M112,M119,M215,M255
-Female:Female,,,,,,,,Male:Female,,,,,,,
-F36,_,5.13,_,_,_,4.65,_,,_,_,_,_,19.44,18.51,_
-F66,5.13,_,_,_,_,5.05,_,,_,_,2.6,_,_,_,_
-F104,_,_,_,0.5,,_,_,,_,_,_,_,_,_,_
-F114,_,_,_,_,_,_,_,,_,_,_,5.82,_,_,_
-F135,_,_,0.5,_,2.89,_,3.94,,_,_,2.04,_,_,_,_
-F137,_,_,_,2.89,_,_,7.91,,_,_,0.55,_,_,_,_
-F146,4.65,5.05,_,_,_,_,_,,0.14,_,0.76,_,_,_,_
-F147,_,_,_,3.94,7.91,_,_,,3.73,0.21,4.6,_,_,_,_
-F200,_,_,_,_,_,_,_,,_,_,_,6.49,_,_,_
-F252,_,_,_,_,_,_,_,,_,_,_,_,_,_,3.45
-,,,,,,,,,,,,,,,
-Mean =,4.3 ± 0.86,,,,,,,Mean =,5.26 ± 1.78,,,,,,
-,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,
-ID,F36,F66,F104,F135,F137,F146,F147,,M14,M67,M69,M112,M119,M215,M255
-Female:Female,,,,,,,,Male:Female,,,,,,,
-Net,6.84,7.25,0.5,4.44,7.91,6.77,8.96,,3.87,0.21,8.57,12.31,21.24,20.32,3.45
-Prportion,0.2,0.2,0.1,0.5,1,0.7,0.3,,0.4,0.02,0.5,0.4,0.6,1,0.2
+﻿" Table 13 | Individual and net overlap of home range areas among Gila Monsters at Stone Canyon (a.) and Owl Head Buttes (b.). Home range overlaps were calculated using 100% MCPs. Overlap of individuals are those intersections between other individuals. Net home range overlap is the total area contributing to area shared by multiple individuals. Overlap proportions represent the proportion of an individuals total home range shared with other individuals. At Stone Canyon male-male overlaps only occurred between two pairs of males: M14-M69 and M119-M215 at 0.5 ha. and 19.5 ha. respectively and were therefore not included in the table (a.). At Owl Head, female-female overlaps only occurred in a single pair: 15-17  at 0.03 ha. and 19.5 ha. and was also not included in the table (b.).                                               a.",,,,,,,,,,
+ID,F36,F66,F104,F135,F137,F146,,M14,M67,M69
+Female:Female,,,,,,,Male:Female,,,
+F36,_,5.13,_,_,_,4.65,,_,_,_
+F66,5.13,_,_,_,_,5.05,,_,_,2.6
+F104,_,_,_,0.5,,_,,_,_,_
+F114,_,_,_,_,_,_,,_,_,_
+F135,_,_,0.5,_,2.89,_,,_,_,2.04
+F137,_,_,_,2.89,_,_,,_,_,0.55
+F146,4.65,5.05,_,_,_,_,,0.14,_,0.76
+F147,_,_,_,3.94,7.91,_,,3.73,0.21,4.6
+F200,_,_,_,_,_,_,,_,_,_
+F252,_,_,_,_,_,_,,_,_,_
+Mean =,4.3 ± 0.9 S.E.,,,,,,Mean =,5.3 ± 1.8 S.E.,,
+,,,,,,,,,,
+ID,F36,F66,F104,F135,F137,F146,,M14,M67,M69
+Female:Female,,,,,,,Male:Female,,,
+Net,6.84,7.25,0.5,4.44,7.91,6.77,,3.87,0.21,8.57
+Proportion,0.2,0.2,0.1,0.5,1,0.7,,0.4,0.02,0.5
+b.,,,,,,,,,,
+ID,10,11,12,2,4,8,,13,15,17
+Male:Male,,,,,,,Male:Female,,,
+10,-,-,29.9,-,-,-,,-,-,-
+11,-,-,-,1.6,33.7,9.4,,-,22.7,-
+12,29.9,-,-,-,-,-,,0.4,-,-
+2,-,1.6,-,-,26.1,11.5,,4.8,10.5,19.5
+4,-,33.7,0.5,26.1,-,19.9,,-,39,3.6
+8,-,9.4,-,11.5,19.9,-,,-,13.5,2.7
+Mean =,18.9 ± 4.5 S.E.,,,,,,Mean =,13.0 ± 4.2 S.E.,,
+,,,,,,,,,,
+ID,10,11,12,2,4,8,,13,15,17
+Male:Male,,,,,,,Male:Female,,,
+Net,29.9,33.7,29.9,27.7,60.3,6.77,,5.2,39.9,19.5
+Proportion,0.8,0.9,0.6,0.4,0.8,1,,0.2,1,0.4
