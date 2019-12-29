@@ -114,7 +114,7 @@ H.susp_lu <- name_lookup(query = 'heloderma suspectum', return = 'data')
 
 H.susp_code <- print(as.integer(names(which.max(table(H.susp_lu$nubKey)))))
 
-occ_count(taxonKey = H.susp_code, georeferenced = TRUE)
+# occ_count(taxonKey = H.susp_code, georeferenced = TRUE)
 
 usa <- isocodes[grep("United States", isocodes$name), "code"]
 mex <- isocodes[grep("Mexico", isocodes$name), "code"]
@@ -140,7 +140,7 @@ H.susp_df.mex <- as.data.frame(cbind(H.susp_data.mex$scientificName,
                                H.susp_data.mex$verbatimLocality))
 
 H.susp_df.usmex <- as.data.frame(rbind(H.susp_df,H.susp_df.mex))
-View(H.susp_df.usmex)
+
 
 coords <- cbind(type.convert(H.susp_data[["US"]][["decimalLongitude"]], as.is = TRUE),
                 type.convert(H.susp_data[["US"]][["decimalLatitude"]], as.is = TRUE))
@@ -149,10 +149,10 @@ coords.mex <- cbind(type.convert(H.susp_data.mex[["decimalLongitude"]], as.is = 
                 type.convert(H.susp_data.mex[["decimalLatitude"]], as.is = TRUE))
 
 coords <-  rbind(coords,coords.mex)
-View(coords)
+
 
 H.susp_info <- cbind(H.susp_df.usmex,coords)
-View(H.susp_info)
+
 colnames(H.susp_info) <- c("species","dataset","state","location","longitude","latitude")
 
 world <- map_data("world")
@@ -160,8 +160,8 @@ states <- map_data("state")
 counties <- map_data("county")
 
 counties$polyname <- paste(counties$region, counties$subregion, sep = ",")
-counties <- counties %>% left_join(fips, by = c("polyname" = "polyname"))
-counties$fips <- as.character(counties$fips)
+# counties <- counties %>% left_join(fips, by = c("polyname" = "polyname"))
+# counties$fips <- as.character(counties$fips)
 
 southwestern_states <- subset(states, region %in% 
                             c("arizona", "california", "utah", "nevada", 
@@ -384,7 +384,7 @@ SCOH.hr.fig
 At Stone Canyon, home ranges appeared relatively stable, with no major shifts in areas of use (Fig. 4). Male yearly home ranges ranged from 1.91 - 25.1 ha, with a mean of 11.7 ± 1.7 S.E. ha (100% MCP), 9.1 ± 1.3 S.E. Ha (95% MCP). Female home ranges ranged from 2.1 – 38.8 ha and a mean of 9.8 ± 1.1 S.E. ha (100% MCP), 7.1 ± 0.7 S.E. ha (95% MCP). Male Gila Monsters at Owl head Buttes had home ranges that ranged from 10.6 – 82.7 ha with a mean of 43.2 ± 5.7 S.E. ha (100% MCP), 41.9 ± 4.9 S.E. ha (95% MCP). Female home ranges ranged from 7.1 – 47.6 with a mean of 22.0 ± 3.7 S.E. ha (100% MCP), 20.6 ± 2.5 S.E. ha (95% MCP).
 
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(Rmisc)
 Means <- summarySE(year, measurevar="Home_Range_100mcp",
                           groupvars=c("Environment"),na.rm = TRUE)
@@ -574,6 +574,9 @@ mcp.shift.TEST4 <- ggplot() +
   labs(caption = "Figure 4  |  Yearly home range shifts of sub-sampled home ranges of 8 lizards, both males and females. Home \n range shifts appear to be relativley stable over study years.")+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
   # theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5))
+## within each geom_polygon line?:
+## aes(colour="red"or"M112_mcp.09T")...+scale_color_manual(name="",breaks=c("","",...""))+
+## values=c(""="",...)
 
 mcp.shift.TEST4
 ```
@@ -717,7 +720,7 @@ grid.arrange(yr.mean.raw, yr.mean.adj, nrow = 1,
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-kable(ref_dfRM_sex, format = "pandoc", caption = 'Table 3 | Directional means of home range after being adjusted for year, sex and sample size.')
+kable(ref_dfRM_sex, format = "pandoc", caption = 'Table 3 | Directional means of home range (100% MCP) after being adjusted for year, sex and sample size.')
 ```
 
 <br>
@@ -943,8 +946,7 @@ LSM.KDE.HR<-ggplot(ref_dfRM_KDE, aes(x=Sex,y=lsmean))+
 # LSM.KDE.HR
 
 grid.arrange(Raw.KDE.HR, LSM.KDE.HR, nrow = 1,  
-             bottom = textGrob("Figure 9 | a. Raw group means of overall yearly 95% KDEs between males and females at Stone Canyon. \n b. Adjusted 95% KDEs after being adjusted for  year, sex, and sample size.",
-                               gp = gpar(fontface = 1,fontsize = 10),hjust = 0, x = 0))
+             bottom = textGrob("Figure 9 | a. Raw group means of overall yearly 95% KDEs between males and females at Stone Canyon. \n b. Adjusted 95% KDEs after being adjusted for  year, sex, and sample size.", gp = gpar(fontface = 1,fontsize = 10),hjust = 0, x = 0))
 ```
 
  

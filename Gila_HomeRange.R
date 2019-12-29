@@ -199,8 +199,8 @@ library(readr)
 # View(F104)
 
 # Function for running animal MCP:
-mcp_analysis("./F252/Emergence .csv", percentage=100)
-mcp_analysis("./F36/Dry .csv", percentage=100)
+mcp_analysis("./F114/2007 .csv", percentage=100)
+mcp_analysis("./F36/2010 .csv", percentage=100)
 
 
 ###########################################################################################
@@ -299,7 +299,7 @@ mapView(M112_MCP, zcol="id")
 # CRS.SC<-CRS("+proj=utm +zone=12 +ellps=WGS84 +units=m +no_defs") 
 
 # Function for running animal KDE:
-kde_analysis.href.plot("./M255/2012 .csv", percentage=50)
+kde_analysis.href.plot("./F66/2011 .csv", percentage=95)
 #lapply(files,kde_analysis.href.plot, percentage=95)
 
 
