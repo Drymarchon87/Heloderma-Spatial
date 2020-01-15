@@ -211,12 +211,12 @@ ggplot(data = H.susp_info, aes(x=longitude, y=latitude)) +
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, cache=TRUE}
-# ggmap::register_google(key = "AIzaSyBjhhE9peRBmS1h9WYQx1k5MF_XAXqUfSs")
-# 
-# p3<- ggmap(get_googlemap(center = c(lon = -110.99088, lat = 32.46878),
-#                          zoom = 15, scale = 2,maptype ='satellite',archiving = TRUE,
-#                          color = 'color'))
-# 
+ggmap::register_google(key = "AIzaSyBjhhE9peRBmS1h9WYQx1k5MF_XAXqUfSs")
+
+p3<- ggmap(get_googlemap(center = c(lon = -110.99088, lat = 32.46878),
+                         zoom = 15, scale = 2,maptype ='satellite',archiving = TRUE,
+                         color = 'color'))
+
 # p3
 
 Longitude<-c(-110.978,-110.978,-110.980,-110.983,-110.985,-110.988,-110.990,-110.994,-110.995,
@@ -835,10 +835,10 @@ kable(year.kde, format = "pandoc", caption = 'Yearly KDE Home Ranges')
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 sub <- subset(year, Environment == "subsidized")
 
-YR_GRP_Means.KDE <- summarySE(sub, measurevar="Home_Range_95kde",
+YR_GRP_Means.95KDE <- summarySE(sub, measurevar="Home_Range_95kde",
                             groupvars=c("Sex"),na.rm = TRUE)
 
-kable(YR_GRP_Means.KDE, format = "pandoc", caption = 'Table 4 | Raw Group 95% KDE home range means male and female home ranges at Stone Canyon.')
+kable(YR_GRP_Means.95KDE, format = "pandoc", caption = 'Table 4 | Raw Group 95% KDE home range means male and female home ranges at Stone Canyon.')
 ```
  
 <br>
@@ -875,10 +875,10 @@ summary(RM.KDE.50.mod.year)
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-YR_GRP_Means.KDE <- summarySE(sub, measurevar="Home_Range_50kde",
+YR_GRP_Means.50KDE <- summarySE(sub, measurevar="Home_Range_50kde",
                             groupvars=c("Sex"),na.rm = TRUE)
 
-kable(YR_GRP_Means.KDE, format = "pandoc", caption = 'Table 5 | Raw Group 50% KDE home range means male and female home ranges at Stone Canyon.')
+kable(YR_GRP_Means.50KDE, format = "pandoc", caption = 'Table 5 | Raw Group 50% KDE home range means male and female home ranges at Stone Canyon.')
 ```
 
 
@@ -895,7 +895,7 @@ anova(RM.KDE.50.mod.year)
 library(gridExtra)
 library(grid)
 
-Raw.KDE.HR<-ggplot(YR_GRP_Means.KDE, aes(x=Sex,y=Home_Range_95kde))+
+Raw.KDE.HR<-ggplot(YR_GRP_Means.95KDE, aes(x=Sex,y=Home_Range_95kde))+
   geom_point(size = 2, position=position_dodge(.1))+
   geom_errorbar(aes(ymin=Home_Range_95kde-se, ymax=Home_Range_95kde+se),
                 width=.1,position=position_dodge())+
@@ -912,7 +912,7 @@ Raw.KDE.HR<-Raw.KDE.HR + theme(legend.title = element_blank(),
                      legend.background = element_blank(),
                      legend.key = element_blank(),
                      legend.box.background = element_rect(colour = "black"))
-# Raw.KDE.HR
+Raw.KDE.HR
 
 RM.KDEmod.year<-lmer(Home_Range_95kde~Year+Sex+N+(1|Gila),data = sub)
 
