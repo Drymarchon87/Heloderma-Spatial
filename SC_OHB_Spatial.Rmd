@@ -392,6 +392,12 @@ Means <- summarySE(year, measurevar="Home_Range_100mcp",
 kable(Means, format = "pandoc", caption = 'Overall combined 100% MCP means averaged across sex')
 ```
 
+```{r include=FALSE}
+Means.95mcp <- summarySE(year, measurevar="Home_Range_95mcp",
+                          groupvars=c("Environment"),na.rm = TRUE)
+Means.95mcp
+```
+
 
 <br>
 
@@ -735,11 +741,16 @@ Post-Hoc analyses between sexes indicated that there was a significant differenc
 RMmod.year.Em<-lmer(Home_Range_100mcp~Environment+Year+Sex+N100+Environment*Sex+
                       (1|Gila),data = year)
 
+# RMmod.year.Em95<-lmer(Home_Range_95mcp~Environment+Year+Sex+N95+Environment*Sex+
+#                       (1|Gila),data = year)
+
 # Sex.emm.oa <- emmeans(RMmod.year.Em, c("Environment","Sex"))
 # pairs(Sex.emm.oa)
 
 emm_s.t2 <- emmeans(RMmod.year.Em, pairwise ~ Sex | Environment)
 emm_s.t2
+# emm_s.e1 <- emmeans(RMmod.year.Em, pairwise ~ Environment)
+# emm_s.e1
 ```
 
 
@@ -755,6 +766,9 @@ Figure 6 | Pairwise comparisons of home range between sexes within each environm
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 emm_s.t3 <- emmeans(RMmod.year.Em, pairwise ~ Environment | Sex)
 emm_s.t3
+
+# emm_s.t95 <- emmeans(RMmod.year.Em95, pairwise ~ Environment | Sex)
+# emm_s.t95
 ```
 
 
