@@ -512,10 +512,10 @@ M215_mcp.12T <- fortify(M215_mcp.12, region = "id")
 
 
 mcp.shift.TEST4 <- ggplot() +
-  geom_polygon(data=F104_mcp.08T, aes(x=F104_mcp.08T$long, y=F104_mcp.08T$lat),
-               alpha=0.1,colour="black",linetype=2) +
-  geom_polygon(data=F104_mcp.09T, aes(x=F104_mcp.09T$long, y=F104_mcp.09T$lat),
-               alpha=0.1,colour="black",linetype=2) +
+  # geom_polygon(data=F104_mcp.08T, aes(x=F104_mcp.08T$long, y=F104_mcp.08T$lat),
+  #              alpha=0.1,colour="black",linetype=2) +
+  # geom_polygon(data=F104_mcp.09T, aes(x=F104_mcp.09T$long, y=F104_mcp.09T$lat),
+  #              alpha=0.1,colour="black",linetype=2) +
   geom_polygon(data=F114_mcp.08T, aes(x=F114_mcp.08T$long, y=F114_mcp.08T$lat),
                alpha=0.1,colour="black",linetype=3) +
   geom_polygon(data=F114_mcp.09T, aes(x=F114_mcp.09T$long, y=F114_mcp.09T$lat),
@@ -527,11 +527,11 @@ mcp.shift.TEST4 <- ggplot() +
   geom_polygon(data=F114_mcp.12T, aes(x=F114_mcp.12T$long, y=F114_mcp.12T$lat),
                alpha=0.1,colour="black",linetype=3) +
   geom_polygon(data=F137_mcp.09T, aes(x=F137_mcp.09T$long, y=F137_mcp.09T$lat),
-               alpha=0.1,colour="black",linetype=4) +
+               alpha=0.1,colour="brown",linetype=4) +
   geom_polygon(data=F137_mcp.10T, aes(x=F137_mcp.10T$long, y=F137_mcp.10T$lat),
-               alpha=0.1,colour="black",linetype=4) +
+               alpha=0.1,colour="brown",linetype=4) +
   geom_polygon(data=F137_mcp.11T, aes(x=F137_mcp.11T$long, y=F137_mcp.11T$lat),
-               alpha=0.1,colour="black",linetype=4) +
+               alpha=0.1,colour="brown",linetype=4) +
   geom_polygon(data=F147_mcp.09T, aes(x=F147_mcp.09T$long, y=F147_mcp.09T$lat),
                alpha=0.1,colour="red",linetype=1) +
   geom_polygon(data=F147_mcp.10T, aes(x=F147_mcp.10T$long, y=F147_mcp.10T$lat),
@@ -540,34 +540,34 @@ mcp.shift.TEST4 <- ggplot() +
                alpha=0.1,colour="red",linetype=1) +
   geom_polygon(data=F147_mcp.12T, aes(x=F147_mcp.12T$long, y=F147_mcp.12T$lat),
                alpha=0.1,colour="red",linetype=1) +
-  geom_polygon(data=F36_mcp.08T, aes(x=F36_mcp.08T$long, y=F36_mcp.08T$lat),
-               alpha=0.1,colour="black",linetype=6) +
-  geom_polygon(data=F36_mcp.09T, aes(x=F36_mcp.09T$long, y=F36_mcp.09T$lat),
-               alpha=0.1,colour="black",linetype=6) +
-  geom_polygon(data=F36_mcp.10T, aes(x=F36_mcp.10T$long, y=F36_mcp.10T$lat),
-               alpha=0.1,colour="black",linetype=6) +
-  geom_polygon(data=F36_mcp.11T, aes(x=F36_mcp.11T$long, y=F36_mcp.11T$lat),
-               alpha=0.1,colour="black",linetype=6) +
-  geom_polygon(data=F36_mcp.12T, aes(x=F36_mcp.12T$long, y=F36_mcp.12T$lat),
-               alpha=0.1,colour="black",linetype=6) +
+  # geom_polygon(data=F36_mcp.08T, aes(x=F36_mcp.08T$long, y=F36_mcp.08T$lat),
+  #              alpha=0.1,colour="black",linetype=6) +
+  # geom_polygon(data=F36_mcp.09T, aes(x=F36_mcp.09T$long, y=F36_mcp.09T$lat),
+  #              alpha=0.1,colour="black",linetype=6) +
+  # geom_polygon(data=F36_mcp.10T, aes(x=F36_mcp.10T$long, y=F36_mcp.10T$lat),
+  #              alpha=0.1,colour="black",linetype=6) +
+  # geom_polygon(data=F36_mcp.11T, aes(x=F36_mcp.11T$long, y=F36_mcp.11T$lat),
+  #              alpha=0.1,colour="black",linetype=6) +
+  # geom_polygon(data=F36_mcp.12T, aes(x=F36_mcp.12T$long, y=F36_mcp.12T$lat),
+  #              alpha=0.1,colour="black",linetype=6) +
   geom_polygon(data=F66_mcp.08T, aes(x=F66_mcp.08T$long, y=F66_mcp.08T$lat),
-               alpha=0.1,colour="black",linetype=1) +
+               alpha=0.1,colour="green",linetype=5) +
   geom_polygon(data=F66_mcp.09T, aes(x=F66_mcp.09T$long, y=F66_mcp.09T$lat),
-               alpha=0.1,colour="black",linetype=1) +
+               alpha=0.1,colour="green",linetype=5) +
   geom_polygon(data=F66_mcp.10T, aes(x=F66_mcp.10T$long, y=F66_mcp.10T$lat),
-               alpha=0.1,colour="black",linetype=1) +
+               alpha=0.1,colour="green",linetype=5) +
   geom_polygon(data=M119_mcp.08T, aes(x=M119_mcp.08T$long, y=M119_mcp.08T$lat),
-               alpha=0.1,colour="blue",linetype=2) +
+               alpha=0.1,colour="blue",linetype=6) +
   geom_polygon(data=M119_mcp.09T, aes(x=M119_mcp.09T$long, y=M119_mcp.09T$lat),
-               alpha=0.1,colour="blue",linetype=2) +
+               alpha=0.1,colour="blue",linetype=6) +
   geom_polygon(data=M119_mcp.10T, aes(x=M119_mcp.10T$long, y=M119_mcp.10T$lat),
-               alpha=0.1,colour="blue",linetype=2) +
+               alpha=0.1,colour="blue",linetype=6) +
   geom_polygon(data=M112_mcp.07T, aes(x=M112_mcp.07T$long, y=M112_mcp.07T$lat),
-               alpha=0.1,colour="blue",linetype=3) +
+               alpha=0.1,colour="purple",linetype=2) +
   geom_polygon(data=M112_mcp.09T, aes(x=M112_mcp.09T$long, y=M112_mcp.09T$lat),
-               alpha=0.1,colour="blue",linetype=3) +
+               alpha=0.1,colour="purple",linetype=2) +
   geom_polygon(data=M112_mcp.10T, aes(x=M112_mcp.10T$long, y=M112_mcp.10T$lat),
-               alpha=0.1,colour="blue",linetype=3) +
+               alpha=0.1,colour="purple",linetype=2) +
   # geom_polygon(data=M69_mcp.09T, aes(x=M69_mcp.09T$long, y=M69_mcp.09T$lat),
   #              alpha=0.1,colour="black") +
   # geom_polygon(data=M69_mcp.10T, aes(x=M69_mcp.10T$long, y=M69_mcp.10T$lat),
@@ -577,7 +577,7 @@ mcp.shift.TEST4 <- ggplot() +
   # geom_polygon(data=M215_mcp.12T, aes(x=M215_mcp.12T$long, y=M215_mcp.12T$lat),
   #              alpha=0.1,colour="black") +
   theme_bw() +labs(x="Easting (m)", y="Northing (m)") +
-  labs(caption = "Figure 4  |  Yearly home range shifts of sub-sampled home ranges of 8 lizards, both males and females. Home \n range shifts appear to be relativley stable over study years.")+
+  labs(caption = "Figure 5  |  SC Yearly home range shifts of 8 lizards, both males and females. Home range shifts appear to be \n relativley stable over study years.")+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
   # theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5))
 ## within each geom_polygon line?:
@@ -705,13 +705,13 @@ Raw.YearHR<-ggplot(YR_GRP_Means, aes(x=Sex,y=Home_Range_100mcp,group=Environment
   # labs(caption = "Figure 3 | Raw overall mean home ranges between environment and sex using 100% MCPs. Note, that before adjusted \n home ranges, males exhibit smaller overall home ranges at Stone Canyon, than males of Owl Head Buttes.")+
   # theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
 
-yr.mean.raw<-Raw.YearHR + theme(legend.title = element_blank(),
-                     legend.justification=c(0,1),
-                     legend.position=c(0.05, 0.95),
-                     legend.background = element_blank(),
-                     legend.key = element_blank(),
-                     legend.box.background = element_rect(colour = "black"))
-# yr.mean.raw
+# yr.mean.raw<-Raw.YearHR + theme(legend.title = element_blank(),
+#                      legend.justification=c(0,1),
+#                      legend.position=c(0.05, 0.95),
+#                      legend.background = element_blank(),
+#                      legend.key = element_blank(),
+#                      legend.box.background = element_rect(colour = "black"))
+#  yr.mean.raw
 
 library(gridExtra)
 library(grid)
@@ -1168,7 +1168,7 @@ mcp.shift.TEST5 <- ggplot() +
                alpha=0.1,colour="black",linetype=5) +
   theme_bw() +
   labs(x="Easting (m)", y="Northing (m)") +
-  labs(caption = "Figure 11 |  Seasonal home range shifts of five lizards. Emergence and post-monsoon ranges stay realatively within \n each other. All seasonal polygons stay relatively stable without any major shifts away from other seasonal ranges.")+
+  labs(caption = "Figure 6 |  SC seasonal home range shifts of five lizards. All seasonal polygons stay relatively stable with \n considerable overlap and without any major shifts.")+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
   theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5))
 

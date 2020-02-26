@@ -1173,9 +1173,11 @@ spplot(Refugia.spdf, zcol="SEASON", cex=.5, col.regions=rainbow(4))
 
 
 
-#############################################
-##       MCP and KDE with raster maps       :
-#############################################
+#####################################################
+##          Plot spatial points on raster image
+##
+#####################################################
+
 # mcp_analysis.POLY <- function(filename, percentage){
   #   data <- read.csv(file = filename,stringsAsFactors = FALSE)
   #   data.sp <- data[, c("LIZARDNUMBER", "EASTING", "NORTHING")]
@@ -1198,7 +1200,7 @@ utm_points <- cbind(All.Gilas$EASTING, All.Gilas$NORTHING)
 
 utm_locations <- SpatialPoints(utm_points, proj4string=CRS.SC)
 # F104MCP_locations <- SpatialPolygons(F104.latlong, proj4string=CRS.SC)
-utm_locations <- SpatialPoints(utm_points, proj4string=CRS.SC)
+
 
 proj_lat.lon <- as.data.frame(spTransform(utm_locations, CRS("+proj=longlat +datum=WGS84")))
 colnames(proj_lat.lon) <- c("x","y")
@@ -1214,7 +1216,7 @@ proj_lat.lon <- fortify(proj_lat.lon, region = "Type")
 # proj_lat.lon <- as.data.frame(spTransform(utm_locations, CRS("+proj=longlat +datum=WGS84")))
 # colnames(proj_lat.lon) <- c("x","y")
 
-## FORTIGY SPATIAL SPATIAL POLYGONS FOR PLOTTING:
+## FORTIFY SPATIAL SPATIAL POLYGONS FOR PLOTTING:
 # F104_mcp.F <- fortify(F104.MCP_lat.lon, region = "id")
 
 
@@ -1237,6 +1239,88 @@ ggmap(myMap)+geom_point(data=proj_lat.lon, aes(x=x, y=y), size=0.3)
 # geom_polygon(data=F104_mcp.F, aes(x=F104_mcp.F$long, y=F104_mcp.F$lat),
 #              alpha=0.1,colour="blue",linetype=2)
 
+#####################################################
+##          Plot MCPs on raster image
+##
+#####################################################
+
+### attempt 1
+
+utm_points.TEST <- cbind(All.Gilas$EASTING, All.Gilas$NORTHING)
+utm_locations.TEST <- SpatialPoints(utm_points.TEST,proj4string=CRS.SC)
+proj_lat.lon.TEST <- as.data.frame(spTransform(utm_locations.TEST, CRS=CRS.SC))
+colnames(proj_lat.lon.TEST) <- c("x","y")
+rasterTEST <- get_stamenmap(bbox = c(left = -111.009,
+                                     bottom = 32.459,
+                                     right = -110.969,
+                                     top = 32.474),
+                            maptype = "terrain", 
+                            crop = FALSE,
+                            zoom = 15)
+
+raster_utmTEST <- openproj(rasterTEST,
+                       projection = "CRS.SC")
+
+
+F104_MCP<-mcp_analysis.POLY('./F104/F104 .csv', percentage= 100)
+utm_locations <- SpatialPolygons(F104_MCP, proj4string=CRS.SC)
+F104.POLY.Trans <- as.data.frame(spTransform(F104_MCP, CRS("+proj=longlat +datum=WGS84")))
+colnames(F104.POLY.Trans) <- c("x","y")
+F104.POLY.Trans <- fortify(F104.POLY.Trans, region = "Type")
+
+# ggmap(APSU_SM) + 
+#   geom_point(data=campus_points, aes(x = X, y = Y, color=Name), size = 4, alpha = 0.8) + 
+#   geom_polygon(data = fortify(outline_poly), aes(long, lat, group = group), 
+#                colour = "black", fill = NA, alpha = 0.5)
+
+ggmap(myMap) + 
+  geom_point(data=proj_lat.lon, aes(x = x, y = y), size = 0.3, alpha = 0.8) +
+  geom_polygon(data = fortify(F104_MCP), aes(long, lat, group = group),
+               colour = "black", fill = NA, alpha = 0.5)
+
+ggmap(myMap) + 
+  # geom_point(data=proj_lat.lon, aes(x = x, y = y), size = 0.3, alpha = 0.8) +
+  geom_sf(data = F104_MCP, aes(long, lat, group = group)) +
+  coord_sf(crs = "+proj=longlat +datum=WGS84")
+
+ggmap(myMap) + 
+   geom_point(data=proj_lat.lon, aes(x = x, y = y), size = 0.3, alpha = 0.8) +
+   geom_polygon(data = fortify(F104.MCP), aes(long, lat, group = group),
+                                 colour = "black", fill = NA, alpha = 0.5)
+
+rm(F104.POLY.Trans)
+rm(M104_MCP)
+plot(F104_MCP)
+
+###
+
+## Get/view the stamen map (bbox should be adjusted appropriately):
+  
+stamen <- get_stamenmap(bbox = c(left = -111.01, 
+                                 bottom = 32.45, 
+                                 right = -110.96, 
+                                 top = 32.478),
+                        zoom = 14, maptype = "terrain")
+ggmap(myMap)
+
+## The MCP I created had the easting/northing values but didn’t have the projection set 
+## (see: mcp.out@proj4string, where mcp.out is the name of your MCP object for any given 
+## animal). So first I set the polygon projection with proj4string() and then reprojected 
+## the polygon to lat/lon with spTransform():
+  
+F104_MCP@proj4string
+# proj4string(mcp.out) <- CRS("+proj=utm +zone=12 +datum=WGS84")
+F104_latlon <- spTransform(F104_MCP, CRS("+proj=longlat +datum=WGS84"))
+
+## If your polygon has a projection then you can skip that first step. This gives you a 
+## useable stamen map and a MCP polygon in lat/lon. Then all you need to do is use ggmap() 
+## to map them:
+  
+SC_stamen_map <- ggmap(myMap) +
+geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+geom_polygon(data = fortify(F104_latlon), aes(long, lat, group=group), colour = "black", 
+             fill = NA)
+SC_stamen_map
 
 
 #######################################################
