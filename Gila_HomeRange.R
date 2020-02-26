@@ -1246,81 +1246,156 @@ ggmap(myMap)+geom_point(data=proj_lat.lon, aes(x=x, y=y), size=0.3)
 
 ### attempt 1
 
-utm_points.TEST <- cbind(All.Gilas$EASTING, All.Gilas$NORTHING)
-utm_locations.TEST <- SpatialPoints(utm_points.TEST,proj4string=CRS.SC)
-proj_lat.lon.TEST <- as.data.frame(spTransform(utm_locations.TEST, CRS=CRS.SC))
-colnames(proj_lat.lon.TEST) <- c("x","y")
-rasterTEST <- get_stamenmap(bbox = c(left = -111.009,
-                                     bottom = 32.459,
-                                     right = -110.969,
-                                     top = 32.474),
-                            maptype = "terrain", 
-                            crop = FALSE,
-                            zoom = 15)
-
-raster_utmTEST <- openproj(rasterTEST,
-                       projection = "CRS.SC")
-
-
-F104_MCP<-mcp_analysis.POLY('./F104/F104 .csv', percentage= 100)
-utm_locations <- SpatialPolygons(F104_MCP, proj4string=CRS.SC)
-F104.POLY.Trans <- as.data.frame(spTransform(F104_MCP, CRS("+proj=longlat +datum=WGS84")))
-colnames(F104.POLY.Trans) <- c("x","y")
-F104.POLY.Trans <- fortify(F104.POLY.Trans, region = "Type")
 
 # ggmap(APSU_SM) + 
 #   geom_point(data=campus_points, aes(x = X, y = Y, color=Name), size = 4, alpha = 0.8) + 
 #   geom_polygon(data = fortify(outline_poly), aes(long, lat, group = group), 
 #                colour = "black", fill = NA, alpha = 0.5)
 
-ggmap(myMap) + 
-  geom_point(data=proj_lat.lon, aes(x = x, y = y), size = 0.3, alpha = 0.8) +
-  geom_polygon(data = fortify(F104_MCP), aes(long, lat, group = group),
-               colour = "black", fill = NA, alpha = 0.5)
-
-ggmap(myMap) + 
-  # geom_point(data=proj_lat.lon, aes(x = x, y = y), size = 0.3, alpha = 0.8) +
-  geom_sf(data = F104_MCP, aes(long, lat, group = group)) +
-  coord_sf(crs = "+proj=longlat +datum=WGS84")
-
-ggmap(myMap) + 
-   geom_point(data=proj_lat.lon, aes(x = x, y = y), size = 0.3, alpha = 0.8) +
-   geom_polygon(data = fortify(F104.MCP), aes(long, lat, group = group),
-                                 colour = "black", fill = NA, alpha = 0.5)
-
-rm(F104.POLY.Trans)
-rm(M104_MCP)
-plot(F104_MCP)
+# rm(rasterTEST,utm_locations.TEST,proj_lat.lon.TEST,utm_points.TEST)
 
 ###
 
 ## Get/view the stamen map (bbox should be adjusted appropriately):
-  
-stamen <- get_stamenmap(bbox = c(left = -111.01, 
-                                 bottom = 32.45, 
-                                 right = -110.96, 
-                                 top = 32.478),
-                        zoom = 14, maptype = "terrain")
-ggmap(myMap)
+myMap <- get_stamenmap(bbox = c(left = -111.009,
+                                bottom = 32.459,
+                                right = -110.969,
+                                top = 32.474),
+                       maptype = "terrain", 
+                       crop = FALSE,
+                       zoom = 15)
+
+myMap_imagery <- get_stamenmap(bbox = c(left = -111.009,
+                                bottom = 32.459,
+                                right = -110.969,
+                                top = 32.474),
+                       maptype = "toner-2011", 
+                       crop = FALSE,
+                       zoom = 15)
+?get_stamenmap
+myMap_imagery
+
+# stamen <- get_stamenmap(bbox = c(left = -111.01, 
+#                                  bottom = 32.45, 
+#                                  right = -110.96, 
+#                                  top = 32.478),
+#                         zoom = 14, maptype = "terrain")
 
 ## The MCP I created had the easting/northing values but didn’t have the projection set 
 ## (see: mcp.out@proj4string, where mcp.out is the name of your MCP object for any given 
 ## animal). So first I set the polygon projection with proj4string() and then reprojected 
 ## the polygon to lat/lon with spTransform():
   
-F104_MCP@proj4string
+# F104_MCP@proj4string
 # proj4string(mcp.out) <- CRS("+proj=utm +zone=12 +datum=WGS84")
 F104_latlon <- spTransform(F104_MCP, CRS("+proj=longlat +datum=WGS84"))
+F114_latlon <- spTransform(F114_MCP, CRS("+proj=longlat +datum=WGS84"))
+F135_latlon <- spTransform(F135_MCP, CRS("+proj=longlat +datum=WGS84"))
+F137_latlon <- spTransform(F137_MCP, CRS("+proj=longlat +datum=WGS84"))
+F146_latlon <- spTransform(F146_MCP, CRS("+proj=longlat +datum=WGS84"))
+F147_latlon <- spTransform(F147_MCP, CRS("+proj=longlat +datum=WGS84"))
+F200_latlon <- spTransform(F200_MCP, CRS("+proj=longlat +datum=WGS84"))
+F214_latlon <- spTransform(F214_MCP, CRS("+proj=longlat +datum=WGS84"))
+F252_latlon <- spTransform(F252_MCP, CRS("+proj=longlat +datum=WGS84"))
+F36_latlon <- spTransform(F36_MCP, CRS("+proj=longlat +datum=WGS84"))
+F66_latlon <- spTransform(F66_MCP, CRS("+proj=longlat +datum=WGS84"))
+M112_latlon <- spTransform(M112_MCP, CRS("+proj=longlat +datum=WGS84"))
+M119_latlon <- spTransform(M119_MCP, CRS("+proj=longlat +datum=WGS84"))
+M14_latlon <- spTransform(M14_MCP, CRS("+proj=longlat +datum=WGS84"))
+M215_latlon <- spTransform(M215_MCP, CRS("+proj=longlat +datum=WGS84"))
+M255_latlon <- spTransform(M255_MCP, CRS("+proj=longlat +datum=WGS84"))
+M67_latlon <- spTransform(M67_MCP, CRS("+proj=longlat +datum=WGS84"))
+M69_latlon <- spTransform(M69_MCP, CRS("+proj=longlat +datum=WGS84"))
 
 ## If your polygon has a projection then you can skip that first step. This gives you a 
 ## useable stamen map and a MCP polygon in lat/lon. Then all you need to do is use ggmap() 
 ## to map them:
   
 SC_stamen_map <- ggmap(myMap) +
-geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
-geom_polygon(data = fortify(F104_latlon), aes(long, lat, group=group), colour = "black", 
-             fill = NA)
+  geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+  geom_polygon(data = fortify(F104_latlon), aes(long, lat, group=group), colour = "red", 
+             fill = NA) +
+  geom_polygon(data = fortify(F114_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F135_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F137_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F146_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F147_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F200_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F214_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F252_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F36_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F66_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(M112_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M119_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M14_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M215_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M255_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M67_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M69_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) 
+    
 SC_stamen_map
+
+#####################################
+## Add North arrow and scale bar to stamen  map :
+
+## add north arrow
+library(ggsn)
+# north(data = NULL, location = "topright", scale = 0.1, symbol = 1,
+#       x.min, x.max, y.min, y.max, anchor = NULL)
+
+# SC_stamen_map + north(data = NULL, location = "topright", scale = 0.1, symbol = 1,
+#       0.65, -0.9, 0.5, 0.9, anchor = NULL)
+
+north2(SC_stamen_map, x = 0.2, y = 0.27, scale = 0.1, symbol = 16)
+
+## Add scale bare
+# scalebar(data = NULL, location = "bottomright", dist = NULL,
+#          dist_unit = NULL, transform = NULL, dd2km = NULL, model = NULL,
+#          height = 0.02, st.dist = 0.02, st.bottom = TRUE, st.size = 5,
+#          st.color = "black", box.fill = c("black", "white"),
+#          box.color = "black", border.size = 1, x.min = NULL, x.max = NULL,
+#          y.min = NULL, y.max = NULL, anchor = NULL, facet.var = NULL,
+#          facet.lev = NULL, ...)
+# SC_stamen_map +
+#   scalebar(x.min = -110.01, x.max = -111.00,
+#            y.min = 32.57, y.max = 32.60,
+#            dist = 4, dist_unit = "km",
+#            st.bottom = FALSE, st.color = "black",
+#            transform = FALSE, model = "WGS84") +
+#   north2(SC_stamen_map, x = 0.2, y = 0.27, scale = 0.1, symbol = 16)
+
+# For data in UTM meters: 
+                       
+SC_stamen_map<-SC_stamen_map + ggsn::scalebar(x.min = -110.972, x.max = -110.966,
+                     y.min = 32.474, y.max = 32.476, 
+                     dist = 500, 
+                     dist_unit="m", 
+                     height=0.19,
+                     st.bottom=FALSE, 
+                     st.dist=0.3,
+                     st.size=3,
+                     transform = TRUE, 
+                     model = 'WGS84') 
+
+SC_stamen_map+north2(SC_stamen_map, x = 0.89, y = 0.8, scale = 0.1, symbol = 16)
+
 
 
 #######################################################
