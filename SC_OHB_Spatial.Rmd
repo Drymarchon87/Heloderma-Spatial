@@ -318,7 +318,7 @@ kable(GM_table,format="pandoc", caption='Table 1 | Pooled overall home ranges of
 <br>
 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 All.Gilas <- read_csv("./GM_Final_Data.csv")
 
 utm_points <- cbind(All.Gilas$EASTING, All.Gilas$NORTHING)
@@ -361,7 +361,7 @@ Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp,group=Environment))+
   xlab("Number of Relocations")+
   ylab("Area (ha) using 100% MCP")+
   geom_smooth(method = "lm",se=FALSE)+
-  labs(caption = "Figure 3 | Non-Subsidized (Owl Head Buttes) vs. Subsidized (Stone Canyon) population 100% MCPs against number \n of fixes of the complete data set.")+
+  # labs(caption = "Figure 3 | Non-Subsidized (Owl Head Buttes) vs. Subsidized (Stone Canyon) population 100% MCPs against number \n of fixes of the complete data set.")+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
   # theme_bw()
 
@@ -826,6 +826,20 @@ mapview(Male.MCP, legend=F, zcol="id", col.regions = c("blue"), alpha.regions=0.
 ```
 Figure 8 | Interactive map: Home Range overlap by sex of 100% MCPs at Stone Canyon. Red polygons represent female lizards, and blue represents male lizards. 
 
+```{r}
+SC_stamen_map<-SC_stamen_map + ggsn::scalebar(x.min = -110.972, x.max = -110.966,
+                     y.min = 32.474, y.max = 32.476, 
+                     dist = 500, dist_unit="m", 
+                     height=0.19,
+                     st.bottom=TRUE, 
+                     st.dist=0.3,
+                     st.size=3.5,
+                     transform = TRUE, 
+                     model = 'WGS84') 
+SC_stamen_map
+SC_stamen_map+north2(SC_stamen_map, x = 0.89, y = 0.85, scale = 0.1, symbol = 16)
+```
+
 
 <br>
 
@@ -1250,13 +1264,13 @@ pd <- position_dodge(0.3) # move them .05 to the left and right ('dodges')
 raw.seasonal<-ggplot(SEAS_GRP_TEST,aes(x=Environment, y=Home_Range_100mcp, shape=Sex)) + 
   geom_point(aes(shape=Sex), size = 2, position=pd) +
   geom_errorbar(aes(ymin=Home_Range_100mcp-se, ymax=Home_Range_100mcp+se), position = pd,
-                width=0.3, size=0.5, lty=1) + 
-  # scale_colour_manual(values = c('black','red')) +
+                width=0.3, size=0.5, lty=1) +
+  scale_colour_manual(values = c('black','red')) +
   facet_grid(~Season) +
-  # scale_shape_manual(values = c(8,19))+
+  scale_shape_manual(values = c(8,19))+
   labs(caption = "Figure 12 |  Raw seasonal means of sexes between each environment. Home ranges of the subsidezed population remain \n relatively small throughout the seasons, with the exception during the dry season where we observe increased male \n home ranges. The non-subsidized population exhibits a large amount of variation across seasons.")+
-  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
-  # scale_x_discrete(limits=c('Emergence','Dry','Monsoon','Post_Monsoon')) +
+  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
+  scale_x_discrete(limits=c('Emergence','Dry','Monsoon','Post_Monsoon')) +
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
         plot.title = element_text(lineheight=1.5, face="bold", size=rel(1.5), hjust = 0.5),
         axis.text.x  = element_text(vjust=0.5, size=8),
@@ -1425,7 +1439,7 @@ kable(Seas.Ind.Means, format = "pandoc", caption = 'Table 7 | Mean individual se
 
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 nonsub <- subset(seasonal, Environment == "nonsubsidized")
-
+View(nonsub)
 RM.mod.NSub <- lmer(Home_Range_100mcp~Season+Sex+N+Season*Sex+(1|Gila), data=nonsub)
 
 emm_s.t6 <- emmeans(RM.mod.NSub, pairwise ~ Sex | Season)

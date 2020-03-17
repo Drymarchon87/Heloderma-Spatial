@@ -1264,7 +1264,7 @@ myMap <- get_stamenmap(bbox = c(left = -111.009,
                        maptype = "terrain", 
                        crop = FALSE,
                        zoom = 15)
-
+ 
 myMap_imagery <- get_stamenmap(bbox = c(left = -111.009,
                                 bottom = 32.459,
                                 right = -110.969,
@@ -1273,7 +1273,7 @@ myMap_imagery <- get_stamenmap(bbox = c(left = -111.009,
                        crop = FALSE,
                        zoom = 15)
 ?get_stamenmap
-myMap_imagery
+ggmap(myMap_imagery)
 
 # stamen <- get_stamenmap(bbox = c(left = -111.01, 
 #                                  bottom = 32.45, 
@@ -1307,12 +1307,13 @@ M255_latlon <- spTransform(M255_MCP, CRS("+proj=longlat +datum=WGS84"))
 M67_latlon <- spTransform(M67_MCP, CRS("+proj=longlat +datum=WGS84"))
 M69_latlon <- spTransform(M69_MCP, CRS("+proj=longlat +datum=WGS84"))
 
+
 ## If your polygon has a projection then you can skip that first step. This gives you a 
 ## useable stamen map and a MCP polygon in lat/lon. Then all you need to do is use ggmap() 
 ## to map them:
   
 SC_stamen_map <- ggmap(myMap) +
-  geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+  # geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
   geom_polygon(data = fortify(F104_latlon), aes(long, lat, group=group), colour = "red", 
              fill = NA) +
   geom_polygon(data = fortify(F114_latlon), aes(long, lat, group=group), colour = "red", 
@@ -1352,8 +1353,198 @@ SC_stamen_map <- ggmap(myMap) +
     
 SC_stamen_map
 
+SC_stamen_mapTONER <- ggmap(myMap_imagery) +
+  # geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+  geom_polygon(data = fortify(F104_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F114_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F135_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F137_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F146_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F147_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F200_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F214_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F252_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F36_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F66_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(M112_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M119_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M14_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M215_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M255_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M67_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M69_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) 
+
+SC_stamen_mapTONER
+
+F104_latlonK <- spTransform(F104_KDE, CRS("+proj=longlat +datum=WGS84"))
+F114_latlonK <- spTransform(F114_KDE, CRS("+proj=longlat +datum=WGS84"))
+F135_latlonK <- spTransform(F135_KDE, CRS("+proj=longlat +datum=WGS84"))
+F137_latlonK <- spTransform(F137_KDE, CRS("+proj=longlat +datum=WGS84"))
+F146_latlonK <- spTransform(F146_KDE, CRS("+proj=longlat +datum=WGS84"))
+F147_latlonK <- spTransform(F147_KDE, CRS("+proj=longlat +datum=WGS84"))
+F200_latlonK <- spTransform(F200_KDE, CRS("+proj=longlat +datum=WGS84"))
+F214_latlonK <- spTransform(F214_KDE, CRS("+proj=longlat +datum=WGS84"))
+F252_latlonK <- spTransform(F252_KDE, CRS("+proj=longlat +datum=WGS84"))
+F36_latlonK <- spTransform(F36_KDE, CRS("+proj=longlat +datum=WGS84"))
+F66_latlonK <- spTransform(F66_KDE, CRS("+proj=longlat +datum=WGS84"))
+M112_latlonK <- spTransform(M112_KDE, CRS("+proj=longlat +datum=WGS84"))
+M119_latlonK <- spTransform(M119_KDE, CRS("+proj=longlat +datum=WGS84"))
+M14_latlonK <- spTransform(M14_KDE, CRS("+proj=longlat +datum=WGS84"))
+M215_latlonK <- spTransform(M215_KDE, CRS("+proj=longlat +datum=WGS84"))
+M255_latlonK <- spTransform(M255_KDE, CRS("+proj=longlat +datum=WGS84"))
+M67_latlonK <- spTransform(M67_KDE, CRS("+proj=longlat +datum=WGS84"))
+M69_latlonK <- spTransform(M69_KDE, CRS("+proj=longlat +datum=WGS84"))
+
+SC_stamen_mapK <- ggmap(myMap) +
+  # geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+  geom_polygon(data = fortify(F104_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F114_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F135_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F137_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F146_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F147_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F200_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F214_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F252_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F36_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F66_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(M112_latlonK), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M119_latlonK), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M14_latlonK), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M215_latlonK), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M255_latlonK), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M67_latlonK), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M69_latlonK), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) 
+
+SC_stamen_mapK
+
+# Seasonal HR MCP Map:
+
+F114_mcp.EMS<-mcp_analysis.POLY('./F114/Emergence .csv', percentage= 100)
+F114_mcp.DRYS<-mcp_analysis.POLY('./F114/Dry .csv', percentage= 100)
+F114_mcp.MONS<-mcp_analysis.POLY('./F114/Monsoon .csv', percentage= 100)
+F114_mcp.PMS<-mcp_analysis.POLY('./F114/Post_Monsoon .csv', percentage= 100)
+F137_mcp.EMS<-mcp_analysis.POLY('./F137/Emergence .csv', percentage= 100)
+F137_mcp.DRYS<-mcp_analysis.POLY('./F137/Dry .csv', percentage= 100)
+F137_mcp.MONS<-mcp_analysis.POLY('./F137/Monsoon .csv', percentage= 100)
+F137_mcp.PMS<-mcp_analysis.POLY('./F137/Post_Monsoon .csv', percentage= 100)
+F147_mcp.EMS<-mcp_analysis.POLY('./F147/Emergence .csv', percentage= 100)
+F147_mcp.DRYS<-mcp_analysis.POLY('./F147/Dry .csv', percentage= 100)
+F147_mcp.MONS<-mcp_analysis.POLY('./F147/Monsoon .csv', percentage= 100)
+F147_mcp.PMS<-mcp_analysis.POLY('./F147/Post_Monsoon .csv', percentage= 100)
+F36_mcp.EMS<-mcp_analysis.POLY('./F36/Emergence .csv', percentage= 100)
+F36_mcp.DRYS<-mcp_analysis.POLY('./F36/Dry .csv', percentage= 100)
+F36_mcp.MONS<-mcp_analysis.POLY('./F36/Monsoon .csv', percentage= 100)
+F36_mcp.PMS<-mcp_analysis.POLY('./F36/Post_Monsoon .csv', percentage= 100)
+F66_mcp.EMS<-mcp_analysis.POLY('./F66/Emergence .csv', percentage= 100)
+F66_mcp.DRYS<-mcp_analysis.POLY('./F66/Dry .csv', percentage= 100)
+F66_mcp.MONS<-mcp_analysis.POLY('./F66/Monsoon .csv', percentage= 100)
+F66_mcp.PMS<-mcp_analysis.POLY('./F66/Post_Monsoon .csv', percentage= 100)
+
+F114_latlonE <- spTransform(F114_mcp.EMS, CRS("+proj=longlat +datum=WGS84"))
+F114_latlonD <- spTransform(F114_mcp.DRYS, CRS("+proj=longlat +datum=WGS84"))
+F114_latlonM <- spTransform(F114_mcp.MONS, CRS("+proj=longlat +datum=WGS84"))
+F114_latlonP <- spTransform(F114_mcp.PMS, CRS("+proj=longlat +datum=WGS84"))
+F137_latlonE <- spTransform(F137_mcp.EMS, CRS("+proj=longlat +datum=WGS84"))
+F137_latlonD <- spTransform(F137_mcp.DRYS, CRS("+proj=longlat +datum=WGS84"))
+F137_latlonM <- spTransform(F137_mcp.MONS, CRS("+proj=longlat +datum=WGS84"))
+F137_latlonP <- spTransform(F137_mcp.PMS, CRS("+proj=longlat +datum=WGS84"))
+F147_latlonE <- spTransform(F147_mcp.EMS, CRS("+proj=longlat +datum=WGS84"))
+F147_latlonD <- spTransform(F147_mcp.DRYS, CRS("+proj=longlat +datum=WGS84"))
+F147_latlonM <- spTransform(F147_mcp.MONS, CRS("+proj=longlat +datum=WGS84"))
+F147_latlonP <- spTransform(F147_mcp.PMS, CRS("+proj=longlat +datum=WGS84"))
+F36_latlonE <- spTransform(F36_mcp.EMS, CRS("+proj=longlat +datum=WGS84"))
+F36_latlonD <- spTransform(F36_mcp.DRYS, CRS("+proj=longlat +datum=WGS84"))
+F36_latlonM <- spTransform(F36_mcp.MONS, CRS("+proj=longlat +datum=WGS84"))
+F36_latlonP <- spTransform(F36_mcp.PMS, CRS("+proj=longlat +datum=WGS84"))
+F66_latlonE <- spTransform(F66_mcp.EMS, CRS("+proj=longlat +datum=WGS84"))
+F66_latlonD <- spTransform(F66_mcp.DRYS, CRS("+proj=longlat +datum=WGS84"))
+F66_latlonM <- spTransform(F66_mcp.MONS, CRS("+proj=longlat +datum=WGS84"))
+F66_latlonP <- spTransform(F66_mcp.PMS, CRS("+proj=longlat +datum=WGS84"))
+
+SC_stamen_mapS <- ggmap(myMap) +
+  # geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+  geom_polygon(data = fortify(F114_latlonE), aes(long, lat, group=group), colour = "black", 
+               fill = NA) +
+  geom_polygon(data = fortify(F114_latlonD), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F114_latlonM), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(F114_latlonP), aes(long, lat, group=group), colour = "green", 
+               fill = NA) +
+  geom_polygon(data = fortify(F137_latlonE), aes(long, lat, group=group), colour = "black", 
+               fill = NA) +
+  geom_polygon(data = fortify(F137_latlonD), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F137_latlonM), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(F137_latlonP), aes(long, lat, group=group), colour = "green", 
+               fill = NA) +
+  geom_polygon(data = fortify(F147_latlonE), aes(long, lat, group=group), colour = "black", 
+               fill = NA) +
+  geom_polygon(data = fortify(F147_latlonD), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F147_latlonM), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(F147_latlonP), aes(long, lat, group=group), colour = "green", 
+               fill = NA) +
+  geom_polygon(data = fortify(F36_latlonE), aes(long, lat, group=group), colour = "black", 
+               fill = NA) +
+  geom_polygon(data = fortify(F36_latlonD), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F36_latlonM), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(F36_latlonP), aes(long, lat, group=group), colour = "green", 
+               fill = NA) +
+  geom_polygon(data = fortify(F66_latlonE), aes(long, lat, group=group), colour = "black", 
+               fill = NA) +
+  geom_polygon(data = fortify(F66_latlonD), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F66_latlonM), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(F66_latlonP), aes(long, lat, group=group), colour = "green", 
+               fill = NA) 
+
+SC_stamen_mapS
+
 #####################################
-## Add North arrow and scale bar to stamen  map :
+## Add North arrow and scale bar to stamen map :
 
 ## add north arrow
 library(ggsn)
@@ -1382,9 +1573,11 @@ north2(SC_stamen_map, x = 0.2, y = 0.27, scale = 0.1, symbol = 16)
 #   north2(SC_stamen_map, x = 0.2, y = 0.27, scale = 0.1, symbol = 16)
 
 # For data in UTM meters: 
-                       
+ 
+#  Scalebar and north arrow for MCP Maps:  
+
 SC_stamen_map<-SC_stamen_map + ggsn::scalebar(x.min = -110.972, x.max = -110.966,
-                     y.min = 32.474, y.max = 32.476, 
+                     y.min = 32.477, y.max = 32.479, 
                      dist = 500, 
                      dist_unit="m", 
                      height=0.19,
@@ -1393,10 +1586,25 @@ SC_stamen_map<-SC_stamen_map + ggsn::scalebar(x.min = -110.972, x.max = -110.966
                      st.size=3,
                      transform = TRUE, 
                      model = 'WGS84') 
+SC_stamen_map
 
-SC_stamen_map+north2(SC_stamen_map, x = 0.89, y = 0.8, scale = 0.1, symbol = 16)
+SC_stamen_map+north2(SC_stamen_map, x = 0.836, y = 0.73, scale = 0.1, symbol = 16)
 
+# scalebar and north arrow for KDE Maps:
 
+SC_stamen_mapK <- SC_stamen_mapK + ggsn::scalebar(x.min = -110.972, x.max = -110.966,
+                                              y.min = 32.477, y.max = 32.479, 
+                                              dist = 500, 
+                                              dist_unit="m", 
+                                              height=0.19,
+                                              st.bottom=FALSE, 
+                                              st.dist=0.3,
+                                              st.size=3,
+                                              transform = TRUE, 
+                                              model = 'WGS84') 
+SC_stamen_mapK
+
+SC_stamen_mapK + north2(SC_stamen_mapK, x = 0.836, y = 0.73, scale = 0.1, symbol = 16)
 
 #######################################################
 ##
