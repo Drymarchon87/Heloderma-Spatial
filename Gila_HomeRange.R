@@ -1275,11 +1275,29 @@ myMap_imagery <- get_stamenmap(bbox = c(left = -111.009,
 ?get_stamenmap
 ggmap(myMap_imagery)
 
-# stamen <- get_stamenmap(bbox = c(left = -111.01, 
-#                                  bottom = 32.45, 
-#                                  right = -110.96, 
-#                                  top = 32.478),
-#                         zoom = 14, maptype = "terrain")
+Season.Map <- get_stamenmap(bbox = c(left = -111.005,
+                                bottom = 32.46,
+                                right = -110.98,
+                                top = 32.475),
+                       maptype = "toner-background", 
+                       crop = FALSE,
+                       zoom = 16)
+
+                          
+ggmap(Season.Map)
+Season.Map2 <- get_stamenmap(bbox = c(left = -111.005,
+                                      bottom = 32.46,
+                                      right = -110.98,
+                                      top = 32.475),
+                             maptype = "terrain", 
+                             crop = FALSE,
+                             zoom = 16)
+
+get_stamen_tile_download_fail_log()
+ggmap(Season.Map2)
+?get_stamenmap
+rm(Season.Map2)
+#toner-background
 
 ## The MCP I created had the easting/northing values but didn’t have the projection set 
 ## (see: mcp.out@proj4string, where mcp.out is the name of your MCP object for any given 
@@ -1349,7 +1367,9 @@ SC_stamen_map <- ggmap(myMap) +
   geom_polygon(data = fortify(M67_latlon), aes(long, lat, group=group), colour = "blue", 
                fill = NA) +
   geom_polygon(data = fortify(M69_latlon), aes(long, lat, group=group), colour = "blue", 
-               fill = NA) 
+               fill = NA) +
+  xlab("Longitude")+
+  ylab("Latitude")
     
 SC_stamen_map
 
@@ -1390,7 +1410,9 @@ SC_stamen_mapTONER <- ggmap(myMap_imagery) +
   geom_polygon(data = fortify(M67_latlon), aes(long, lat, group=group), colour = "blue", 
                fill = NA) +
   geom_polygon(data = fortify(M69_latlon), aes(long, lat, group=group), colour = "blue", 
-               fill = NA) 
+               fill = NA) +
+  xlab("Longitude")+
+  ylab("Latitude")
 
 SC_stamen_mapTONER
 
@@ -1450,7 +1472,9 @@ SC_stamen_mapK <- ggmap(myMap) +
   geom_polygon(data = fortify(M67_latlonK), aes(long, lat, group=group), colour = "blue", 
                fill = NA) +
   geom_polygon(data = fortify(M69_latlonK), aes(long, lat, group=group), colour = "blue", 
-               fill = NA) 
+               fill = NA) +
+  xlab("Longitude")+
+  ylab("Latitude")
 
 SC_stamen_mapK
 
@@ -1498,50 +1522,148 @@ F66_latlonD <- spTransform(F66_mcp.DRYS, CRS("+proj=longlat +datum=WGS84"))
 F66_latlonM <- spTransform(F66_mcp.MONS, CRS("+proj=longlat +datum=WGS84"))
 F66_latlonP <- spTransform(F66_mcp.PMS, CRS("+proj=longlat +datum=WGS84"))
 
-SC_stamen_mapS <- ggmap(myMap) +
+SC_stamen_mapS <- ggmap(Season.Map) +
   # geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
   geom_polygon(data = fortify(F114_latlonE), aes(long, lat, group=group), colour = "black", 
-               fill = NA) +
+               linetype=2, fill = NA) +
   geom_polygon(data = fortify(F114_latlonD), aes(long, lat, group=group), colour = "red", 
-               fill = NA) +
+               linetype=2, fill = NA) +
   geom_polygon(data = fortify(F114_latlonM), aes(long, lat, group=group), colour = "blue", 
-               fill = NA) +
+               linetype=2, fill = NA) +
   geom_polygon(data = fortify(F114_latlonP), aes(long, lat, group=group), colour = "green", 
-               fill = NA) +
+               linetype=2, fill = NA) +
   geom_polygon(data = fortify(F137_latlonE), aes(long, lat, group=group), colour = "black", 
-               fill = NA) +
+               linetype=1, fill = NA) +
   geom_polygon(data = fortify(F137_latlonD), aes(long, lat, group=group), colour = "red", 
-               fill = NA) +
+               linetype=1, fill = NA) +
   geom_polygon(data = fortify(F137_latlonM), aes(long, lat, group=group), colour = "blue", 
-               fill = NA) +
+               linetype=1, fill = NA) +
   geom_polygon(data = fortify(F137_latlonP), aes(long, lat, group=group), colour = "green", 
-               fill = NA) +
+               linetype=1, fill = NA) +
   geom_polygon(data = fortify(F147_latlonE), aes(long, lat, group=group), colour = "black", 
-               fill = NA) +
+               linetype=3, fill = NA) +
   geom_polygon(data = fortify(F147_latlonD), aes(long, lat, group=group), colour = "red", 
-               fill = NA) +
+               linetype=3, fill = NA) +
   geom_polygon(data = fortify(F147_latlonM), aes(long, lat, group=group), colour = "blue", 
-               fill = NA) +
+               linetype=3, fill = NA) +
   geom_polygon(data = fortify(F147_latlonP), aes(long, lat, group=group), colour = "green", 
-               fill = NA) +
+               linetype=3, fill = NA) +
   geom_polygon(data = fortify(F36_latlonE), aes(long, lat, group=group), colour = "black", 
-               fill = NA) +
+               linetype=4, fill = NA) +
   geom_polygon(data = fortify(F36_latlonD), aes(long, lat, group=group), colour = "red", 
-               fill = NA) +
+               linetype=4, fill = NA) +
   geom_polygon(data = fortify(F36_latlonM), aes(long, lat, group=group), colour = "blue", 
-               fill = NA) +
+               linetype=4, fill = NA) +
   geom_polygon(data = fortify(F36_latlonP), aes(long, lat, group=group), colour = "green", 
-               fill = NA) +
+               linetype=4, fill = NA) +
   geom_polygon(data = fortify(F66_latlonE), aes(long, lat, group=group), colour = "black", 
-               fill = NA) +
+               linetype=5, fill = NA) +
   geom_polygon(data = fortify(F66_latlonD), aes(long, lat, group=group), colour = "red", 
-               fill = NA) +
+               linetype=5, fill = NA) +
   geom_polygon(data = fortify(F66_latlonM), aes(long, lat, group=group), colour = "blue", 
-               fill = NA) +
-  geom_polygon(data = fortify(F66_latlonP), aes(long, lat, group=group), colour = "green", 
-               fill = NA) 
+               linetype=5, fill = NA) +
+  geom_polygon(data = fortify(F66_latlonP), aes(long, lat, group=group), colour = "green",
+               linetype=5, fill = NA) +
+  xlab("Longitude")+
+  ylab("Latitude")
 
 SC_stamen_mapS
+
+## Yearly shift stamen maps: 
+
+F114_mcp.08<-mcp_analysis.POLY("./F114/2008 .csv", percentage= 100)
+F114_mcp.09<-mcp_analysis.POLY("./F114/2009 .csv", percentage= 100)
+F114_mcp.10<-mcp_analysis.POLY("./F114/2010 .csv", percentage= 100)
+F114_mcp.11<-mcp_analysis.POLY("./F114/2011 .csv", percentage= 100)
+F114_mcp.12<-mcp_analysis.POLY("./F114/2012 .csv", percentage= 100)
+F137_mcp.09<-mcp_analysis.POLY("./F137/2009 .csv", percentage= 100)
+F137_mcp.10<-mcp_analysis.POLY("./F137/2010 .csv", percentage= 100)
+F137_mcp.11<-mcp_analysis.POLY("./F137/2011 .csv", percentage= 100)
+F147_mcp.09<-mcp_analysis.POLY("./F147/2009 .csv", percentage= 100)
+F147_mcp.10<-mcp_analysis.POLY("./F147/2010 .csv", percentage= 100)
+F147_mcp.11<-mcp_analysis.POLY("./F147/2011 .csv", percentage= 100)
+F147_mcp.12<-mcp_analysis.POLY("./F147/2012 .csv", percentage= 100)
+F66_mcp.08<-mcp_analysis.POLY("./F66/2008 .csv", percentage= 100)
+F66_mcp.09<-mcp_analysis.POLY("./F66/2009 .csv", percentage= 100)
+F66_mcp.10<-mcp_analysis.POLY("./F66/2010 .csv", percentage= 100)
+M119_mcp.08<-mcp_analysis.POLY("./M119/2008 .csv", percentage= 100)
+M119_mcp.09<-mcp_analysis.POLY("./M119/2009 .csv", percentage= 100)
+M119_mcp.10<-mcp_analysis.POLY("./M119/2010 .csv", percentage= 100)
+M112_mcp.07<-mcp_analysis.POLY("./M112/2007 .csv", percentage= 100)
+M112_mcp.09<-mcp_analysis.POLY("./M112/2009 .csv", percentage= 100)
+M112_mcp.10<-mcp_analysis.POLY("./M112/2010 .csv", percentage= 100)
+
+
+F114_latlon.08 <- spTransform(F114_mcp.08, CRS("+proj=longlat +datum=WGS84"))
+F114_latlon.09 <- spTransform(F114_mcp.09, CRS("+proj=longlat +datum=WGS84"))
+F114_latlon.10 <- spTransform(F114_mcp.10, CRS("+proj=longlat +datum=WGS84"))
+F114_latlon.11 <- spTransform(F114_mcp.11, CRS("+proj=longlat +datum=WGS84"))
+F114_latlon.12 <- spTransform(F114_mcp.12, CRS("+proj=longlat +datum=WGS84"))
+F137_latlon.09 <- spTransform(F137_mcp.09, CRS("+proj=longlat +datum=WGS84"))
+F137_latlon.10 <- spTransform(F137_mcp.10, CRS("+proj=longlat +datum=WGS84"))
+F137_latlon.11 <- spTransform(F137_mcp.11, CRS("+proj=longlat +datum=WGS84"))
+F147_latlon.09 <- spTransform(F147_mcp.09, CRS("+proj=longlat +datum=WGS84"))
+F147_latlon.10 <- spTransform(F147_mcp.10, CRS("+proj=longlat +datum=WGS84"))
+F147_latlon.11 <- spTransform(F147_mcp.11, CRS("+proj=longlat +datum=WGS84"))
+F147_latlon.12 <- spTransform(F147_mcp.12, CRS("+proj=longlat +datum=WGS84"))
+F66_latlon.08 <- spTransform(F66_mcp.08, CRS("+proj=longlat +datum=WGS84"))
+F66_latlon.09 <- spTransform(F66_mcp.09, CRS("+proj=longlat +datum=WGS84"))
+F66_latlon.10 <- spTransform(F66_mcp.10, CRS("+proj=longlat +datum=WGS84"))
+M119_latlon.08 <- spTransform(M119_mcp.08, CRS("+proj=longlat +datum=WGS84"))
+M119_latlon.09 <- spTransform(M119_mcp.09, CRS("+proj=longlat +datum=WGS84"))
+M119_latlon.10 <- spTransform(M119_mcp.10, CRS("+proj=longlat +datum=WGS84"))
+M112_latlon.07 <- spTransform(M112_mcp.07, CRS("+proj=longlat +datum=WGS84"))
+M112_latlon.09 <- spTransform(M112_mcp.09, CRS("+proj=longlat +datum=WGS84"))
+M112_latlon.10 <- spTransform(M112_mcp.10, CRS("+proj=longlat +datum=WGS84"))
+
+MCP.Shift.Yearly <- ggmap(Season.Map) +
+  # geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+  geom_polygon(data = fortify(F114_latlon.08), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F114_latlon.09), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F114_latlon.10), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F114_latlon.11), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F114_latlon.12), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  # geom_polygon(data = fortify(F137_latlon.09), aes(long, lat, group=group), colour = "red", 
+  #              linetype=1, fill = NA) +
+  # geom_polygon(data = fortify(F137_latlon.10), aes(long, lat, group=group), colour = "red", 
+  #              linetype=1, fill = NA) +
+  # geom_polygon(data = fortify(F137_latlon.11), aes(long, lat, group=group), colour = "red", 
+  #              linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F147_latlon.09), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F147_latlon.10), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F147_latlon.11), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F147_latlon.12), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F66_latlon.08), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F66_latlon.09), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F66_latlon.10), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(M119_latlon.08), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(M119_latlon.09), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(M119_latlon.10), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  # geom_polygon(data = fortify(M112_latlon.07), aes(long, lat, group=group), colour = "red", 
+  #              linetype=6, fill = NA) +
+  # geom_polygon(data = fortify(M112_latlon.09), aes(long, lat, group=group), colour = "red",
+  #              linetype=6, fill = NA) +
+  # geom_polygon(data = fortify(M112_latlon.10), aes(long, lat, group=group), colour = "red",
+  #              linetype=6, fill = NA) +
+  xlab("Longitude") +
+  ylab("Latitude")
+
+MCP.Shift.Yearly
 
 #####################################
 ## Add North arrow and scale bar to stamen map :
@@ -1605,6 +1727,36 @@ SC_stamen_mapK <- SC_stamen_mapK + ggsn::scalebar(x.min = -110.972, x.max = -110
 SC_stamen_mapK
 
 SC_stamen_mapK + north2(SC_stamen_mapK, x = 0.836, y = 0.73, scale = 0.1, symbol = 16)
+
+# scalebar and north arrow for season Maps:
+
+SC_stamen_mapS <- SC_stamen_mapS + ggsn::scalebar(x.min = -111.005, x.max = -110.998,
+                                                  y.min = 32.461, y.max = 32.463, 
+                                                  dist = 250, 
+                                                  dist_unit="m", 
+                                                  height=0.19,
+                                                  st.bottom=FALSE, 
+                                                  st.dist=0.3,
+                                                  st.size=3,
+                                                  transform = TRUE, 
+                                                  model = 'WGS84') 
+SC_stamen_mapS
+
+SC_stamen_mapS + north2(SC_stamen_mapS, x = 0.36, y = 0.30, scale = 0.1, symbol = 16)
+
+MCP.Shift.Yearly <- MCP.Shift.Yearly + ggsn::scalebar(x.min = -111.005, x.max = -110.998,
+                                                  y.min = 32.461, y.max = 32.463, 
+                                                  dist = 250, 
+                                                  dist_unit="m", 
+                                                  height=0.19,
+                                                  st.bottom=FALSE, 
+                                                  st.dist=0.3,
+                                                  st.size=3,
+                                                  transform = TRUE, 
+                                                  model = 'WGS84') 
+MCP.Shift.Yearly
+
+MCP.Shift.Yearly + north2(MCP.Shift.Yearly, x = 0.36, y = 0.30, scale = 0.1, symbol = 16)
 
 #######################################################
 ##

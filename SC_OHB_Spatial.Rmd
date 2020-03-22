@@ -477,6 +477,7 @@ M69_mcp.09<-mcp_analysis.POLY("./M69/2009 .csv", percentage= 100)
 M69_mcp.10<-mcp_analysis.POLY("./M69/2010 .csv", percentage= 100)
 
 ## Fortify mcp polygons for ggplot2 *YEAR*:
+
 F104_mcp.08T <- fortify(F104_mcp.08, region = "id")
 F104_mcp.09T <- fortify(F104_mcp.09, region = "id")
 F114_mcp.08T <- fortify(F114_mcp.08, region = "id")
