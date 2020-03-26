@@ -1,0 +1,36 @@
+---
+title: "Spatial Scripts"
+output: html_notebook
+---
+
+
+
+```{r}
+packrat::init("~/Desktop/Heloderma Spatial/Heloderma Spatial")
+```
+
+
+
+```{r}
+# required packages
+library(adehabitatHR) #for home range calculations
+library(data.table) #manipulate S3 and S4 data tables
+library(ggplot2) #for graphic output
+library(ggfortify) #to allow ggplot2 to read spatial data
+library(grid) #to add annotations to the output
+# library(OpenStreetMap) #for obtaining raster images
+library(pbapply) #needed for progress bar
+library(plotly) #for interactive xy plot
+library(rgdal) #for converting spatial data
+library(sp) #for converting spatial data
+library(rgeos)
+# library(raster)
+library(mapview)
+
+```
+
+
+```{r}
+
+```
+
