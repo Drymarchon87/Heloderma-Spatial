@@ -30,7 +30,1200 @@ library(mapview)
 ```
 
 
+
+
+
+Overall individual yearly home ranges for non/subsidized populations
+```{r echo=FALSE}
+GM_table <- read_csv("GM_table.csv")
+kable(GM_table,format="pandoc", caption='Table 1 | Pooled overall home ranges of Gila Monsters at Owl Head Buttes and Stone Canyon Golf Club. Both 100% and 95% MCPs were calculated between both populations.')
+```
+
+
+
+
+
+Gila monster locations for all tracked lizards across Stone Canyon
 ```{r}
+All.Gilas <- read_csv("./GM_Final_Data.csv")
+
+utm_points <- cbind(All.Gilas$EASTING, All.Gilas$NORTHING)
+
+utm_locations <- SpatialPoints(utm_points, proj4string=CRS.SC)
+
+proj_lat.lon <- as.data.frame(spTransform(utm_locations, CRS("+proj=longlat +datum=WGS84")))
+colnames(proj_lat.lon) <- c("x","y")
+
+## FORTIGY SPATIAL SPATIAL POINTS FOR PLOTTING:
+proj_lat.lon <- fortify(proj_lat.lon, region = "Type")
+
+myMap <- get_stamenmap(bbox = c(left = -111.009,
+                                bottom = 32.459,
+                                right = -110.969,
+                                top = 32.474),
+                       maptype = "terrain", 
+                       crop = FALSE,
+                       zoom = 15)
+
+ggmap(myMap)+geom_point(data=proj_lat.lon, aes(x=x, y=y), size=0.3)
+```
+
+
+
+
+
+###################### OVERALL YEARLY ANALYSES ####################
+
+
+Plot of 100%  MCP HRs against number of relocations
+```{r}
+year <- read_csv("GM_Consolidated_ByYear.csv")
+
+# quick plot
+# Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp,group=Environment))+
+Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp))+
+  geom_point(aes(shape = factor(Environment)), size = 2)+
+  geom_smooth(aes(linetype=Environment),colour="black", method="lm") +
+  # scale_colour_manual(values=c(subsidized="cyan3",nonsubsidized="indian red1"))+
+  # labs(title = "100% MCP Home Ranges")+
+  xlab("Number of Relocations")+
+  ylab("100% MCP Area (ha)")+
+  # labs(caption = "Figure 3 | Non-Subsidized (Owl Head Buttes) vs. Subsidized (Stone Canyon) population 100% MCPs against number \n of fixes of the complete data set.")+
+  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
+  # theme_bw()
+
+Graph1<-Graph1+theme(axis.title=element_text(size = 14))
+
+# legend at top-left, inside the plot
+SCOH.hr.fig<-Graph1 + theme(legend.title = element_blank(),
+               legend.text = element_text(size = 12),
+               legend.justification=c(0,1),
+               legend.position=c(0.05, 0.95),
+               legend.background = element_blank(),
+               legend.key = element_blank(),
+               legend.box.background = element_rect(colour = "black")) +
+               scale_shape_discrete(name  ="",
+                          breaks=c("nonsubsidized", "subsidized"),
+                          labels=c("Nonsubsidized", "Subsidized")) +
+                            scale_linetype_discrete(name  ="",
+                          breaks=c("nonsubsidized", "subsidized"),
+                          labels=c("Nonsubsidized", "Subsidized"))
+
+SCOH.hr.fig
+# dir.create("outputs") # create a new folder to hold the output files
+# ggsave("outputs/SC_OHB_plot.pdf")
+```
+
+
+
+
+
+Overall combined 100% MCP means averaged across sex
+```{r}
+library(Rmisc)
+Means <- summarySE(year, measurevar="Home_Range_100mcp",
+                          groupvars=c("Environment"),na.rm = TRUE)
+
+kable(Means, format = "pandoc", caption = 'Overall combined 100% MCP means averaged across sex')
+```
+
+
+
+
+
+Overall combined 95% MCP means averaged across sex
+```{r}
+Means.95mcp <- summarySE(year, measurevar="Home_Range_95mcp",
+                          groupvars=c("Environment"),na.rm = TRUE)
+Means.95mcp
+```
+
+
+
+
+
+Set projection for mapping
+```{r}
+CRS.SC<-CRS("+proj=utm +zone=12 +ellps=WGS84 +units=m +no_defs")
+```
+
+
+
+
+
+Function for MCP analysis
+```{r eval=FALSE, include=FALSE}
+mcp_analysis <- function(filename, percentage){
+  data <- read.csv(file = filename)
+  x <- as.data.frame(data$EASTING)
+  y <- as.data.frame(data$NORTHING)
+  xy <- c(x,y)
+  data.proj <- SpatialPointsDataFrame(xy,data, proj4string = CRS.SC)
+  xy <- SpatialPoints(data.proj@coords)
+  mcp.out <- mcp(xy, percentage, unout="ha")
+  area <- as.data.frame(round(mcp.out@data$area,4))
+  .rowNamesDF(area, make.names=TRUE) <- data$YEAR
+  write.table(area,file="MCP_Hectares.csv",
+              append=TRUE,sep=",", col.names=FALSE, row.names=TRUE)
+  mcp.points <- cbind((data.frame(xy)),data$YEAR)
+  colnames(mcp.points) <- c("x","y", "year")
+  mcp.poly <- fortify(mcp.out, region = "id")
+  units <- grid.text(paste(round(mcp.out@data$area,2)," ha"), x=0.9,  y=0.95,
+                     gp=gpar(fontface=4, cex=0.9), draw = FALSE)
+  mcp.plot <- ggplot() +
+    geom_polygon(data=mcp.poly, aes(x=mcp.poly$long, y=mcp.poly$lat), alpha=0.5) +
+    geom_point(data=mcp.points, aes(x=x, y=y)) + theme_bw() +
+    labs(x="Easting (m)", y="Northing (m)", title=mcp.points$year) +
+    theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5)) +
+    annotation_custom(units)
+  mcp.plot
+}
+```
+
+
+Function of MCP polygons used for mapping
+```{r eval=FALSE, include=FALSE}
+# CRS.SC<-CRS("+proj=utm +zone=12 +ellps=WGS84 +units=m +no_defs")
+
+mcp_analysis.POLY <- function(filename, percentage){
+  data <- read.csv(file = filename,stringsAsFactors = FALSE)
+  data.sp <- data[, c("LIZARDNUMBER", "EASTING", "NORTHING")]
+  coordinates(data.sp) <- c("EASTING", "NORTHING")
+  proj4string(data.sp) <- CRS.SC
+  mcp_out <- mcp(data.sp, percentage, unout="ha")
+}
+```
+
+
+Function of KDE analysis
+```{r}
+kde_analysis.href.plot <- function(filename, percentage){
+  data <- read.csv(file = filename)
+  x <- as.data.frame(data$EASTING)
+  y <- as.data.frame(data$NORTHING)
+  xy <- c(x,y)
+  data.proj <- SpatialPointsDataFrame(xy,data, proj4string = CRS.SC)
+  xy <- SpatialPoints(data.proj@coords)
+  kde<-kernelUD(xy, h="href", kern="bivnorm", grid=1000)
+  ver <- getverticeshr(kde, percentage)
+  area <- as.data.frame(round(ver$area,4))
+  .rowNamesDF(area, make.names=TRUE) <- data$LIZARDNUMBER
+  write.table(area,file="KDE_Hectares.csv",
+              append=TRUE,sep=",", col.names=FALSE, row.names=TRUE)
+  kde.points <- cbind((data.frame(data.proj@coords)),data$LIZARDNUMBER)
+  colnames(kde.points) <- c("x","y","lizardnumber")
+  kde.poly <- fortify(ver, region = "id")
+  units <- grid.text(paste(round(ver$area,2)," ha"), x=0.9,  y=0.95,
+                     gp=gpar(fontface=4, cex=0.9), draw = FALSE)
+  kde.plot <- ggplot() +
+    geom_polygon(data=kde.poly, aes(x=kde.poly$long, y=kde.poly$lat), alpha = 0.5) +
+    geom_point(data=kde.points, aes(x=x, y=y)) + theme_bw() +
+    labs(x="Easting (m)", y="Northing (m)", title=kde.points$lizardnumber) +
+    theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5)) +
+    annotation_custom(units)
+  kde.plot
+}
+```
+
+
+Function of KDE polygons for mapping
+```{r}
+kde_analysis.href.polygon <- function(filename, percentage){
+  data <- read.csv(file = filename)
+  x <- as.data.frame(data$EASTING)
+  y <- as.data.frame(data$NORTHING)
+  xy <- c(x,y)
+  data.proj <- SpatialPointsDataFrame(xy,data, proj4string = CRS.SC)
+  xy <- SpatialPoints(data.proj@coords)
+  kde<-kernelUD(xy, h="href", kern="bivnorm", grid=1000)
+  ver <- getverticeshr(kde, percentage)
+  ver@proj4string<-CRS.SC
+  area <- as.data.frame(round(ver$area,4))
+  .rowNamesDF(area, make.names=TRUE) <- data$YEAR
+  write.table(area,file="KDE_Hectares.csv",
+              append=TRUE,sep=",", col.names=FALSE, row.names=TRUE)
+  kde.points <- cbind((data.frame(data.proj@coords)),data$YEAR)
+  colnames(kde.points) <- c("x","y","year")
+  kde.poly <- fortify(ver, region = "id")
+  units <- grid.text(paste(round(ver$area,2)," ha"), x=0.9,  y=0.95,
+                     gp=gpar(fontface=4, cex=0.9), draw = FALSE)
+  ver
+}
+```
+
+
+Function of raster of UD 
+```{r}
+# kde_analysis.href.raster <- function(filename){
+#   data <- read.csv(file = filename)
+#   x <- as.data.frame(data$EASTING)
+#   y <- as.data.frame(data$NORTHING)
+#   xy <- c(x,y)
+#   data.proj <- SpatialPointsDataFrame(xy,data, proj4string = CRS.SC)
+#   xy <- SpatialPoints(data.proj@coords)
+#   kde<-kernelUD(xy, h="href", kern="bivnorm", grid=1000)
+#   kde<-as(kde, "SpatialGridDataFrame")
+#   kde@proj4string<- CRS.SC
+#   kde
+# }
+```
+
+
+Function of trajectory analysis and distance over time
+```{r}
+traj_analysis <- function(filename){
+  relocs_data <- read.csv(file = filename)
+  relocs <- as.ltraj(cbind(relocs_data$EASTING, relocs_data$NORTHING),id=relocs_data$LIZARDNUMBER, typeII = FALSE, date=NULL)
+  relocs.df <- ld(relocs)
+  relocs_dist <- as.data.frame(sum(sapply(relocs.df$dist, sum, na.rm=TRUE)))
+  colnames(relocs_dist) <- "Total Distance"
+  name <- relocs.df$id[1]
+  row.names(relocs_dist) <- name
+  relocs_units <- grid.text(paste(round(relocs_dist,2),"m"), x=0.9, y=0.9,
+                            gp=gpar(fontface=3, col="black", cex=0.9), draw = FALSE)
+  reloc.plot <- ggplot() + theme_classic() + geom_path(data=relocs.df, aes(x=x,y=y), linetype = "dashed", colour = "red",
+                                                       arrow = arrow(length=unit(.5,"cm"), angle = 20, ends="last", type = "closed")) +
+    geom_point(data=relocs.df, aes(x=x, y=y)) + geom_point(data=relocs.df, aes(x=x[1],
+                                                                               y=y[1]), size = 3, color = "darkgreen", pch=0) +
+    labs(x="Easting (m)", y="Northing (m)", title=relocs.df$id[1]) +
+    theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5)) +
+    annotation_custom(relocs_units)
+  reloc.plot
+}
+```
+
+
+Function of distance of time
+```{r}
+dist_analysis <- function(filename){
+  relocs_data <- read.csv(file = filename)
+  relocs <- as.ltraj(cbind(relocs_data$EASTING, relocs_data$NORTHING),id=relocs_data$LIZARDNUMBER, typeII = FALSE, date=NULL)
+  relocs.df <- ld(relocs)
+  relocs_dist <- as.data.frame(sum(sapply(relocs.df$dist, sum, na.rm=TRUE)))
+  colnames(relocs_dist) <- "Total Distance"
+  name <- relocs.df$id[1]
+  row.names(relocs_dist) <- name
+  write.table(relocs_dist,file="reloc_dist.csv",
+              append=TRUE,sep=",", col.names=FALSE, row.names=TRUE)
+  dist.plot
+}
+```
+
+
+Map of yearly HR shifts of a subset of Gila Monsters. Includes running MCP polygons, Fortify mcp polygons for ggplot2 by YEAR
+```{r}
+M215_mcp.11<-mcp_analysis.POLY("./M215/2011 .csv", percentage= 100)
+M215_mcp.12<-mcp_analysis.POLY("./M215/2012 .csv", percentage= 100)
+F104_mcp.08<-mcp_analysis.POLY("./F104/2008 .csv", percentage= 100)
+F104_mcp.09<-mcp_analysis.POLY("./F104/2009 .csv", percentage= 100)
+F114_mcp.08<-mcp_analysis.POLY("./F114/2008 .csv", percentage= 100)
+F114_mcp.09<-mcp_analysis.POLY("./F114/2009 .csv", percentage= 100)
+F114_mcp.10<-mcp_analysis.POLY("./F114/2010 .csv", percentage= 100)
+F114_mcp.11<-mcp_analysis.POLY("./F114/2011 .csv", percentage= 100)
+F114_mcp.12<-mcp_analysis.POLY("./F114/2012 .csv", percentage= 100)
+F137_mcp.09<-mcp_analysis.POLY("./F137/2009 .csv", percentage= 100)
+F137_mcp.10<-mcp_analysis.POLY("./F137/2010 .csv", percentage= 100)
+F137_mcp.11<-mcp_analysis.POLY("./F137/2011 .csv", percentage= 100)
+F147_mcp.09<-mcp_analysis.POLY("./F147/2009 .csv", percentage= 100)
+F147_mcp.10<-mcp_analysis.POLY("./F147/2010 .csv", percentage= 100)
+F147_mcp.11<-mcp_analysis.POLY("./F147/2011 .csv", percentage= 100)
+F147_mcp.12<-mcp_analysis.POLY("./F147/2012 .csv", percentage= 100)
+F36_mcp.08<-mcp_analysis.POLY("./F36/2008 .csv", percentage= 100)
+F36_mcp.09<-mcp_analysis.POLY("./F36/2009 .csv", percentage= 100)
+F36_mcp.10<-mcp_analysis.POLY("./F36/2010 .csv", percentage= 100)
+F36_mcp.11<-mcp_analysis.POLY("./F36/2011 .csv", percentage= 100)
+F36_mcp.12<-mcp_analysis.POLY("./F36/2012 .csv", percentage= 100)
+F66_mcp.08<-mcp_analysis.POLY("./F66/2008 .csv", percentage= 100)
+F66_mcp.09<-mcp_analysis.POLY("./F66/2009 .csv", percentage= 100)
+F66_mcp.10<-mcp_analysis.POLY("./F66/2010 .csv", percentage= 100)
+M119_mcp.08<-mcp_analysis.POLY("./M119/2008 .csv", percentage= 100)
+M119_mcp.09<-mcp_analysis.POLY("./M119/2009 .csv", percentage= 100)
+M119_mcp.10<-mcp_analysis.POLY("./M119/2010 .csv", percentage= 100)
+M112_mcp.07<-mcp_analysis.POLY("./M112/2007 .csv", percentage= 100)
+M112_mcp.09<-mcp_analysis.POLY("./M112/2009 .csv", percentage= 100)
+M112_mcp.10<-mcp_analysis.POLY("./M112/2010 .csv", percentage= 100)
+M69_mcp.09<-mcp_analysis.POLY("./M69/2009 .csv", percentage= 100)
+M69_mcp.10<-mcp_analysis.POLY("./M69/2010 .csv", percentage= 100)
+
+## Fortify mcp polygons for ggplot2 *YEAR*:
+
+F104_mcp.08T <- fortify(F104_mcp.08, region = "id")
+F104_mcp.09T <- fortify(F104_mcp.09, region = "id")
+F114_mcp.08T <- fortify(F114_mcp.08, region = "id")
+F114_mcp.09T <- fortify(F114_mcp.09, region = "id")
+F114_mcp.10T <- fortify(F114_mcp.10, region = "id")
+F114_mcp.11T <- fortify(F114_mcp.11, region = "id")
+F114_mcp.12T <- fortify(F114_mcp.12, region = "id")
+F137_mcp.09T <- fortify(F137_mcp.09, region = "id")
+F137_mcp.10T <- fortify(F137_mcp.10, region = "id")
+F137_mcp.11T <- fortify(F137_mcp.11, region = "id")
+F147_mcp.09T <- fortify(F147_mcp.09, region = "id")
+F147_mcp.10T <- fortify(F147_mcp.10, region = "id")
+F147_mcp.11T <- fortify(F147_mcp.11, region = "id")
+F147_mcp.12T <- fortify(F147_mcp.12, region = "id")
+F36_mcp.08T <- fortify(F36_mcp.08, region = "id")
+F36_mcp.09T <- fortify(F36_mcp.09, region = "id")
+F36_mcp.10T <- fortify(F36_mcp.10, region = "id")
+F36_mcp.11T <- fortify(F36_mcp.11, region = "id")
+F36_mcp.12T <- fortify(F36_mcp.12, region = "id")
+F66_mcp.08T <- fortify(F66_mcp.08, region = "id")
+F66_mcp.09T <- fortify(F66_mcp.09, region = "id")
+F66_mcp.10T <- fortify(F66_mcp.10, region = "id")
+M119_mcp.08T <- fortify(M119_mcp.08, region = "id")
+M119_mcp.09T <- fortify(M119_mcp.09, region = "id")
+M119_mcp.10T <- fortify(M119_mcp.10, region = "id")
+M112_mcp.07T <- fortify(M112_mcp.07, region = "id")
+M112_mcp.09T <- fortify(M112_mcp.09, region = "id")
+M112_mcp.10T <- fortify(M112_mcp.10, region = "id")
+M69_mcp.09T <- fortify(M69_mcp.09, region = "id")
+M69_mcp.10T <- fortify(M69_mcp.10, region = "id")
+M215_mcp.11T <- fortify(M215_mcp.11, region = "id")
+M215_mcp.12T <- fortify(M215_mcp.12, region = "id")
+
+
+mcp.shift.TEST4 <- ggplot() +
+  # geom_polygon(data=F104_mcp.08T, aes(x=F104_mcp.08T$long, y=F104_mcp.08T$lat),
+  #              alpha=0.1,colour="black",linetype=2) +
+  # geom_polygon(data=F104_mcp.09T, aes(x=F104_mcp.09T$long, y=F104_mcp.09T$lat),
+  #              alpha=0.1,colour="black",linetype=2) +
+  geom_polygon(data=F114_mcp.08T, aes(x=F114_mcp.08T$long, y=F114_mcp.08T$lat),
+               alpha=0.1,colour="black",linetype=3) +
+  geom_polygon(data=F114_mcp.09T, aes(x=F114_mcp.09T$long, y=F114_mcp.09T$lat),
+               alpha=0.1,colour="black",linetype=3) +
+  geom_polygon(data=F114_mcp.10T, aes(x=F114_mcp.10T$long, y=F114_mcp.10T$lat),
+               alpha=0.1,colour="black",linetype=3) +
+  geom_polygon(data=F114_mcp.11T, aes(x=F114_mcp.11T$long, y=F114_mcp.11T$lat),
+               alpha=0.1,colour="black",linetype=3) +
+  geom_polygon(data=F114_mcp.12T, aes(x=F114_mcp.12T$long, y=F114_mcp.12T$lat),
+               alpha=0.1,colour="black",linetype=3) +
+  geom_polygon(data=F137_mcp.09T, aes(x=F137_mcp.09T$long, y=F137_mcp.09T$lat),
+               alpha=0.1,colour="brown",linetype=4) +
+  geom_polygon(data=F137_mcp.10T, aes(x=F137_mcp.10T$long, y=F137_mcp.10T$lat),
+               alpha=0.1,colour="brown",linetype=4) +
+  geom_polygon(data=F137_mcp.11T, aes(x=F137_mcp.11T$long, y=F137_mcp.11T$lat),
+               alpha=0.1,colour="brown",linetype=4) +
+  geom_polygon(data=F147_mcp.09T, aes(x=F147_mcp.09T$long, y=F147_mcp.09T$lat),
+               alpha=0.1,colour="red",linetype=1) +
+  geom_polygon(data=F147_mcp.10T, aes(x=F147_mcp.10T$long, y=F147_mcp.10T$lat),
+               alpha=0.1,colour="red",linetype=1) +
+  geom_polygon(data=F147_mcp.11T, aes(x=F147_mcp.11T$long, y=F147_mcp.11T$lat),
+               alpha=0.1,colour="red",linetype=1) +
+  geom_polygon(data=F147_mcp.12T, aes(x=F147_mcp.12T$long, y=F147_mcp.12T$lat),
+               alpha=0.1,colour="red",linetype=1) +
+  # geom_polygon(data=F36_mcp.08T, aes(x=F36_mcp.08T$long, y=F36_mcp.08T$lat),
+  #              alpha=0.1,colour="black",linetype=6) +
+  # geom_polygon(data=F36_mcp.09T, aes(x=F36_mcp.09T$long, y=F36_mcp.09T$lat),
+  #              alpha=0.1,colour="black",linetype=6) +
+  # geom_polygon(data=F36_mcp.10T, aes(x=F36_mcp.10T$long, y=F36_mcp.10T$lat),
+  #              alpha=0.1,colour="black",linetype=6) +
+  # geom_polygon(data=F36_mcp.11T, aes(x=F36_mcp.11T$long, y=F36_mcp.11T$lat),
+  #              alpha=0.1,colour="black",linetype=6) +
+  # geom_polygon(data=F36_mcp.12T, aes(x=F36_mcp.12T$long, y=F36_mcp.12T$lat),
+  #              alpha=0.1,colour="black",linetype=6) +
+  geom_polygon(data=F66_mcp.08T, aes(x=F66_mcp.08T$long, y=F66_mcp.08T$lat),
+               alpha=0.1,colour="green",linetype=5) +
+  geom_polygon(data=F66_mcp.09T, aes(x=F66_mcp.09T$long, y=F66_mcp.09T$lat),
+               alpha=0.1,colour="green",linetype=5) +
+  geom_polygon(data=F66_mcp.10T, aes(x=F66_mcp.10T$long, y=F66_mcp.10T$lat),
+               alpha=0.1,colour="green",linetype=5) +
+  geom_polygon(data=M119_mcp.08T, aes(x=M119_mcp.08T$long, y=M119_mcp.08T$lat),
+               alpha=0.1,colour="blue",linetype=6) +
+  geom_polygon(data=M119_mcp.09T, aes(x=M119_mcp.09T$long, y=M119_mcp.09T$lat),
+               alpha=0.1,colour="blue",linetype=6) +
+  geom_polygon(data=M119_mcp.10T, aes(x=M119_mcp.10T$long, y=M119_mcp.10T$lat),
+               alpha=0.1,colour="blue",linetype=6) +
+  geom_polygon(data=M112_mcp.07T, aes(x=M112_mcp.07T$long, y=M112_mcp.07T$lat),
+               alpha=0.1,colour="purple",linetype=2) +
+  geom_polygon(data=M112_mcp.09T, aes(x=M112_mcp.09T$long, y=M112_mcp.09T$lat),
+               alpha=0.1,colour="purple",linetype=2) +
+  geom_polygon(data=M112_mcp.10T, aes(x=M112_mcp.10T$long, y=M112_mcp.10T$lat),
+               alpha=0.1,colour="purple",linetype=2) +
+  # geom_polygon(data=M69_mcp.09T, aes(x=M69_mcp.09T$long, y=M69_mcp.09T$lat),
+  #              alpha=0.1,colour="black") +
+  # geom_polygon(data=M69_mcp.10T, aes(x=M69_mcp.10T$long, y=M69_mcp.10T$lat),
+  #              alpha=0.1,colour="black") +
+  # geom_polygon(data=M215_mcp.11T, aes(x=M215_mcp.11T$long, y=M215_mcp.11T$lat),
+  #              alpha=0.1,colour="black") +
+  # geom_polygon(data=M215_mcp.12T, aes(x=M215_mcp.12T$long, y=M215_mcp.12T$lat),
+  #              alpha=0.1,colour="black") +
+  theme_bw() +labs(x="Easting (m)", y="Northing (m)") +
+  labs(caption = "Figure 5  |  SC Yearly home range shifts of 8 lizards, both males and females. Home range shifts appear to be \n relativley stable over study years.")+
+  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
+  # theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5))
+## within each geom_polygon line?:
+## aes(colour="red"or"M112_mcp.09T")...+scale_color_manual(name="",breaks=c("","",...""))+
+## values=c(""="",...)
+
+mcp.shift.TEST4
+```
+
+
+
+
+
+Raw group 100% MCP home range means of Stone Canyon and Owl Head Buttes. Grouped by environment and sex
+```{r}
+library(Rmisc)
+YR_GRP_Means <- summarySE(year, measurevar="Home_Range_100mcp",
+                          groupvars=c("Environment","Sex"),na.rm = TRUE)
+
+kable(YR_GRP_Means, format = "pandoc", 
+      caption = 'Table 1 | Raw group 100% MCP home range means of Stone Canyon and Owl Head Buttes. Grouped by environment and sex.')
+```
+
+
+
+
+Raw group 95% MCP home range means of Stone Canyon and Owl Head Buttes. Grouped by environment and sex
+```{r}
+YR_GRP_Means95 <- summarySE(year, measurevar="Home_Range_95mcp",
+                            groupvars=c("Environment","Sex"),na.rm = TRUE)
+
+kable(YR_GRP_Means95, format = "pandoc", caption = 'Table 2 | Raw group 95% MCP home range means of raw data of Stone Canyon and Owl Head Buttes. Grouped by environment and sex.')
+```
+
+
+
+
+RM-ANOVA for 100% MCP analyses between the subsidized and non-subsidized
+```{r}
+# Get p-values from mixed model F values:
+library(lme4)
+library(readr)
+year <- read_csv("GM_Consolidated_ByYear.csv")
+
+RMmod.year<-lmer(Home_Range_100mcp~Environment+Year+Sex+N100+Environment*Sex+
+                   (1|Gila),data = year)
+summary(RMmod.year)
+```
+
+
+ANOVA table for 100% MCPs between the two populations
+```{r}
+anova(RMmod.year)
+```
+
+
+
+
+
+RM-ANOVA for 95% MCP analyses between the subsidized and non-subsidized
+```{r}
+RMmod.year95<-lmer(Home_Range_95mcp~Environment+Year+Sex+N100+Environment*Sex+
+                   (1|Gila),data = year)
+summary(RMmod.year95)
+```
+
+
+ANOVA table for 95% MCPs between the two populations
+```{r}
+anova(RMmod.year95)
+```
+
+
+
+
+
+Raw group means AND adjusted EMMs of Yearly Overall 100%MCP
+```{r}
+RMmod.year100<-lmer(Home_Range_100mcp~Environment+Year+Sex+N100+Environment*Sex+(1|Gila),data = year)
+
+############################# EMMs adjusted #############################
+
+RM.marginal <- lsmeans(RMmod.year100, 
+                    ~ Environment)
+
+## CATAGORIZE LSM GRAPH BY SEX BETWEEN ENVIRONMENT:
+refRM_sex <- lsmeans(RMmod.year100, specs = c("Environment","Sex"))
+
+# refRM_sex
+ref_dfRM_sex <- as.data.frame(summary(refRM_sex))
+pd_RM <- position_dodge(0.1)
+
+yr.mean.adj<-ggplot(ref_dfRM_sex, aes(x=Sex,y=lsmean,group=Environment))+
+  geom_point(aes(shape = factor(Environment)), size = 3,position=position_dodge(.1), 
+            show.legend = FALSE)+
+  geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), width=.1,position=position_dodge())+
+  xlab("")+
+  ylab("")
+
+#yr.mean.adj
+
+############################# Raw Group Means ############################
+pd_RM <- position_dodge(0.1)
+
+Raw.YearHR<-ggplot(YR_GRP_Means, aes(x=Sex,y=Home_Range_100mcp,group=Environment))+
+  geom_point(aes(shape = factor(Environment)), size = 3,position=position_dodge(.1))+
+  geom_errorbar(aes(ymin=Home_Range_100mcp-se, ymax=Home_Range_100mcp+se),
+                width=.1,position=position_dodge())+
+  xlab("")+
+  ylab("100% MCP Area (ha)")
+
+
+Raw.YearHR<-Raw.YearHR + theme(legend.title = element_blank(),
+                     legend.text = element_text(size = 12),
+                     legend.justification=c(0,1),
+                     legend.position=c(0.05, 0.95),
+                     legend.background = element_blank(),
+                     legend.key = element_blank(),
+                     legend.box.background = element_rect(colour = "black")) +
+   scale_shape_discrete(name  ="",
+                          breaks=c("nonsubsidized", "subsidized"),
+                          labels=c("Nonsubsidized", "Subsidized"))
+
+#Raw.YearHR
+
+library(ggpubr)
+library(gridExtra)
+library(grid)
+
+# grid.arrange(Raw.YearHR, yr.mean.adj, nrow = 1,  
+#              bottom = textGrob("Figure 5 | a. Raw group means of overall yearly home ranges between males and females. Note that the male \n home range of the subsidized population is smaller than that of the female home range in the non-subsidized \n population. b. Group means of home ranges after being adjusted for environment, year, sex, and sample size.",
+#                                gp = gpar(fontface = 1,fontsize = 10),hjust = 0, x = 0))
+
+# grid.arrange(Raw.YearHR, yr.mean.adj, nrow = 1)
+# grid.arrange(Raw.YearHR, yr.mean.adj, nrow = 1)
+# ggarrange(Raw.YearHR, yr.mean.adj, labels = c("A", "B"),
+#           ncol = 2)
+```
+
+
+
+
+
+
+Directional means of home range (100% MCP) after being adjusted for year, sex and sample size
+```{r}
+kable(ref_dfRM_sex, format = "pandoc", caption = 'Table | Directional means of home range (100% MCP) after being adjusted for year, sex and sample size.')
+```
+
+
+
+
+RM-ANOVA of 95% KDEs for the subsidized population
+```{r}
+RM.KDEmod.year<-lmer(Home_Range_95kde~Year+Sex+N+(1|Gila),data = sub)
+
+summary(RM.KDEmod.year)
+```
+
+ANOVA Table for 95%KDE
+```{r}
+anova(RM.KDEmod.year)
+```
+
+
+
+
+RM-ANOVA of 50% KDEs for the subsidized
+```{r}
+RM.KDE.50.mod.year<-lmer(Home_Range_50kde~Year+Sex+N+(1|Gila),data = sub)
+
+summary(RM.KDE.50.mod.year)
+```
+
+ANOVA Talbe of 50%  KDE for the subsidized
+```{r}
+anova(RM.KDE.50.mod.year)
+```
+
+
+
+
+TABLE. Raw Group 50% KDE home range means male and female home ranges at Stone Canyon
+```{r}
+YR_GRP_Means.50KDE <- summarySE(sub, measurevar="Home_Range_50kde",
+                            groupvars=c("Sex"),na.rm = TRUE)
+
+kable(YR_GRP_Means.50KDE, format = "pandoc", caption = 'Table 5 | Raw Group 50% KDE home range means male and female home ranges at Stone Canyon.')
+```
+
+
+
+
+Raw group means AND adjusted EMMs of Yearly Overall 95% KDEs between non/subsidized populations
+```{r}
+RMmod.95kde<-lmer(Home_Range_95kde~Environment+Year+Sex+N+Environment*Sex+(1|Gila),data = year)
+
+############################ EMMs of 95% KDEs ###########################
+
+RM.marginal <- lsmeans(RMmod.95kde, 
+                       ~ Environment)
+
+## CATAGORIZE LSM GRAPH BY SEX BETWEEN ENVIRONMENT:
+refRM_kde <- lsmeans(RMmod.95kde, specs = c("Environment","Sex"))
+
+# refRM_sex
+ref_dfRM_kde <- as.data.frame(summary(refRM_kde))
+pd_RM <- position_dodge(0.1)
+
+kde.mean.adj<-ggplot(ref_dfRM_kde, aes(x=Sex,y=lsmean,group=Environment))+
+  geom_point(aes(shape = factor(Environment)), size = 3,position=position_dodge(.1), 
+             show.legend = FALSE)+
+  geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), width=.1,position=position_dodge())+
+  xlab("")+
+  ylab("")
+
+# kde.mean.adj
+
+############################ raw EMMs of 95% KDEs ###########################
+
+pd_RM <- position_dodge(0.1)
+
+Raw.kde<-ggplot(YR_Means.95KDEall, aes(x=Sex,y=Home_Range_95kde,group=Environment))+
+  geom_point(aes(shape = factor(Environment)), size = 3,position=position_dodge(.1),
+             show.legend = FALSE)+
+  geom_errorbar(aes(ymin=Home_Range_95kde-se, ymax=Home_Range_95kde+se),
+                width=.1, position=position_dodge())+
+  xlab("")+
+  ylab("95% KDE Area (ha)")
+Raw.kde
+# Raw.kde<-Raw.kde + theme(legend.title = element_blank(),
+#                                legend.text = element_text(size = 12),
+#                                legend.justification=c(0,1),
+#                                legend.position=c(0.05, 0.95),
+#                                legend.background = element_blank(),
+#                                legend.key = element_blank(),
+#                                legend.box.background = element_rect(colour = "black")) +
+#   scale_shape_discrete(name  ="",
+#                        breaks=c("nonsubsidized", "subsidized"),
+#                        labels=c("Nonsubsidized", "Subsidized"))
+# Raw.kde
+
+library(gridExtra)
+library(grid)
+
+# ggarrange(Raw.kde, kde.mean.adj, labels = c("A", "B"),
+#           nrow = 1)
 
 ```
+
+
+
+
+
+Yearly overall means of 95% KDEs grouped by site and sex
+```{r}
+YR_Means.95KDEall <- summarySE(year, measurevar="Home_Range_95kde",
+                            groupvars=c("Environment","Sex"),na.rm = TRUE)
+ 
+kable(YR_Means.95KDEall, format = "pandoc", caption = 'Table | Raw Group 95% KDE home range means male and female home ranges at non/subsidized.')
+```
+
+
+
+Collective grid of 100% MCP and 95% KDE of both sites from above
+```{r}
+ggarrange(Raw.YearHR, yr.mean.adj, Raw.kde, kde.mean.adj, labels = c("A", "B", "C","D"),
+          ncol = 2, nrow = 2)
+```
+
+
+
+
+
+Pairwise Comparisons, between sexes by environment, and between environments averaged across sex
+```{r}
+RMmod.year.Em<-lmer(Home_Range_100mcp~Environment+Year+Sex+N100+Environment*Sex+
+                      (1|Gila),data = year)
+
+# RMmod.year.Em95<-lmer(Home_Range_95mcp~Environment+Year+Sex+N95+Environment*Sex+
+#                       (1|Gila),data = year)
+
+# Sex.emm.oa <- emmeans(RMmod.year.Em, c("Environment","Sex"))
+# pairs(Sex.emm.oa)
+
+emm_s.t2 <- emmeans(RMmod.year.Em, pairwise ~ Sex | Environment)
+emm_s.t2
+# emm_s.e1 <- emmeans(RMmod.year.Em, pairwise ~ Environment)
+# emm_s.e1
+```
+
+
+Graphical Comparisons of Sex Within Each Environment:
+```{r}
+plot(emm_s.t2, comparisons = TRUE, xlab = "Least Square Mean (ha)", ylab = "Environment")
+```
+
+
+
+
+Pairwise by sex between enviornements 100%  MCP, and 95% KDEs
+```{r}
+emm_s.t3 <- emmeans(RMmod.year.Em, pairwise ~ Environment | Sex)
+emm_s.t3
+
+# emm_s.t95 <- emmeans(RMmod.year.Em95, pairwise ~ Environment | Sex)
+# emm_s.t95
+```
+
+
+
+Graphical Comparisons of Sex between the two populations:
+```{r}
+plot(emm_s.t3, comparisons = TRUE, xlab = "Least Square Mean (ha)", ylab = "Environment")
+```
+
+
+
+
+
+Ineractive map of MCPs at Stone Canyon
+```{r}
+M67_MCP<-mcp_analysis.POLY('./M67/M67 .csv', percentage= 100)
+M69_MCP<-mcp_analysis.POLY('./M69/M69 .csv', percentage= 100)
+M255_MCP<-mcp_analysis.POLY('./M255/M255 .csv', percentage= 100)
+M215_MCP<-mcp_analysis.POLY('./M215/M215 .csv', percentage= 100)
+M14_MCP<-mcp_analysis.POLY('./M14/M14 .csv', percentage= 100)
+M119_MCP<-mcp_analysis.POLY('./M119/M119 .csv', percentage= 100)
+M112_MCP<-mcp_analysis.POLY('./M112/M112 .csv', percentage= 100)
+
+F66_MCP<-mcp_analysis.POLY('./F66/F66 .csv', percentage= 100)
+F36_MCP<-mcp_analysis.POLY('./F36/F36 .csv', percentage= 100)
+F252_MCP<-mcp_analysis.POLY('./F252/F252 .csv', percentage= 100)
+F214_MCP<-mcp_analysis.POLY('./F214/F214 .csv', percentage= 100)
+F200_MCP<-mcp_analysis.POLY('./F200/F200 .csv', percentage= 100)
+F147_MCP<-mcp_analysis.POLY('./F147/F147 .csv', percentage= 100)
+F146_MCP<-mcp_analysis.POLY('./F146/F146 .csv', percentage= 100)
+F137_MCP<-mcp_analysis.POLY('./F137/F137 .csv', percentage= 100)
+F135_MCP<-mcp_analysis.POLY('./F135/F135 .csv', percentage= 100)
+F114_MCP<-mcp_analysis.POLY('./F114/F114 .csv', percentage= 100)
+F104_MCP<-mcp_analysis.POLY('./F104/F104 .csv', percentage= 100)
+
+Male.MCP <- rbind(M67_MCP,M69_MCP,M255_MCP,M215_MCP,M14_MCP,M119_MCP,M112_MCP)
+Female.MCP <- rbind(F66_MCP,F36_MCP,F252_MCP,F214_MCP,F200_MCP,F147_MCP,F146_MCP,F137_MCP,
+                    F135_MCP,F114_MCP,F104_MCP)
+
+mapviewOptions(basemaps = c("OpenStreetMap","Esri.WorldImagery","OpenTopoMap"),
+               na.color = "magenta",
+               layers.control.pos = "topleft")
+
+mapview(Male.MCP, legend=F, zcol="id", col.regions = c("blue"), alpha.regions=0.3) + 
+  mapview(Female.MCP, legend=F, zcol = "id", col.regions = c("red"), alpha.regions=0.3)
+```
+
+
+
+
+
+Create stagnant stamen map of MCPs at Stone Canyon
+```{r}
+SC_stamen_map<-SC_stamen_map + ggsn::scalebar(x.min = -110.972, x.max = -110.966,
+                     y.min = 32.474, y.max = 32.476, 
+                     dist = 500, dist_unit="m", 
+                     height=0.19,
+                     st.bottom=TRUE, 
+                     st.dist=0.3,
+                     st.size=3.5,
+                     transform = TRUE, 
+                     model = 'WGS84') 
+SC_stamen_map
+SC_stamen_map+north2(SC_stamen_map, x = 0.89, y = 0.85, scale = 0.1, symbol = 16)
+```
+
+
+
+
+Interactive map of KDEs at Stone Canyon
+```{r}
+M67_KDE<-kde_analysis.href.polygon('./M67/M67 .csv', percentage= 95)
+M69_KDE<-kde_analysis.href.polygon('./M69/M69 .csv', percentage= 95)
+M255_KDE<-kde_analysis.href.polygon('./M255/M255 .csv', percentage= 95)
+M215_KDE<-kde_analysis.href.polygon('./M215/M215 .csv', percentage= 95)
+M14_KDE<-kde_analysis.href.polygon('./M14/M14 .csv', percentage= 95)
+M119_KDE<-kde_analysis.href.polygon('./M119/M119 .csv', percentage= 95)
+M112_KDE<-kde_analysis.href.polygon('./M112/M112 .csv', percentage= 95)
+
+F66_KDE<-kde_analysis.href.polygon('./F66/F66 .csv', percentage= 95)
+F36_KDE<-kde_analysis.href.polygon('./F36/F36 .csv', percentage= 95)
+F252_KDE<-kde_analysis.href.polygon('./F252/F252 .csv', percentage= 95)
+F214_KDE<-kde_analysis.href.polygon('./F214/F214 .csv', percentage= 95)
+F200_KDE<-kde_analysis.href.polygon('./F200/F200 .csv', percentage= 95)
+F147_KDE<-kde_analysis.href.polygon('./F147/F147 .csv', percentage= 95)
+F146_KDE<-kde_analysis.href.polygon('./F146/F146 .csv', percentage= 95)
+F137_KDE<-kde_analysis.href.polygon('./F137/F137 .csv', percentage= 95)
+F135_KDE<-kde_analysis.href.polygon('./F135/F135 .csv', percentage= 95)
+F114_KDE<-kde_analysis.href.polygon('./F114/F114 .csv', percentage= 95)
+F104_KDE<-kde_analysis.href.polygon('./F104/F104 .csv', percentage= 95)
+
+Male.KDE <- rbind(M67_KDE,M69_KDE,M255_KDE,M215_KDE,M14_KDE,M119_KDE,M112_KDE)
+Female.KDE <- rbind(F66_KDE,F36_KDE,F252_KDE,F214_KDE,F200_KDE,F147_KDE,F146_KDE,F137_KDE,
+                    F135_KDE,F114_KDE,F104_KDE)
+
+mapviewOptions(basemaps = c("OpenStreetMap","Esri.WorldImagery","OpenTopoMap"),
+               na.color = "magenta",
+               layers.control.pos = "topleft")
+
+mapview(Male.KDE, legend=F, zcol="id", col.regions = c("blue"), alpha.regions=0.3) + 
+  mapview(Female.KDE, legend=F, zcol = "id", col.regions = c("red"), alpha.regions=0.3)
+```
+
+
+
+
+TABLE 
+```{r}
+kable(ref_dfRM_kde, format = "pandoc", caption = 'Table  | Subsidized and non-subsidized directional means of KDE home ranges after being adjusted for year, sex and sample size.')
+```
+
+
+
+
+############### SEASONAL ANALYSES ##################
+
+
+Map of seasonal fluctions of home ranges
+```{r}
+## Create MCP polygons by SEASON:
+M215_mcp.EM<-mcp_analysis.POLY("./M215/Emergence .csv", percentage= 100)
+M215_mcp.DRY<-mcp_analysis.POLY("./M215/Dry .csv", percentage= 100)
+M215_mcp.MON<-mcp_analysis.POLY("./M215/Monsoon .csv", percentage= 100)
+
+M112_mcp.DRY<-mcp_analysis.POLY("./M112/Dry .csv", percentage= 100)
+M112_mcp.MON<-mcp_analysis.POLY("./M112/Monsoon .csv", percentage= 100)
+M112_mcp.PM<-mcp_analysis.POLY("./M112/Post_Monsoon .csv", percentage= 100)
+
+M119_mcp.DRY<-mcp_analysis.POLY("./M119/Dry .csv", percentage= 100)
+M119_mcp.MON<-mcp_analysis.POLY("./M119/Monsoon .csv", percentage= 100)
+M119_mcp.PM<-mcp_analysis.POLY("./M119/Post_Monsoon .csv", percentage= 100)
+
+F114_mcp.EM<-mcp_analysis.POLY("./F114/Emergence .csv", percentage= 100)
+F114_mcp.DRY<-mcp_analysis.POLY("./F114/Dry .csv", percentage= 100)
+F114_mcp.MON<-mcp_analysis.POLY("./F114/Monsoon .csv", percentage= 100)
+F114_mcp.PM<-mcp_analysis.POLY("./F114/Post_Monsoon .csv", percentage= 100)
+
+F137_mcp.EM<-mcp_analysis.POLY("./F137/Emergence .csv", percentage= 100)
+F137_mcp.DRY<-mcp_analysis.POLY("./F137/Dry .csv", percentage= 100)
+F137_mcp.MON<-mcp_analysis.POLY("./F137/Monsoon .csv", percentage= 100)
+F137_mcp.PM<-mcp_analysis.POLY("./F137/Post_Monsoon .csv", percentage= 100)
+
+F147_mcp.EM<-mcp_analysis.POLY("./F147/Emergence .csv", percentage= 100)
+F147_mcp.DRY<-mcp_analysis.POLY("./F147/Dry .csv", percentage= 100)
+F147_mcp.MON<-mcp_analysis.POLY("./F147/Monsoon .csv", percentage= 100)
+F147_mcp.PM<-mcp_analysis.POLY("./F147/Post_Monsoon .csv", percentage= 100)
+
+F252_mcp.EM<-mcp_analysis.POLY("./F252/Emergence .csv", percentage= 100)
+F252_mcp.DRY<-mcp_analysis.POLY("./F252/Dry .csv", percentage= 100)
+F252_mcp.MON<-mcp_analysis.POLY("./F252/Monsoon .csv", percentage= 100)
+F252_mcp.PM<-mcp_analysis.POLY("./F252/Post_Monsoon .csv", percentage= 100)
+
+F36_mcp.EM<-mcp_analysis.POLY("./F36/Emergence .csv", percentage= 100)
+F36_mcp.DRY<-mcp_analysis.POLY("./F36/Dry .csv", percentage= 100)
+F36_mcp.MON<-mcp_analysis.POLY("./F36/Monsoon .csv", percentage= 100)
+F36_mcp.PM<-mcp_analysis.POLY("./F36/Post_Monsoon .csv", percentage= 100)
+
+F66_mcp.EM<-mcp_analysis.POLY("./F66/Emergence .csv", percentage= 100)
+F66_mcp.DRY<-mcp_analysis.POLY("./F66/Dry .csv", percentage= 100)
+F66_mcp.MON<-mcp_analysis.POLY("./F66/Monsoon .csv", percentage= 100)
+F66_mcp.PM<-mcp_analysis.POLY("./F66/Post_Monsoon .csv", percentage= 100)
+
+## Fortify mcp polygons for ggplot2 *SEASON*:
+M215_mcp.EMT <- fortify(M215_mcp.EM, region = "id")
+M215_mcp.DRYT <- fortify(M215_mcp.DRY, region = "id")
+M215_mcp.MONT <- fortify(M215_mcp.MON, region = "id")
+
+M112_mcp.DRYT <- fortify(M112_mcp.DRY, region = "id")
+M112_mcp.MONT <- fortify(M112_mcp.MON, region = "id")
+M112_mcp.PMT <- fortify(M112_mcp.PM, region = "id")
+
+M119_mcp.DRYT <- fortify(M119_mcp.DRY, region = "id")
+M119_mcp.MONT <- fortify(M119_mcp.MON, region = "id")
+M119_mcp.PMT <- fortify(M119_mcp.PM, region = "id")
+
+F114_mcp.EMT <- fortify(F114_mcp.EM, region = "id")
+F114_mcp.DRYT <- fortify(F114_mcp.DRY, region = "id")
+F114_mcp.MONT <- fortify(F114_mcp.MON, region = "id")
+F114_mcp.PMT <- fortify(F114_mcp.PM, region = "id")
+
+F137_mcp.EMT <- fortify(F137_mcp.EM, region = "id")
+F137_mcp.DRYT <- fortify(F137_mcp.DRY, region = "id")
+F137_mcp.MONT <- fortify(F137_mcp.MON, region = "id")
+F137_mcp.PMT <- fortify(F137_mcp.PM, region = "id")
+
+F147_mcp.EMT <- fortify(F147_mcp.EM, region = "id")
+F147_mcp.DRYT <- fortify(F147_mcp.DRY, region = "id")
+F147_mcp.MONT <- fortify(F147_mcp.MON, region = "id")
+F147_mcp.PMT <- fortify(F147_mcp.PM, region = "id")
+
+F252_mcp.EMT <- fortify(F252_mcp.EM, region = "id")
+F252_mcp.DRYT <- fortify(F252_mcp.DRY, region = "id")
+F252_mcp.MONT <- fortify(F252_mcp.MON, region = "id")
+F252_mcp.PMT <- fortify(F252_mcp.PM, region = "id")
+
+F36_mcp.EMT <- fortify(F36_mcp.EM, region = "id")
+F36_mcp.DRYT <- fortify(F36_mcp.DRY, region = "id")
+F36_mcp.MONT <- fortify(F36_mcp.MON, region = "id")
+F36_mcp.PMT <- fortify(F36_mcp.PM, region = "id")
+
+F66_mcp.EMT <- fortify(F66_mcp.EM, region = "id")
+F66_mcp.DRYT <- fortify(F66_mcp.DRY, region = "id")
+F66_mcp.MONT <- fortify(F66_mcp.MON, region = "id")
+F66_mcp.PMT <- fortify(F66_mcp.PM, region = "id")
+
+mcp.shift.TEST5 <- ggplot() +
+  geom_polygon(data=F114_mcp.EMT, aes(x=F114_mcp.EMT$long, y=F114_mcp.EMT$lat),
+               alpha=0.1,colour="blue",linetype=2) +
+  geom_polygon(data=F114_mcp.DRYT, aes(x=F114_mcp.DRYT$long, y=F114_mcp.DRYT$lat),
+               alpha=0.1,colour="red",linetype=3) +
+  geom_polygon(data=F114_mcp.MONT, aes(x=F114_mcp.MONT$long, y=F114_mcp.MONT$lat),
+               alpha=0.1,colour="green",linetype=4) +
+  geom_polygon(data=F114_mcp.PMT, aes(x=F114_mcp.PMT$long, y=F114_mcp.PMT$lat),
+               alpha=0.1,colour="black",linetype=5) +
+  geom_polygon(data=F137_mcp.EMT, aes(x=F137_mcp.EMT$long, y=F137_mcp.EMT$lat),
+               alpha=0.1,colour="blue",linetype=2) +
+  geom_polygon(data=F137_mcp.DRYT, aes(x=F137_mcp.DRYT$long, y=F137_mcp.DRYT$lat),
+               alpha=0.1,colour="red",linetype=3) +
+  geom_polygon(data=F137_mcp.MONT, aes(x=F137_mcp.MONT$long, y=F137_mcp.MONT$lat),
+               alpha=0.1,colour="green",linetype=4) +
+  geom_polygon(data=F137_mcp.PMT, aes(x=F137_mcp.PMT$long, y=F137_mcp.PMT$lat),
+               alpha=0.1,colour="black",linetype=5) +
+  geom_polygon(data=F147_mcp.EMT, aes(x=F147_mcp.EMT$long, y=F147_mcp.EMT$lat),
+               alpha=0.1,colour="blue",linetype=2) +
+  geom_polygon(data=F147_mcp.DRYT, aes(x=F147_mcp.DRYT$long, y=F147_mcp.DRYT$lat),
+               alpha=0.1,colour="red",linetype=3) +
+  geom_polygon(data=F147_mcp.MONT, aes(x=F147_mcp.MONT$long, y=F147_mcp.MONT$lat),
+               alpha=0.1,colour="green",linetype=4) +
+  geom_polygon(data=F147_mcp.PMT, aes(x=F147_mcp.PMT$long, y=F147_mcp.PMT$lat),
+               alpha=0.1,colour="black",linetype=5) +
+  # geom_polygon(data=F252_mcp.EMT, aes(x=F252_mcp.EMT$long, y=F252_mcp.EMT$lat),
+  #              alpha=0.1,colour="black",linetype=2) +
+  # geom_polygon(data=F252_mcp.DRYT, aes(x=F252_mcp.DRYT$long, y=F252_mcp.DRYT$lat),
+  #              alpha=0.1,colour="black",linetype=3) +
+  # geom_polygon(data=F252_mcp.MONT, aes(x=F252_mcp.MONT$long, y=F252_mcp.MONT$lat),
+  #              alpha=0.1,colour="black",linetype=4) +
+  # geom_polygon(data=F252_mcp.PMT, aes(x=F252_mcp.PMT$long, y=F252_mcp.PMT$lat),
+  #              alpha=0.1,colour="black",linetype=5) +
+  geom_polygon(data=F36_mcp.EMT, aes(x=F36_mcp.EMT$long, y=F36_mcp.EMT$lat),
+               alpha=0.1,colour="blue",linetype=2) +
+  geom_polygon(data=F36_mcp.DRYT, aes(x=F36_mcp.DRYT$long, y=F36_mcp.DRYT$lat),
+               alpha=0.1,colour="red",linetype=3) +
+  geom_polygon(data=F36_mcp.MONT, aes(x=F36_mcp.MONT$long, y=F36_mcp.MONT$lat),
+               alpha=0.1,colour="green",linetype=4) +
+  geom_polygon(data=F36_mcp.PMT, aes(x=F36_mcp.PMT$long, y=F36_mcp.PMT$lat),
+               alpha=0.1,colour="black",linetype=5) +
+  geom_polygon(data=F66_mcp.EMT, aes(x=F66_mcp.EMT$long, y=F66_mcp.EMT$lat),
+               alpha=0.1,colour="blue",linetype=2) +
+  geom_polygon(data=F66_mcp.DRYT, aes(x=F66_mcp.DRYT$long, y=F66_mcp.DRYT$lat),
+               alpha=0.1,colour="red",linetype=3) +
+  geom_polygon(data=F66_mcp.MONT, aes(x=F66_mcp.MONT$long, y=F66_mcp.MONT$lat),
+               alpha=0.1,colour="green",linetype=4) +
+  geom_polygon(data=F66_mcp.PMT, aes(x=F66_mcp.PMT$long, y=F66_mcp.PMT$lat),
+               alpha=0.1,colour="black",linetype=5) +
+  theme_bw() +
+  labs(x="Easting (m)", y="Northing (m)") +
+  labs(caption = "Figure 6 |  SC seasonal home range shifts of five lizards. All seasonal polygons stay relatively stable with \n considerable overlap and without any major shifts.")+
+  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
+  theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5))
+
+mcp.shift.TEST5
+```
+
+
+
+
+TABLE group means  of seasonal home ranges between the  two  populations averaged across sex
+```{r}
+seasonal<-read.csv("SC_Seasonal_Data.csv")
+
+library(Rmisc)
+
+SEAS_GRP_Means <- summarySE(seasonal, measurevar="Home_Range_100mcp",
+                            groupvars=c("Environment","Season"), na.rm = TRUE)
+
+# SEAS_GRP_Means
+kable(SEAS_GRP_Means, format = "pandoc", caption = 'Table 6 | Group means of seasonal home ranges between Stone Canyon (subsidized) and Owl Head Buttes (non-subsidized). These means are averaged across sex.')
+```
+
+
+
+
+RM-ANOVA for seasonal home ranges between environments
+```{r}
+library(lme4)
+library(readr)
+library(lmerTest)
+# seasonal<-read.csv("SC_Seasonal_Data.csv")
+
+RM.mod.Season <- lmer(Home_Range_100mcp~Environment+Season+Sex+N+Environment*Season+(1|Gila), 
+                      data=seasonal)
+summary(RM.mod.Season)
+```
+
+
+ANOVA table of seasonal HRs between envs.
+```{r}
+anova(RM.mod.Season)
+```
+
+
+
+
+TABLE of seasonal home ranges by sex between the two populations
+```{r}
+SEAS_GRP_TEST <- summarySE(seasonal, measurevar="Home_Range_100mcp",
+                           groupvars=c("Environment","Season","Sex"), na.rm = TRUE)
+
+# SEAS_GRP_Means
+kable(SEAS_GRP_TEST, format = "pandoc", caption = 'Table 7 | Seasonal home range means between Stone Canyon (subsidized) and Owl Head Buttes (non-subsidized) popuations for males and females. These are raw means before being adjusted for environment, season, sex, and sample size.')
+```
+
+
+
+
+figures for raw seasonal home ranges between the two populations
+```{r}
+pd <- position_dodge(0.3) # move them .05 to the left and right ('dodges')
+
+# To change plot order of facet wrap,
+# change the order of varible levels with factor()
+# year$Season <- factor(year$Season, levels = c("Emergence", "Dry", "Monsoon", "Post_Monsoon"))
+# f=c('Emergence','Dry','Monsoon', 'Post_Monsoon')
+# year <- within(year, Season <- factor(Season, levels=f))
+
+# New facet label names for seasons
+season.labs <- c("Dry", "Emergence", "Monsoon", "Post Monsoon")
+names(season.labs) <- c("Dry", "Emergence", "Monsoon", "Post_Monsoon")
+
+## TEST 3
+raw.seasonal<-ggplot(SEAS_GRP_TEST,aes(x=Environment, y=Home_Range_100mcp, shape=Sex)) + 
+  geom_point(aes(shape=Sex), size = 3, position=pd) +
+  geom_errorbar(aes(ymin=Home_Range_100mcp-se, ymax=Home_Range_100mcp+se), position = pd,
+                width=0.3, size=0.5, lty=1) +
+  # scale_colour_manual(values = c('black','red')) +
+  facet_grid(~Season, labeller=labeller(Season=season.labs)) +
+  # scale_shape_manual(values = c(8,19))+
+  # labs(caption = "Figure 12 |  Raw seasonal means of sexes between each environment. Home ranges of the subsidezed population remain \n relatively small throughout the seasons, with the exception during the dry season where we observe increased male \n home ranges. The non-subsidized population exhibits a large amount of variation across seasons.")+
+  # theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
+  # scale_x_discrete(limits=c('Emergence','Dry','Monsoon','Post_Monsoon')) +
+  theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
+        plot.title = element_text(lineheight=1.5, face="bold", size=rel(1.5), hjust = 0.5),
+        # axis.text.x  = element_text(vjust=0.5, size=8),
+        axis.text.x=element_blank(),
+        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.title.y  = element_text(size=12),
+        axis.title.x  = element_text(size=10),
+        legend.text = element_text(size = 12, face = "bold"),
+        axis.ticks.x=element_blank(),
+        strip.text = element_text(size=12)) +
+  xlab("") + ylab("100% MCP Area (ha)")
+raw.seasonal
+```
+
+
+
+
+Figures Adjusted EMMs of seasonal home range between the two populations
+```{r}
+RM.mod.Season <- lmer(Home_Range_100mcp~Environment+Season+Sex+N+Environment*Season+(1|Gila), data=seasonal)
+
+# RM.marginal <- lsmeans(RM.mod.Season, 
+#                     ~ Environment)
+# RM.marginal
+
+## CATAGORIZE LSM GRAPH BY SEX BETWEEN ENVIRONMENT:
+refRM_season <- lsmeans(RM.mod.Season, specs = c("Environment","Season","Sex"))
+
+# refRM_sex
+ref_dfRM_season <- as.data.frame(summary(refRM_season))
+pd_RM <- position_dodge(0.2)
+
+# New facet label names for seasons
+season.labs <- c("Dry", "Emergence", "Monsoon", "Post")
+names(season.labs) <- c("Dry", "Emergence", "Monsoon", "Post Monsoon")
+
+adj.seasonal<-ggplot(ref_dfRM_season,aes(x=Environment, y=lsmean, shape=Sex)) + 
+  geom_point(aes(shape=Sex), size = 3, position=pd, show.legend=FALSE) +
+  geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), position = pd,
+                width=0.3, size=0.5, lty=1) + 
+  facet_grid(~Season, labeller=labeller(Season=season.labs)) +
+# labs(caption = "Figure 13 | Adjusted seasonal home range means of sexes between environments. Home ranges of the subsidezed \n population remain relatively small throughout the seasons. After adjustment male home reanges were reduced, \n but still remained slightly larger then females.")+
+  # theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
+  # # scale_shape_manual(values = c(8,19))+
+  theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
+        plot.title = element_text(lineheight=1.5, face="bold", size=rel(1.5), hjust = 0.5),
+        axis.text.x  = element_text(vjust=0.5, size=12),
+        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.title.y  = element_text(size=12),
+        axis.title.x  = element_text(size=10),
+        legend.text = element_text(size = 12, face = "bold"),
+        strip.text = element_blank()) +
+  scale_x_discrete(labels=c("Non", "Sub")) +
+        # strip.text = element_text(size=12)) +
+  xlab("") + ylab("100% MCP Area (ha)")
+adj.seasonal
+```
+
+
+Collective grid of raw and adjusted seasonal home ranges
+```{r}
+ggarrange(raw.seasonal, adj.seasonal, labels = c("A", "B"),
+          nrow = 2)
+```
+
+
+
+
+Post hoc analyses of seasonal home ranges
+
+Pairwise of each season between populations, overaged over levels of sex
+```{r}
+emm_s.t <- emmeans(RM.mod.Season, pairwise ~ Environment | Season)
+emm_s.t
+```
+
+Graphical comparisons
+```{r}
+plot(emm_s.t, comparisons = TRUE)
+```
+
+
+
+
+Pairwise between seasons within each popultion 
+```{r}
+emm_s.t4 <- emmeans(RM.mod.Season, pairwise ~ Season | Environment)
+emm_s.t4
+```
+
+Graphical Comps
+```{r}
+plot(emm_s.t4, comparisons = TRUE)
+```
+
+
+
+Pairwise between sexes of each season of the  subsidized population
+```{r}
+sub <- subset(seasonal, Environment == "subsidized")
+
+RM.mod.Sub <- lmer(Home_Range_100mcp~Season+Sex+N+Season*Sex+(1|Gila), data=sub)
+
+emm_s.t5 <- emmeans(RM.mod.Sub, pairwise ~ Sex | Season)
+emm_s.t5 
+```
+
+Graphical Comps
+```{r}
+plot(emm_s.t5, comparisons = TRUE)
+```
+
+
+
+Pairwise between sexes of each season of the  non-subsidized population
+```{r}
+nonsub <- subset(seasonal, Environment == "nonsubsidized")
+View(nonsub)
+RM.mod.NSub <- lmer(Home_Range_100mcp~Season+Sex+N+Season*Sex+(1|Gila), data=nonsub)
+
+emm_s.t6 <- emmeans(RM.mod.NSub, pairwise ~ Sex | Season)
+emm_s.t6 
+```
+
+Graphical Comps
+```{r}
+plot(emm_s.t6, comparisons = TRUE)
+```
+
+
+
 

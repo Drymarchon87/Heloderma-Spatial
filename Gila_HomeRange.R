@@ -1833,7 +1833,6 @@ ggarrange(Raw.YearHR, yr.mean.adj,Raw.KDE.HR, LSM.KDE.HR, labels = c("A", "B", "
           ncol = 2, nrow = 2)
 
 ########################## SUB VS NONSUB KDEs ##################
-##############MCP example...
 View(year)
 RMmod.95kde<-lmer(Home_Range_95kde~Environment+Year+Sex+N+Environment*Sex+(1|Gila),data = year)
 
@@ -1884,7 +1883,8 @@ library(grid)
 ggarrange(Raw.YearHR, yr.mean.adj,Raw.kde, kde.mean.adj, labels = c("A", "B", "C","D"),
           ncol = 2, nrow = 2)
 
-
+ggarrange(raw.seasonal, adj.seasonal, labels = c("A", "B"),
+          nrow = 2)
 #########################
 ## RECHECKING ASSUMPTIONS
 View(year)
