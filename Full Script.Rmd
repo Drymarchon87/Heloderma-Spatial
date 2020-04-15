@@ -541,23 +541,44 @@ ref_dfRM_sex <- as.data.frame(summary(refRM_sex))
 pd_RM <- position_dodge(0.1)
 
 yr.mean.adj<-ggplot(ref_dfRM_sex, aes(x=Sex,y=lsmean,group=Environment))+
-  geom_point(aes(shape = factor(Environment)), size = 3,position=position_dodge(.1), 
+  geom_point(aes(shape = factor(Environment)), size = 4,position=position_dodge(.1), 
             show.legend = FALSE)+
+  scale_shape_manual(values=c(1, 2))+
   geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), width=.1,position=position_dodge())+
-  xlab("")+
-  ylab("")
+  geom_line(position=pd_RM) +
+  theme_bw()  +
+  xlab("") +
+  ylab("") +
+   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
+        axis.text.x=element_blank(),
+        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.title.y  = element_text(size=16),
+        axis.title.x  = element_text(size=10),
+        legend.text = element_text(size = 12, face = "bold"),
+        axis.ticks.x=element_blank(),
+        strip.text = element_text(size=12)) 
 
-#yr.mean.adj
+yr.mean.adj
 
 ############################# Raw Group Means ############################
-pd_RM <- position_dodge(0.1)
+# pd_RM <- position_dodge(0.1)
 
 Raw.YearHR<-ggplot(YR_GRP_Means, aes(x=Sex,y=Home_Range_100mcp,group=Environment))+
-  geom_point(aes(shape = factor(Environment)), size = 3,position=position_dodge(.1))+
+  geom_point(aes(shape = factor(Environment)), size = 4,position=position_dodge(.1))+
   geom_errorbar(aes(ymin=Home_Range_100mcp-se, ymax=Home_Range_100mcp+se),
                 width=.1,position=position_dodge())+
+  geom_line(position=pd_RM) +
+  theme_bw()+
   xlab("")+
-  ylab("100% MCP Area (ha)")
+  ylab("100% MCP Area (ha)") +
+   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
+        axis.text.x=element_blank(),
+        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.title.y  = element_text(size=16),
+        axis.title.x  = element_text(size=10),
+        legend.text = element_text(size = 12, face = "bold"),
+        axis.ticks.x=element_blank(),
+        strip.text = element_text(size=12)) 
 
 
 Raw.YearHR<-Raw.YearHR + theme(legend.title = element_blank(),
@@ -571,7 +592,7 @@ Raw.YearHR<-Raw.YearHR + theme(legend.title = element_blank(),
                           breaks=c("nonsubsidized", "subsidized"),
                           labels=c("Nonsubsidized", "Subsidized"))
 
-#Raw.YearHR
+Raw.YearHR
 
 library(ggpubr)
 library(gridExtra)
@@ -655,29 +676,54 @@ refRM_kde <- lsmeans(RMmod.95kde, specs = c("Environment","Sex"))
 
 # refRM_sex
 ref_dfRM_kde <- as.data.frame(summary(refRM_kde))
-pd_RM <- position_dodge(0.1)
+# pd_RM <- position_dodge(0.1)
 
 kde.mean.adj<-ggplot(ref_dfRM_kde, aes(x=Sex,y=lsmean,group=Environment))+
-  geom_point(aes(shape = factor(Environment)), size = 3,position=position_dodge(.1), 
+  geom_point(aes(shape = factor(Environment)), size = 4,position=position_dodge(.1), 
              show.legend = FALSE)+
+  scale_shape_manual(values=c(1, 2))+
   geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), width=.1,position=position_dodge())+
+  geom_line(position=pd_RM) +
+  theme_bw()+
   xlab("")+
-  ylab("")
+  ylab("")+
+  theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
+        axis.text.x  = element_text(vjust=0.5, size=16),
+        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.title.y  = element_text(size=16),
+        axis.title.x  = element_text(size=10),
+        legend.text = element_text(size = 12, face = "bold"),
+        strip.text = element_blank()) +
+  scale_x_discrete(labels=c("Female", "Male")) 
 
-# kde.mean.adj
+kde.mean.adj
 
 ############################ raw EMMs of 95% KDEs ###########################
 
-pd_RM <- position_dodge(0.1)
+# pd_RM <- position_dodge(0.1)
 
-Raw.kde<-ggplot(YR_Means.95KDEall, aes(x=Sex,y=Home_Range_95kde,group=Environment))+
-  geom_point(aes(shape = factor(Environment)), size = 3,position=position_dodge(.1),
-             show.legend = FALSE)+
+# geom_line(position=pd)+
+
+Raw.kde<-ggplot(YR_Means.95KDEall, aes(x=Sex,y=Home_Range_95kde,group=Environment)) +
+  geom_point(aes(shape = factor(Environment)), size = 4,position=position_dodge(.1),
+             show.legend = FALSE) +
   geom_errorbar(aes(ymin=Home_Range_95kde-se, ymax=Home_Range_95kde+se),
-                width=.1, position=position_dodge())+
-  xlab("")+
-  ylab("95% KDE Area (ha)")
+                width=.1, position=position_dodge()) +
+  geom_line(position=pd_RM) +
+  theme_bw() +
+  xlab("") +
+  ylab("95% KDE Area (ha)") +
+  theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
+        axis.text.x  = element_text(vjust=0.5, size=16),
+        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.title.y  = element_text(size=16),
+        axis.title.x  = element_text(size=10),
+        legend.text = element_text(size = 12, face = "bold"),
+        strip.text = element_blank()) +
+  scale_x_discrete(labels=c("Female", "Male")) 
+
 Raw.kde
+
 # Raw.kde<-Raw.kde + theme(legend.title = element_blank(),
 #                                legend.text = element_text(size = 12),
 #                                legend.justification=c(0,1),
@@ -699,23 +745,22 @@ library(grid)
 ```
 
 
+Collective grid of 100% MCP and 95% KDE of both sites from above
+```{r}
+ggarrange(Raw.YearHR, yr.mean.adj, Raw.kde, kde.mean.adj, labels = c("A", "B", "C","D"),
+          ncol = 2, nrow = 2)
+```
 
 
 
+
+43.4 male 42.9 female
 Yearly overall means of 95% KDEs grouped by site and sex
 ```{r}
 YR_Means.95KDEall <- summarySE(year, measurevar="Home_Range_95kde",
                             groupvars=c("Environment","Sex"),na.rm = TRUE)
  
 kable(YR_Means.95KDEall, format = "pandoc", caption = 'Table | Raw Group 95% KDE home range means male and female home ranges at non/subsidized.')
-```
-
-
-
-Collective grid of 100% MCP and 95% KDE of both sites from above
-```{r}
-ggarrange(Raw.YearHR, yr.mean.adj, Raw.kde, kde.mean.adj, labels = c("A", "B", "C","D"),
-          ncol = 2, nrow = 2)
 ```
 
 
@@ -807,7 +852,80 @@ mapview(Male.MCP, legend=F, zcol="id", col.regions = c("blue"), alpha.regions=0.
 
 
 Create stagnant stamen map of MCPs at Stone Canyon
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+## Get/view the stamen map (bbox should be adjusted appropriately):
+myMap <- get_stamenmap(bbox = c(left = -111.009,
+                                bottom = 32.459,
+                                right = -110.969,
+                                top = 32.474),
+                       maptype = "terrain", 
+                       crop = FALSE,
+                       zoom = 15)
+
+F104_latlon <- spTransform(F104_MCP, CRS("+proj=longlat +datum=WGS84"))
+F114_latlon <- spTransform(F114_MCP, CRS("+proj=longlat +datum=WGS84"))
+F135_latlon <- spTransform(F135_MCP, CRS("+proj=longlat +datum=WGS84"))
+F137_latlon <- spTransform(F137_MCP, CRS("+proj=longlat +datum=WGS84"))
+F146_latlon <- spTransform(F146_MCP, CRS("+proj=longlat +datum=WGS84"))
+F147_latlon <- spTransform(F147_MCP, CRS("+proj=longlat +datum=WGS84"))
+F200_latlon <- spTransform(F200_MCP, CRS("+proj=longlat +datum=WGS84"))
+F214_latlon <- spTransform(F214_MCP, CRS("+proj=longlat +datum=WGS84"))
+F252_latlon <- spTransform(F252_MCP, CRS("+proj=longlat +datum=WGS84"))
+F36_latlon <- spTransform(F36_MCP, CRS("+proj=longlat +datum=WGS84"))
+F66_latlon <- spTransform(F66_MCP, CRS("+proj=longlat +datum=WGS84"))
+M112_latlon <- spTransform(M112_MCP, CRS("+proj=longlat +datum=WGS84"))
+M119_latlon <- spTransform(M119_MCP, CRS("+proj=longlat +datum=WGS84"))
+M14_latlon <- spTransform(M14_MCP, CRS("+proj=longlat +datum=WGS84"))
+M215_latlon <- spTransform(M215_MCP, CRS("+proj=longlat +datum=WGS84"))
+M255_latlon <- spTransform(M255_MCP, CRS("+proj=longlat +datum=WGS84"))
+M67_latlon <- spTransform(M67_MCP, CRS("+proj=longlat +datum=WGS84"))
+M69_latlon <- spTransform(M69_MCP, CRS("+proj=longlat +datum=WGS84"))
+
+SC_stamen_map <- ggmap(myMap) +
+  # geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+  geom_polygon(data = fortify(F104_latlon), aes(long, lat, group=group), colour = "red", 
+             fill = NA) +
+  geom_polygon(data = fortify(F114_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F135_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F137_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F146_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F147_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F200_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F214_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F252_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F36_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F66_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(M112_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M119_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M14_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M215_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M255_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M67_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M69_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  xlab("Longitude") +
+  ylab("Latitude") 
+
+# SC_stamen_map
+
+library(ggsn)
+
 SC_stamen_map<-SC_stamen_map + ggsn::scalebar(x.min = -110.972, x.max = -110.966,
                      y.min = 32.474, y.max = 32.476, 
                      dist = 500, dist_unit="m", 
@@ -817,7 +935,7 @@ SC_stamen_map<-SC_stamen_map + ggsn::scalebar(x.min = -110.972, x.max = -110.966
                      st.size=3.5,
                      transform = TRUE, 
                      model = 'WGS84') 
-SC_stamen_map
+# SC_stamen_map
 SC_stamen_map+north2(SC_stamen_map, x = 0.89, y = 0.85, scale = 0.1, symbol = 16)
 ```
 
@@ -1074,38 +1192,36 @@ figures for raw seasonal home ranges between the two populations
 ```{r}
 pd <- position_dodge(0.3) # move them .05 to the left and right ('dodges')
 
-# To change plot order of facet wrap,
-# change the order of varible levels with factor()
-# year$Season <- factor(year$Season, levels = c("Emergence", "Dry", "Monsoon", "Post_Monsoon"))
-# f=c('Emergence','Dry','Monsoon', 'Post_Monsoon')
-# year <- within(year, Season <- factor(Season, levels=f))
+# relevel factor season:
+SEAS_GRP_TEST$Season<-relevel(SEAS_GRP_TEST$Season,"Emergence")
 
 # New facet label names for seasons
-season.labs <- c("Dry", "Emergence", "Monsoon", "Post Monsoon")
-names(season.labs) <- c("Dry", "Emergence", "Monsoon", "Post_Monsoon")
+# season.labs <- c("Dry", "Emergence", "Monsoon", "Post Monsoon")
+# names(season.labs) <- c("Dry", "Emergence", "Monsoon", "Post_Monsoon")
+
+season.labs <- c("Emergence", "Dry", "Monsoon", "Post Monsoon")
+names(season.labs) <- c("Emergence", "Dry", "Monsoon", "Post_Monsoon")
 
 ## TEST 3
 raw.seasonal<-ggplot(SEAS_GRP_TEST,aes(x=Environment, y=Home_Range_100mcp, shape=Sex)) + 
-  geom_point(aes(shape=Sex), size = 3, position=pd) +
+  geom_point(aes(shape=Sex), size = 4, position=pd) +
   geom_errorbar(aes(ymin=Home_Range_100mcp-se, ymax=Home_Range_100mcp+se), position = pd,
                 width=0.3, size=0.5, lty=1) +
-  # scale_colour_manual(values = c('black','red')) +
   facet_grid(~Season, labeller=labeller(Season=season.labs)) +
-  # scale_shape_manual(values = c(8,19))+
-  # labs(caption = "Figure 12 |  Raw seasonal means of sexes between each environment. Home ranges of the subsidezed population remain \n relatively small throughout the seasons, with the exception during the dry season where we observe increased male \n home ranges. The non-subsidized population exhibits a large amount of variation across seasons.")+
-  # theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
-  # scale_x_discrete(limits=c('Emergence','Dry','Monsoon','Post_Monsoon')) +
+   theme_bw() +
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
         plot.title = element_text(lineheight=1.5, face="bold", size=rel(1.5), hjust = 0.5),
         # axis.text.x  = element_text(vjust=0.5, size=8),
         axis.text.x=element_blank(),
         axis.text.y  = element_text(vjust=0.5, size=8),
-        axis.title.y  = element_text(size=12),
-        axis.title.x  = element_text(size=10),
+        axis.title.y  = element_text(size=16),
+        axis.title.x  = element_blank(),
+        legend.title = element_blank(),
         legend.text = element_text(size = 12, face = "bold"),
         axis.ticks.x=element_blank(),
         strip.text = element_text(size=12)) +
-  xlab("") + ylab("100% MCP Area (ha)")
+  xlab("") + ylab("100% MCP Area (ha)") 
+
 raw.seasonal
 ```
 
@@ -1127,29 +1243,33 @@ refRM_season <- lsmeans(RM.mod.Season, specs = c("Environment","Season","Sex"))
 ref_dfRM_season <- as.data.frame(summary(refRM_season))
 pd_RM <- position_dodge(0.2)
 
+# relevel factor season for graphing purposes:
+ref_dfRM_season$Season<-relevel(ref_dfRM_season$Season,"Emergence")
+
 # New facet label names for seasons
-season.labs <- c("Dry", "Emergence", "Monsoon", "Post")
-names(season.labs) <- c("Dry", "Emergence", "Monsoon", "Post Monsoon")
+# season.labs <- c("Dry", "Emergence", "Monsoon", "Post Monsoon")
+# names(season.labs) <- c("Dry", "Emergence", "Monsoon", "Post_Monsoon")
+
+# season.labs <- c("Emergence", "Dry", "Monsoon", "Post Monsoon")
+# names(season.labs) <- c("Emergence", "Dry", "Monsoon", "Post_Monsoon")
 
 adj.seasonal<-ggplot(ref_dfRM_season,aes(x=Environment, y=lsmean, shape=Sex)) + 
-  geom_point(aes(shape=Sex), size = 3, position=pd, show.legend=FALSE) +
+  geom_point(aes(shape=Sex), size = 4, position=pd, show.legend=FALSE) +
+  scale_shape_manual(values=c(1, 2)) +
   geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), position = pd,
                 width=0.3, size=0.5, lty=1) + 
   facet_grid(~Season, labeller=labeller(Season=season.labs)) +
-# labs(caption = "Figure 13 | Adjusted seasonal home range means of sexes between environments. Home ranges of the subsidezed \n population remain relatively small throughout the seasons. After adjustment male home reanges were reduced, \n but still remained slightly larger then females.")+
-  # theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))+
-  # # scale_shape_manual(values = c(8,19))+
+  theme_bw()+
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
-        plot.title = element_text(lineheight=1.5, face="bold", size=rel(1.5), hjust = 0.5),
-        axis.text.x  = element_text(vjust=0.5, size=12),
+        axis.text.x  = element_text(vjust=0.5, size=16),
         axis.text.y  = element_text(vjust=0.5, size=8),
-        axis.title.y  = element_text(size=12),
+        axis.title.y  = element_text(size=16),
         axis.title.x  = element_text(size=10),
-        legend.text = element_text(size = 12, face = "bold"),
+        # legend.text = element_text(size = 12, face = "bold"),
         strip.text = element_blank()) +
   scale_x_discrete(labels=c("Non", "Sub")) +
-        # strip.text = element_text(size=12)) +
   xlab("") + ylab("100% MCP Area (ha)")
+
 adj.seasonal
 ```
 

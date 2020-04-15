@@ -1847,21 +1847,21 @@ refRM_kde <- lsmeans(RMmod.95kde, specs = c("Environment","Sex"))
 ref_dfRM_kde <- as.data.frame(summary(refRM_kde))
 pd_RM <- position_dodge(0.1)
 
-kde.mean.adj<-ggplot(ref_dfRM_kde, aes(x=Sex,y=lsmean,group=Environment))+
-  geom_point(aes(shape = factor(Environment)), size = 3,position=position_dodge(.1), 
+kde.mean.adj<-ggplot(ref_dfRM_kde, aes(x=Sex, y=lsmean, group=Environment))+
+  geom_point(aes(shape = factor(Environment)), size = 3, position=position_dodge(.1), 
              show.legend = FALSE)+
-  geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), width=.1,position=position_dodge())+
+  geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), width=.1, position=position_dodge())+
   xlab("")+
   ylab("")
 kde.mean.adj
 
 pd_RM <- position_dodge(0.1)
 
-Raw.kde<-ggplot(YR_Means.95KDEall, aes(x=Sex,y=Home_Range_95kde,group=Environment))+
+Raw.kde<-ggplot(YR_Means.95KDEall, aes(x=Sex, y=Home_Range_95kde, group=Environment))+
   geom_point(aes(shape = factor(Environment)), size = 3,position=position_dodge(.1),
              show.legend = FALSE)+
   geom_errorbar(aes(ymin=Home_Range_95kde-se, ymax=Home_Range_95kde+se),
-                width=.1,position=position_dodge())+
+                width=.1, position=position_dodge())+
   xlab("")+
   ylab("95% KDE Area (ha)")
 Raw.kde
@@ -1885,6 +1885,7 @@ ggarrange(Raw.YearHR, yr.mean.adj,Raw.kde, kde.mean.adj, labels = c("A", "B", "C
 
 ggarrange(raw.seasonal, adj.seasonal, labels = c("A", "B"),
           nrow = 2)
+
 #########################
 ## RECHECKING ASSUMPTIONS
 View(year)
