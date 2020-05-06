@@ -82,7 +82,8 @@ year <- read_csv("GM_Consolidated_ByYear.csv")
 # quick plot
 # Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp,group=Environment))+
 Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp))+
-  geom_point(aes(shape = factor(Environment)), size = 2)+
+  geom_point(aes(shape = factor(Environment)), size = 4)+
+  scale_shape_manual(values=c(16, 2))+
   geom_smooth(aes(linetype=Environment),colour="black", method="lm") +
   # scale_colour_manual(values=c(subsidized="cyan3",nonsubsidized="indian red1"))+
   # labs(title = "100% MCP Home Ranges")+
@@ -92,11 +93,11 @@ Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp))+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
   # theme_bw()
 
-Graph1<-Graph1+theme(axis.title=element_text(size = 14))
+Graph1<-Graph1+theme(axis.title=element_text(size = 18))
 
 # legend at top-left, inside the plot
 SCOH.hr.fig<-Graph1 + theme(legend.title = element_blank(),
-               legend.text = element_text(size = 12),
+               legend.text = element_text(size = 14),
                legend.justification=c(0,1),
                legend.position=c(0.05, 0.95),
                legend.background = element_blank(),
@@ -114,6 +115,47 @@ SCOH.hr.fig
 # ggsave("outputs/SC_OHB_plot.pdf")
 ```
 
+
+
+Plot of 95% KDEs against relocations
+```{r}
+year2 <- read_csv("GM_Consolidated_ByYear_Input.csv")
+
+# quick plot
+# Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp,group=Environment))+
+Graph2<-ggplot(year2,aes(x=N,y=Home_Range_95kde))+
+  geom_point(aes(shape = factor(Environment)), size = 4)+
+  scale_shape_manual(values=c(16, 2))+
+  geom_smooth(aes(linetype=Environment),colour="black", method="lm") +
+  # scale_colour_manual(values=c(subsidized="cyan3",nonsubsidized="indian red1"))+
+  # labs(title = "100% MCP Home Ranges")+
+  xlab("Number of Relocations")+
+  ylab("95% KDE Area (ha)")+
+  # labs(caption = "Figure 3 | Non-Subsidized (Owl Head Buttes) vs. Subsidized (Stone Canyon) population 100% MCPs against number \n of fixes of the complete data set.")+
+  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
+  # theme_bw()
+
+Graph2<-Graph2+theme(axis.title=element_text(size = 18))
+
+# legend at top-left, inside the plot
+SCOH.hr.fig2<-Graph2 + theme(legend.title = element_blank(),
+               legend.text = element_text(size = 14),
+               legend.justification=c(0,1),
+               legend.position=c(0.05, 0.95),
+               legend.background = element_blank(),
+               legend.key = element_blank(),
+               legend.box.background = element_rect(colour = "black")) +
+               scale_shape_discrete(name  ="",
+                          breaks=c("nonsubsidized", "subsidized"),
+                          labels=c("Nonsubsidized", "Subsidized")) +
+                            scale_linetype_discrete(name  ="",
+                          breaks=c("nonsubsidized", "subsidized"),
+                          labels=c("Nonsubsidized", "Subsidized"))
+
+SCOH.hr.fig2
+# dir.create("outputs") # create a new folder to hold the output files
+# ggsave("outputs/SC_OHB_plot.pdf")
+```
 
 
 
@@ -446,9 +488,9 @@ mcp.shift.TEST4 <- ggplot() +
   #              alpha=0.1,colour="black") +
   # geom_polygon(data=M215_mcp.12T, aes(x=M215_mcp.12T$long, y=M215_mcp.12T$lat),
   #              alpha=0.1,colour="black") +
-  theme_bw() +labs(x="Easting (m)", y="Northing (m)") +
-  labs(caption = "Figure 5  |  SC Yearly home range shifts of 8 lizards, both males and females. Home range shifts appear to be \n relativley stable over study years.")+
-  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
+  theme_bw() +labs(x="Easting (m)", y="Northing (m)")
+  # labs(caption = "Figure 5  |  SC Yearly home range shifts of 8 lizards, both males and females. Home range shifts appear to be \n relativley stable over study years.")+
+  # theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
   # theme(legend.position="none", plot.title = element_text(face = "bold", hjust = 0.5))
 ## within each geom_polygon line?:
 ## aes(colour="red"or"M112_mcp.09T")...+scale_color_manual(name="",breaks=c("","",...""))+
@@ -551,7 +593,7 @@ yr.mean.adj<-ggplot(ref_dfRM_sex, aes(x=Sex,y=lsmean,group=Environment))+
   ylab("") +
    theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
         axis.text.x=element_blank(),
-        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.text.y  = element_text(vjust=0.5, size=12),
         axis.title.y  = element_text(size=16),
         axis.title.x  = element_text(size=10),
         legend.text = element_text(size = 12, face = "bold"),
@@ -573,7 +615,7 @@ Raw.YearHR<-ggplot(YR_GRP_Means, aes(x=Sex,y=Home_Range_100mcp,group=Environment
   ylab("100% MCP Area (ha)") +
    theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
         axis.text.x=element_blank(),
-        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.text.y  = element_text(vjust=0.5, size=12),
         axis.title.y  = element_text(size=16),
         axis.title.x  = element_text(size=10),
         legend.text = element_text(size = 12, face = "bold"),
@@ -689,7 +731,7 @@ kde.mean.adj<-ggplot(ref_dfRM_kde, aes(x=Sex,y=lsmean,group=Environment))+
   ylab("")+
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
         axis.text.x  = element_text(vjust=0.5, size=16),
-        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.text.y  = element_text(vjust=0.5, size=12),
         axis.title.y  = element_text(size=16),
         axis.title.x  = element_text(size=10),
         legend.text = element_text(size = 12, face = "bold"),
@@ -715,7 +757,7 @@ Raw.kde<-ggplot(YR_Means.95KDEall, aes(x=Sex,y=Home_Range_95kde,group=Environmen
   ylab("95% KDE Area (ha)") +
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
         axis.text.x  = element_text(vjust=0.5, size=16),
-        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.text.y  = element_text(vjust=0.5, size=12),
         axis.title.y  = element_text(size=16),
         axis.title.x  = element_text(size=10),
         legend.text = element_text(size = 12, face = "bold"),
@@ -772,15 +814,18 @@ Pairwise Comparisons, between sexes by environment, and between environments ave
 RMmod.year.Em<-lmer(Home_Range_100mcp~Environment+Year+Sex+N100+Environment*Sex+
                       (1|Gila),data = year)
 
-# RMmod.year.Em95<-lmer(Home_Range_95mcp~Environment+Year+Sex+N95+Environment*Sex+
-#                       (1|Gila),data = year)
+RMmod.year.Em95<-lmer(Home_Range_95mcp~Environment+Year+Sex+N95+Environment*Sex+
+                      (1|Gila),data = year)
 
-# Sex.emm.oa <- emmeans(RMmod.year.Em, c("Environment","Sex"))
-# pairs(Sex.emm.oa)
+# CATAGORIZE LSM GRAPH BY SEX BETWEEN ENVIRONMENT:
+refRM_sex <- lsmeans(RMmod.year.Em, specs = c("Environment","Sex"))
 
-emm_s.t2 <- emmeans(RMmod.year.Em, pairwise ~ Sex | Environment)
-emm_s.t2
-# emm_s.e1 <- emmeans(RMmod.year.Em, pairwise ~ Environment)
+emm_s.TK <- emmeans(RMmod.year.Em, pairwise ~ Environment | Sex)
+emm_s.TK
+
+# emm_s.t2 <- emmeans(RMmod.year.Em, pairwise ~ Sex | Environment)
+# emm_s.t2
+# emm_s.e1 <- emmeans(RMmod.year.Em95, pairwise ~ Sex | Environment)
 # emm_s.e1
 ```
 
@@ -795,11 +840,16 @@ plot(emm_s.t2, comparisons = TRUE, xlab = "Least Square Mean (ha)", ylab = "Envi
 
 Pairwise by sex between enviornements 100%  MCP, and 95% KDEs
 ```{r}
+RMmod.95kde<-lmer(Home_Range_95kde~Environment+Year+Sex+N+Environment*Sex+(1|Gila),data = year)
+
+## CATAGORIZE LSM GRAPH BY SEX BETWEEN ENVIRONMENT:
+refRM_kde <- lsmeans(RMmod.95kde, specs = c("Environment","Sex"))
+
 emm_s.t3 <- emmeans(RMmod.year.Em, pairwise ~ Environment | Sex)
 emm_s.t3
 
-# emm_s.t95 <- emmeans(RMmod.year.Em95, pairwise ~ Environment | Sex)
-# emm_s.t95
+emm_s.t95 <- emmeans(RMmod.95kde, pairwise ~ Environment | Sex)
+emm_s.t95
 ```
 
 
@@ -1213,7 +1263,7 @@ raw.seasonal<-ggplot(SEAS_GRP_TEST,aes(x=Environment, y=Home_Range_100mcp, shape
         plot.title = element_text(lineheight=1.5, face="bold", size=rel(1.5), hjust = 0.5),
         # axis.text.x  = element_text(vjust=0.5, size=8),
         axis.text.x=element_blank(),
-        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.text.y  = element_text(vjust=0.5, size=12),
         axis.title.y  = element_text(size=16),
         axis.title.x  = element_blank(),
         legend.title = element_blank(),
@@ -1262,7 +1312,7 @@ adj.seasonal<-ggplot(ref_dfRM_season,aes(x=Environment, y=lsmean, shape=Sex)) +
   theme_bw()+
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
         axis.text.x  = element_text(vjust=0.5, size=16),
-        axis.text.y  = element_text(vjust=0.5, size=8),
+        axis.text.y  = element_text(vjust=0.5, size=12),
         axis.title.y  = element_text(size=16),
         axis.title.x  = element_text(size=10),
         # legend.text = element_text(size = 12, face = "bold"),

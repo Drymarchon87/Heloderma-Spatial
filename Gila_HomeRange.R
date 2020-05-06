@@ -642,7 +642,7 @@ library(rgeos)
 ## Shortcut is to rbind() males together and females together then use mapview to map them:
 
 Male.MCP <- rbind(M67_MCP,M69_MCP,M255_MCP,M215_MCP,M14_MCP,M119_MCP,M112_MCP)
-# mapview(Male.MCP)
+mapview(Male.MCP)
 Female.MCP <- rbind(F66_MCP,F36_MCP,F252_MCP,F214_MCP,F200_MCP,F147_MCP,F146_MCP,F137_MCP,
                     F135_MCP,F114_MCP,F104_MCP)
 # mapview(Female.MCP)
@@ -1886,6 +1886,95 @@ ggarrange(Raw.YearHR, yr.mean.adj,Raw.kde, kde.mean.adj, labels = c("A", "B", "C
 ggarrange(raw.seasonal, adj.seasonal, labels = c("A", "B"),
           nrow = 2)
 
+######################################
+## 100% MCP Multiple reg:
+
+Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp))+
+  geom_point(aes(shape = factor(Environment)), size = 4)+
+  scale_shape_manual(values=c(16, 2), name="", breaks=c("nonsubsidized", "subsidized"),
+                     labels=c("Nonsubsidized", "Subsidized"))+
+  geom_smooth(aes(linetype=Environment),colour="black", method="lm", show.legend =FALSE) +
+  scale_linetype_manual(values=c("dotdash", "solid"))+
+  xlab("Number of Relocations")+
+  ylab("100% MCP Area (ha)")+
+  guides(color = guide_legend(override.aes = list(linetype = 0)))+
+  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9)) +
+  theme_bw() +
+  theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
+        axis.text.x=element_text(vjust=0.5, size=14),
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y  = element_text(size=18),
+        axis.title.x  = element_blank(),
+        legend.text = element_text(size = 12, face = "bold"),
+        strip.text = element_text(size=12)) 
+
+# Graph1<-Graph1+theme(axis.title=element_text(size = 18))
+
+# legend at top-left, inside the plot
+SCOH.hr.fig<-Graph1 + theme(legend.title = element_blank(),
+                            legend.text = element_text(size = 14),
+                            legend.justification=c(0,1),
+                            legend.position=c(0.05, 0.95),
+                            legend.background = element_blank(),
+                            legend.key = element_blank(),
+                            legend.box.background = element_rect(colour = "black"))
+  # scale_shape_discrete(name  ="",
+  #                      breaks=c("nonsubsidized", "subsidized"),
+  #                      labels=c("Nonsubsidized", "Subsidized")) +
+  # scale_linetype_discrete(name  ="",
+  #                          breaks=c("nonsubsidized", "subsidized"),
+  #                          labels=c("Nonsubsidized", "Subsidized"))
+
+
+SCOH.hr.fig
+
+######################################
+## 95% KDE Multiple reg:
+
+Graph2<-ggplot(year2,aes(x=N,y=Home_Range_95kde))+
+  geom_point(aes(shape = factor(Environment)), size = 4)+
+  scale_shape_manual(values=c(16, 2), name="", breaks=c("nonsubsidized", "subsidized"),
+                     labels=c("Nonsubsidized", "Subsidized"))+
+  geom_smooth(aes(linetype=Environment),colour="black", method="lm", show.legend =FALSE) +
+  scale_linetype_manual(values=c("dotdash", "solid"))+
+  xlab("Number of Relocations")+
+  ylab("95% KDE Area (ha)")+
+  guides(color = guide_legend(override.aes = list(linetype = 0)))+
+  theme(plot.caption = element_text(hjust = 0,lineheight = 0.9)) +
+  theme_bw() +
+  theme(legend.position = "none", legend.background = element_rect(colour = "black"),
+        axis.text.x=element_text(vjust=0.5, size=14),
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y  = element_text(size=18),
+        axis.title.x  = element_text(size=18),
+        # legend.text = element_text(size = 12, face = "bold"),
+        strip.text = element_text(size=12)) 
+
+# Graph2<-Graph2+theme(axis.title=element_text(size = 18))
+
+# legend at top-left, inside the plot
+# SCOH.hr.fig2<-Graph2 + theme(legend.title = element_blank(),
+#                             legend.text = element_text(size = 14),
+#                             legend.justification=c(0,1),
+#                             legend.position=c(0.05, 0.95),
+#                             legend.background = element_blank(),
+#                             legend.key = element_blank(),
+#                             legend.box.background = element_rect(colour = "black"))
+# scale_shape_discrete(name  ="",
+#                      breaks=c("nonsubsidized", "subsidized"),
+#                      labels=c("Nonsubsidized", "Subsidized")) +
+# scale_linetype_discrete(name  ="",
+#                          breaks=c("nonsubsidized", "subsidized"),
+#                          labels=c("Nonsubsidized", "Subsidized"))
+
+
+SCOH.hr.fig2<-SCOH.hr.fig2 + theme(legend.position = "none")
+SCOH.hr.fig2
+
+ggarrange(SCOH.hr.fig, SCOH.hr.fig2, labels = c("A", "B"),
+          ncol = 1)
+
+
 #########################
 ## RECHECKING ASSUMPTIONS
 View(year)
@@ -1905,3 +1994,4 @@ ggqqplot(year)
 
 library(rstatix)
 ggqqplot(year,"Home_Range_100mcp",facet.by="Environment")
+
