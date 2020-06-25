@@ -650,7 +650,7 @@ When using 95% MCPs, male home ranges reduced by 25% and female range by 31%. At
 <br>
 
 ```{r RMANOVA YEARLY OVERALL 95% MCP, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
-RMmod.year95<-lmer(Home_Range_95mcp~Environment+Year+Sex+N100+Environment*Sex+
+RMmod.year95<-lmer(Home_Range_95mcp~Environment+Year+Sex+N95+Environment*Sex+
                    (1|Gila),data = year)
 summary(RMmod.year95)
 ```
@@ -741,6 +741,17 @@ grid.arrange(Raw.YearHR, yr.mean.adj, nrow = 1,
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 kable(ref_dfRM_sex, format = "pandoc", caption = 'Table 3 | Directional means of home range (100% MCP) after being adjusted for year, sex and sample size.')
 ```
+
+
+```{r}
+RMmod.year95<-lmer(Home_Range_95mcp~Environment+Year+Sex+N95+Environment*Sex+
+                   (1|Gila),data = year)
+refRM_sex95 <- lsmeans(RMmod.year95, specs = c("Environment","Sex"))
+ref_dfRM_sex95 <- as.data.frame(summary(refRM_sex95))
+
+kable(ref_dfRM_sex95, format = "pandoc", caption = 'Table 3 | Directional means of home range (95% MCP) after being adjusted for year, sex and sample size.')
+```
+
 
 <br>
                                                                                             
@@ -842,8 +853,52 @@ Figure 8 | Interactive map: Home Range overlap by sex of 100% MCPs at Stone Cany
 
 
 ```{r}
+SC_stamen_map <- ggmap(myMap) +
+  # geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+  geom_polygon(data = fortify(F104_latlon), aes(long, lat, group=group), colour = "red", 
+             fill = NA) +
+  geom_polygon(data = fortify(F114_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F135_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F137_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F146_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F147_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F200_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F214_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F252_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F36_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F66_latlon), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(M112_latlon), aes(long, lat, group=group), colour = "blue",
+               fill = NA) +
+  geom_polygon(data = fortify(M119_latlon), aes(long, lat, group=group), colour = "blue",
+               fill = NA) +
+  geom_polygon(data = fortify(M14_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M215_latlon), aes(long, lat, group=group), colour = "blue",
+               fill = NA) +
+  geom_polygon(data = fortify(M255_latlon), aes(long, lat, group=group), colour = "blue",
+               fill = NA) +
+  geom_polygon(data = fortify(M67_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M69_latlon), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  xlab("Longitude")+
+  ylab("Latitude")+
+  theme(axis.title.x = element_text(size = 16),
+        # axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 16))
+
 SC_stamen_map<-SC_stamen_map + ggsn::scalebar(x.min = -110.972, x.max = -110.966,
-                     y.min = 32.474, y.max = 32.476, 
+                     y.min = 32.476, y.max = 32.478, 
                      dist = 500, dist_unit="m", 
                      height=0.19,
                      st.bottom=TRUE, 
@@ -852,7 +907,7 @@ SC_stamen_map<-SC_stamen_map + ggsn::scalebar(x.min = -110.972, x.max = -110.966
                      transform = TRUE, 
                      model = 'WGS84') 
 SC_stamen_map
-SC_stamen_map+north2(SC_stamen_map, x = 0.89, y = 0.85, scale = 0.1, symbol = 16)
+SC_stamen_map+north2(SC_stamen_map, x = 0.89, y = 0.83, scale = 0.1, symbol = 16)
 ```
 
 

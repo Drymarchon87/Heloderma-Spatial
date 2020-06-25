@@ -199,9 +199,9 @@ library(readr)
 # View(F104)
 
 # Function for running animal MCP:
-mcp_analysis("./F114/2007 .csv", percentage=100)
-mcp_analysis("./F36/2010 .csv", percentage=100)
-
+MCP<-mcp_analysis("./F114/2007 .csv", percentage=95)
+MCP<-mcp_analysis("./F36/2010 .csv", percentage=95)
+summary(MCP)
 
 ###########################################################################################
 ## looping function for mcp ******BY YEAR******
@@ -683,6 +683,11 @@ Female_Intersect_2$area<-gArea(Female_Intersect_2, byid=T)/10000
 Female_Intersect_2
 mapView(Female_Intersect_2,legend=F, col.regions = c("red"), alpha.regions=0.3)
 
+Female_Intersect_2a<-gIntersection(F104_MCP,F135_MCP,byid=F)
+Female_Intersect_2a$area<-gArea(Female_Intersect_2a, byid=T)/10000
+Female_Intersect_2a
+mapView(Female_Intersect_2a,legend=F, col.regions = c("red"), alpha.regions=0.3)
+
 Female_Intersect_3<-gIntersection(F135_MCP,F_OL3,byid=F)
 Female_Intersect_3$area<-gArea(Female_Intersect_3, byid=T)/10000
 Female_Intersect_3
@@ -706,10 +711,15 @@ mapView(Male_Intersect_1,legend=F, col.regions = c("blue"), alpha.regions=0.3)
 
 
 ## M14:M69
-Male_Intersect_2<-gIntersection(M14_MCP, M69_MCP,byid=T)
+Male_Intersect_2<-gIntersection(M14_MCP,byid=T)
 Male_Intersect_2$area<-gArea(Male_Intersect_2, byid=T)/10000
 Male_Intersect_2
 mapView(Male_Intersect_2,legend=F, col.regions = c("blue"), alpha.regions=0.3)
+
+Female_Intersect_1<-gIntersection(F36_MCP, F146_MCP, byid=T)
+Female_Intersect_1$area<-gArea(Female_Intersect_1, byid=T)/10000
+Female_Intersect_1
+mapView(Female_Intersect_1,legend=F, col.regions = c("blue"), alpha.regions=0.3)
 
 #############################
 ## NET OVERLAP BETWEEN SEXES:
@@ -1894,14 +1904,15 @@ Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp))+
   scale_shape_manual(values=c(16, 2), name="", breaks=c("nonsubsidized", "subsidized"),
                      labels=c("Nonsubsidized", "Subsidized"))+
   geom_smooth(aes(linetype=Environment),colour="black", method="lm", show.legend =FALSE) +
-  scale_linetype_manual(values=c("dotdash", "solid"))+
+  scale_linetype_manual(values=c("solid", "dashed"))+
   xlab("Number of Relocations")+
   ylab("100% MCP Area (ha)")+
+  scale_x_continuous(limits= c(0,125), breaks = c(0,25,50,75,100,125)) +
   guides(color = guide_legend(override.aes = list(linetype = 0)))+
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9)) +
   theme_bw() +
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
-        axis.text.x=element_text(vjust=0.5, size=14),
+        axis.text.x=element_blank(),
         axis.text.y  = element_text(vjust=0.5, size=14),
         axis.title.y  = element_text(size=18),
         axis.title.x  = element_blank(),
@@ -1936,7 +1947,7 @@ Graph2<-ggplot(year2,aes(x=N,y=Home_Range_95kde))+
   scale_shape_manual(values=c(16, 2), name="", breaks=c("nonsubsidized", "subsidized"),
                      labels=c("Nonsubsidized", "Subsidized"))+
   geom_smooth(aes(linetype=Environment),colour="black", method="lm", show.legend =FALSE) +
-  scale_linetype_manual(values=c("dotdash", "solid"))+
+  scale_linetype_manual(values=c("solid", "dashed"))+
   xlab("Number of Relocations")+
   ylab("95% KDE Area (ha)")+
   guides(color = guide_legend(override.aes = list(linetype = 0)))+
@@ -1948,7 +1959,7 @@ Graph2<-ggplot(year2,aes(x=N,y=Home_Range_95kde))+
         axis.title.y  = element_text(size=18),
         axis.title.x  = element_text(size=18),
         # legend.text = element_text(size = 12, face = "bold"),
-        strip.text = element_text(size=12)) 
+        strip.text = element_text(size=12))
 
 # Graph2<-Graph2+theme(axis.title=element_text(size = 18))
 
@@ -1968,7 +1979,9 @@ Graph2<-ggplot(year2,aes(x=N,y=Home_Range_95kde))+
 #                          labels=c("Nonsubsidized", "Subsidized"))
 
 
-SCOH.hr.fig2<-SCOH.hr.fig2 + theme(legend.position = "none")
+SCOH.hr.fig2<-Graph2 + 
+  theme(legend.position = "none") + scale_x_continuous(limits= c(0,125), 
+                                                       breaks = c(0,25,50,75,100,125))
 SCOH.hr.fig2
 
 ggarrange(SCOH.hr.fig, SCOH.hr.fig2, labels = c("A", "B"),
@@ -1994,4 +2007,21 @@ ggqqplot(year)
 
 library(rstatix)
 ggqqplot(year,"Home_Range_100mcp",facet.by="Environment")
+
+#########################################################
+RMmod.year95<-lmer(Home_Range_95mcp~Year+N95+Environment*Sex+
+                     (1|Gila),data = year)
+summary(RMmod.year95)
+anova(RMmod.year95)
+
+RM.mod.Season <- lmer(Home_Range_100mcp~Environment+Season+Sex+N+Environment*Season+
+                        Season*Sex+(1|Gila), data=seasonal)
+
+summary(RM.mod.Season)
+anova(RM.mod.Season)
+
+## calc effect size
+library(effsize)
+cohen.d(Environment, hedges.correction=TRUE,data=year)
+
 

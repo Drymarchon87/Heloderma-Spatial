@@ -89,7 +89,7 @@ Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp))+
   # labs(title = "100% MCP Home Ranges")+
   xlab("Number of Relocations")+
   ylab("100% MCP Area (ha)")+
-  # labs(caption = "Figure 3 | Non-Subsidized (Owl Head Buttes) vs. Subsidized (Stone Canyon) population 100% MCPs against number \n of fixes of the complete data set.")+
+  
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
   # theme_bw()
 
@@ -123,7 +123,7 @@ year2 <- read_csv("GM_Consolidated_ByYear_Input.csv")
 
 # quick plot
 # Graph1<-ggplot(year,aes(x=N100,y=Home_Range_100mcp,group=Environment))+
-Graph2<-ggplot(year2,aes(x=N,y=Home_Range_95kde))+
+Graph2<-ggplot(year,aes(x=N,y=Home_Range_95kde))+
   geom_point(aes(shape = factor(Environment)), size = 4)+
   scale_shape_manual(values=c(16, 2))+
   geom_smooth(aes(linetype=Environment),colour="black", method="lm") +
@@ -131,7 +131,7 @@ Graph2<-ggplot(year2,aes(x=N,y=Home_Range_95kde))+
   # labs(title = "100% MCP Home Ranges")+
   xlab("Number of Relocations")+
   ylab("95% KDE Area (ha)")+
-  # labs(caption = "Figure 3 | Non-Subsidized (Owl Head Buttes) vs. Subsidized (Stone Canyon) population 100% MCPs against number \n of fixes of the complete data set.")+
+  scale_x_continuous(limits= c(0,125), breaks = c(0,25,50,75,100,125)) +
   theme(plot.caption = element_text(hjust = 0,lineheight = 0.9))
   # theme_bw()
 
@@ -551,7 +551,7 @@ anova(RMmod.year)
 
 RM-ANOVA for 95% MCP analyses between the subsidized and non-subsidized
 ```{r}
-RMmod.year95<-lmer(Home_Range_95mcp~Environment+Year+Sex+N100+Environment*Sex+
+RMmod.year95<-lmer(Home_Range_95mcp~Environment+Year+Sex+N95+Environment*Sex+
                    (1|Gila),data = year)
 summary(RMmod.year95)
 ```
@@ -574,6 +574,8 @@ RMmod.year100<-lmer(Home_Range_100mcp~Environment+Year+Sex+N100+Environment*Sex+
 
 RM.marginal <- lsmeans(RMmod.year100, 
                     ~ Environment)
+# RM.marginal <- lsmeans(RMmod.year100, 
+#                     ~ Sex)
 
 ## CATAGORIZE LSM GRAPH BY SEX BETWEEN ENVIRONMENT:
 refRM_sex <- lsmeans(RMmod.year100, specs = c("Environment","Sex"))
@@ -587,15 +589,15 @@ yr.mean.adj<-ggplot(ref_dfRM_sex, aes(x=Sex,y=lsmean,group=Environment))+
             show.legend = FALSE)+
   scale_shape_manual(values=c(1, 2))+
   geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), width=.1,position=position_dodge())+
-  geom_line(position=pd_RM) +
+  geom_line(position=pd_RM,aes(linetype=Environment), show.legend=FALSE) +
   theme_bw()  +
   xlab("") +
   ylab("") +
    theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
         axis.text.x=element_blank(),
         axis.text.y  = element_text(vjust=0.5, size=12),
-        axis.title.y  = element_text(size=16),
-        axis.title.x  = element_text(size=10),
+        axis.title.y  = element_text(size=18),
+        axis.title.x  = element_blank(),
         legend.text = element_text(size = 12, face = "bold"),
         axis.ticks.x=element_blank(),
         strip.text = element_text(size=12)) 
@@ -609,15 +611,15 @@ Raw.YearHR<-ggplot(YR_GRP_Means, aes(x=Sex,y=Home_Range_100mcp,group=Environment
   geom_point(aes(shape = factor(Environment)), size = 4,position=position_dodge(.1))+
   geom_errorbar(aes(ymin=Home_Range_100mcp-se, ymax=Home_Range_100mcp+se),
                 width=.1,position=position_dodge())+
-  geom_line(position=pd_RM) +
+  geom_line(position=pd_RM,aes(linetype=Environment), show.legend=FALSE) +
   theme_bw()+
   xlab("")+
   ylab("100% MCP Area (ha)") +
    theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
         axis.text.x=element_blank(),
         axis.text.y  = element_text(vjust=0.5, size=12),
-        axis.title.y  = element_text(size=16),
-        axis.title.x  = element_text(size=10),
+        axis.title.y  = element_text(size=18),
+        axis.title.x  = element_blank(),
         legend.text = element_text(size = 12, face = "bold"),
         axis.ticks.x=element_blank(),
         strip.text = element_text(size=12)) 
@@ -661,6 +663,16 @@ kable(ref_dfRM_sex, format = "pandoc", caption = 'Table | Directional means of h
 ```
 
 
+```{r}
+RM.95KDEmod.year<-lmer(Home_Range_95kde~Environment+Year+Sex+N+Environment*Sex+
+                         (1|Gila),data = year)
+
+summary(RM.95KDEmod.year)
+```
+
+```{r}
+anova(RM.95KDEmod.year)
+```
 
 
 RM-ANOVA of 95% KDEs for the subsidized population
@@ -725,23 +737,24 @@ kde.mean.adj<-ggplot(ref_dfRM_kde, aes(x=Sex,y=lsmean,group=Environment))+
              show.legend = FALSE)+
   scale_shape_manual(values=c(1, 2))+
   geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE), width=.1,position=position_dodge())+
-  geom_line(position=pd_RM) +
+  geom_line(position=pd_RM,aes(linetype=Environment), show.legend=FALSE) +
   theme_bw()+
   xlab("")+
   ylab("")+
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
         axis.text.x  = element_text(vjust=0.5, size=16),
         axis.text.y  = element_text(vjust=0.5, size=12),
-        axis.title.y  = element_text(size=16),
-        axis.title.x  = element_text(size=10),
+        axis.title.y  = element_text(size=18),
+        axis.title.x  = element_text(size=18),
         legend.text = element_text(size = 12, face = "bold"),
         strip.text = element_blank()) +
   scale_x_discrete(labels=c("Female", "Male")) 
 
+kde.mean.adj<-kde.mean.adj + ylim(0,90)
 kde.mean.adj
 
 ############################ raw EMMs of 95% KDEs ###########################
-
+# position=pd_RM, linetype=c("dotdash", "solid")
 # pd_RM <- position_dodge(0.1)
 
 # geom_line(position=pd)+
@@ -751,19 +764,21 @@ Raw.kde<-ggplot(YR_Means.95KDEall, aes(x=Sex,y=Home_Range_95kde,group=Environmen
              show.legend = FALSE) +
   geom_errorbar(aes(ymin=Home_Range_95kde-se, ymax=Home_Range_95kde+se),
                 width=.1, position=position_dodge()) +
-  geom_line(position=pd_RM) +
+  geom_line(position=pd_RM,aes(linetype=Environment), show.legend=FALSE) +
+  # scale_linetype_manual(values=c("dotdash", "solid"))+
   theme_bw() +
   xlab("") +
   ylab("95% KDE Area (ha)") +
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
         axis.text.x  = element_text(vjust=0.5, size=16),
         axis.text.y  = element_text(vjust=0.5, size=12),
-        axis.title.y  = element_text(size=16),
-        axis.title.x  = element_text(size=10),
+        axis.title.y  = element_text(size=18),
+        axis.title.x  = element_text(size=18),
         legend.text = element_text(size = 12, face = "bold"),
         strip.text = element_blank()) +
   scale_x_discrete(labels=c("Female", "Male")) 
 
+Raw.kde<-Raw.kde + ylim(0,90)
 Raw.kde
 
 # Raw.kde<-Raw.kde + theme(legend.title = element_blank(),
@@ -776,7 +791,8 @@ Raw.kde
 #   scale_shape_discrete(name  ="",
 #                        breaks=c("nonsubsidized", "subsidized"),
 #                        labels=c("Nonsubsidized", "Subsidized"))
-# Raw.kde
+Raw.kde<-Raw.kde + ylim(0,90)
+Raw.kde
 
 library(gridExtra)
 library(grid)
@@ -823,10 +839,10 @@ refRM_sex <- lsmeans(RMmod.year.Em, specs = c("Environment","Sex"))
 emm_s.TK <- emmeans(RMmod.year.Em, pairwise ~ Environment | Sex)
 emm_s.TK
 
-# emm_s.t2 <- emmeans(RMmod.year.Em, pairwise ~ Sex | Environment)
-# emm_s.t2
-# emm_s.e1 <- emmeans(RMmod.year.Em95, pairwise ~ Sex | Environment)
-# emm_s.e1
+emm_s.t2 <- emmeans(RMmod.year.Em, pairwise ~ Sex | Environment)
+emm_s.t2
+emm_s.e1 <- emmeans(RMmod.year.Em95, pairwise ~ Environment | Sex)
+emm_s.e1
 ```
 
 
@@ -955,22 +971,24 @@ SC_stamen_map <- ggmap(myMap) +
                fill = NA) +
   geom_polygon(data = fortify(F66_latlon), aes(long, lat, group=group), colour = "red", 
                fill = NA) +
-  geom_polygon(data = fortify(M112_latlon), aes(long, lat, group=group), colour = "blue", 
+  geom_polygon(data = fortify(M112_latlon), aes(long, lat, group=group), colour = "blue",
                fill = NA) +
-  geom_polygon(data = fortify(M119_latlon), aes(long, lat, group=group), colour = "blue", 
+  geom_polygon(data = fortify(M119_latlon), aes(long, lat, group=group), colour = "blue",
                fill = NA) +
   geom_polygon(data = fortify(M14_latlon), aes(long, lat, group=group), colour = "blue", 
                fill = NA) +
-  geom_polygon(data = fortify(M215_latlon), aes(long, lat, group=group), colour = "blue", 
+  geom_polygon(data = fortify(M215_latlon), aes(long, lat, group=group), colour = "blue",
                fill = NA) +
-  geom_polygon(data = fortify(M255_latlon), aes(long, lat, group=group), colour = "blue", 
+  geom_polygon(data = fortify(M255_latlon), aes(long, lat, group=group), colour = "blue",
                fill = NA) +
   geom_polygon(data = fortify(M67_latlon), aes(long, lat, group=group), colour = "blue", 
                fill = NA) +
   geom_polygon(data = fortify(M69_latlon), aes(long, lat, group=group), colour = "blue", 
                fill = NA) +
   xlab("Longitude") +
-  ylab("Latitude") 
+  ylab("Latitude") +
+  theme(axis.title.x = element_text(size=15), 
+        axis.title.y = element_text(size=15))
 
 # SC_stamen_map
 
@@ -989,6 +1007,234 @@ SC_stamen_map<-SC_stamen_map + ggsn::scalebar(x.min = -110.972, x.max = -110.966
 SC_stamen_map+north2(SC_stamen_map, x = 0.89, y = 0.85, scale = 0.1, symbol = 16)
 ```
 
+
+
+```{r}
+myMap <- get_stamenmap(bbox = c(left = -111.009,
+                                bottom = 32.459,
+                                right = -110.969,
+                                top = 32.474),
+                       maptype = "terrain", 
+                       crop = FALSE,
+                       zoom = 15)
+
+F104_latlonK <- spTransform(F104_KDE, CRS("+proj=longlat +datum=WGS84"))
+F114_latlonK <- spTransform(F114_KDE, CRS("+proj=longlat +datum=WGS84"))
+F135_latlonK <- spTransform(F135_KDE, CRS("+proj=longlat +datum=WGS84"))
+F137_latlonK <- spTransform(F137_KDE, CRS("+proj=longlat +datum=WGS84"))
+F146_latlonK <- spTransform(F146_KDE, CRS("+proj=longlat +datum=WGS84"))
+F147_latlonK <- spTransform(F147_KDE, CRS("+proj=longlat +datum=WGS84"))
+F200_latlonK <- spTransform(F200_KDE, CRS("+proj=longlat +datum=WGS84"))
+F214_latlonK <- spTransform(F214_KDE, CRS("+proj=longlat +datum=WGS84"))
+F252_latlonK <- spTransform(F252_KDE, CRS("+proj=longlat +datum=WGS84"))
+F36_latlonK <- spTransform(F36_KDE, CRS("+proj=longlat +datum=WGS84"))
+F66_latlonK <- spTransform(F66_KDE, CRS("+proj=longlat +datum=WGS84"))
+M112_latlonK <- spTransform(M112_KDE, CRS("+proj=longlat +datum=WGS84"))
+M119_latlonK <- spTransform(M119_KDE, CRS("+proj=longlat +datum=WGS84"))
+M14_latlonK <- spTransform(M14_KDE, CRS("+proj=longlat +datum=WGS84"))
+M215_latlonK <- spTransform(M215_KDE, CRS("+proj=longlat +datum=WGS84"))
+M255_latlonK <- spTransform(M255_KDE, CRS("+proj=longlat +datum=WGS84"))
+M67_latlonK <- spTransform(M67_KDE, CRS("+proj=longlat +datum=WGS84"))
+M69_latlonK <- spTransform(M69_KDE, CRS("+proj=longlat +datum=WGS84"))
+
+SC_stamen_mapK <- ggmap(myMap) +
+  # geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+  geom_polygon(data = fortify(F104_latlonK), aes(long, lat, group=group), colour = "red",
+               fill = NA) +
+  geom_polygon(data = fortify(F114_latlonK), aes(long, lat, group=group), colour = "red",
+               fill = NA) +
+  geom_polygon(data = fortify(F135_latlonK), aes(long, lat, group=group), colour = "red",
+               fill = NA) +
+  geom_polygon(data = fortify(F137_latlonK), aes(long, lat, group=group), colour = "red",
+               fill = NA) +
+  geom_polygon(data = fortify(F146_latlonK), aes(long, lat, group=group), colour = "red",
+               fill = NA) +
+  geom_polygon(data = fortify(F147_latlonK), aes(long, lat, group=group), colour = "red",
+               fill = NA) +
+  geom_polygon(data = fortify(F200_latlonK), aes(long, lat, group=group), colour = "red",
+               fill = NA) +
+  geom_polygon(data = fortify(F214_latlonK), aes(long, lat, group=group), colour = "red",
+               fill = NA) +
+  geom_polygon(data = fortify(F252_latlonK), aes(long, lat, group=group), colour = "red",
+               fill = NA) +
+  geom_polygon(data = fortify(F36_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(F66_latlonK), aes(long, lat, group=group), colour = "red", 
+               fill = NA) +
+  geom_polygon(data = fortify(M112_latlonK), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M119_latlonK), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M14_latlonK), aes(long, lat, group=group), colour = "blue",
+               fill = NA) +
+  geom_polygon(data = fortify(M215_latlonK), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M255_latlonK), aes(long, lat, group=group), colour = "blue", 
+               fill = NA) +
+  geom_polygon(data = fortify(M67_latlonK), aes(long, lat, group=group), colour = "blue",
+               fill = NA) +
+  geom_polygon(data = fortify(M69_latlonK), aes(long, lat, group=group), colour = "blue",
+               fill = NA) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  theme(axis.title.x = element_text(size=15), 
+        axis.title.y = element_text(size=15))
+
+# SC_stamen_mapK
+
+SC_stamen_mapK <- SC_stamen_mapK + ggsn::scalebar(x.min = -110.972, x.max = -110.966,
+                     y.min = 32.476, y.max = 32.478, 
+                     dist = 500, dist_unit="m", 
+                     height=0.19,
+                     st.bottom=TRUE, 
+                     st.dist=0.3,
+                     st.size=3.5,
+                     transform = TRUE, 
+                     model = 'WGS84') 
+# SC_stamen_mapK
+
+SC_stamen_mapK + north2(SC_stamen_mapK, x = 0.89, y = 0.84, scale = 0.1, symbol = 16)
+```
+
+
+
+```{r}
+Season.Map <- get_stamenmap(bbox = c(left = -111.005,
+                                bottom = 32.46,
+                                right = -110.98,
+                                top = 32.475),
+                       maptype = "toner-background", 
+                       crop = FALSE,
+                       zoom = 16)
+
+SC_stamen_mapS <- ggmap(Season.Map) +
+  # geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+  geom_polygon(data = fortify(F114_latlonE), aes(long, lat, group=group), colour = "black", 
+               linetype=2, fill = NA) +
+  geom_polygon(data = fortify(F114_latlonD), aes(long, lat, group=group), colour = "red", 
+               linetype=2, fill = NA) +
+  geom_polygon(data = fortify(F114_latlonM), aes(long, lat, group=group), colour = "blue", 
+               linetype=2, fill = NA) +
+  geom_polygon(data = fortify(F114_latlonP), aes(long, lat, group=group), colour = "green", 
+               linetype=2, fill = NA) +
+  geom_polygon(data = fortify(F137_latlonE), aes(long, lat, group=group), colour = "black", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F137_latlonD), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F137_latlonM), aes(long, lat, group=group), colour = "blue", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F137_latlonP), aes(long, lat, group=group), colour = "green", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F147_latlonE), aes(long, lat, group=group), colour = "black", 
+               linetype=3, fill = NA) +
+  geom_polygon(data = fortify(F147_latlonD), aes(long, lat, group=group), colour = "red", 
+               linetype=3, fill = NA) +
+  geom_polygon(data = fortify(F147_latlonM), aes(long, lat, group=group), colour = "blue", 
+               linetype=3, fill = NA) +
+  geom_polygon(data = fortify(F147_latlonP), aes(long, lat, group=group), colour = "green", 
+               linetype=3, fill = NA) +
+  geom_polygon(data = fortify(F36_latlonE), aes(long, lat, group=group), colour = "black", 
+               linetype=4, fill = NA) +
+  geom_polygon(data = fortify(F36_latlonD), aes(long, lat, group=group), colour = "red", 
+               linetype=4, fill = NA) +
+  geom_polygon(data = fortify(F36_latlonM), aes(long, lat, group=group), colour = "blue",
+               linetype=4, fill = NA) +
+  geom_polygon(data = fortify(F36_latlonP), aes(long, lat, group=group), colour = "green", 
+               linetype=4, fill = NA) +
+  geom_polygon(data = fortify(F66_latlonE), aes(long, lat, group=group), colour = "black", 
+               linetype=5, fill = NA) +
+  geom_polygon(data = fortify(F66_latlonD), aes(long, lat, group=group), colour = "red", 
+               linetype=5, fill = NA) +
+  geom_polygon(data = fortify(F66_latlonM), aes(long, lat, group=group), colour = "blue",
+               linetype=5, fill = NA) +
+  geom_polygon(data = fortify(F66_latlonP), aes(long, lat, group=group), colour = "green",
+               linetype=5, fill = NA) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  theme(axis.title.x = element_text(size=15), 
+        axis.title.y = element_text(size=15))
+
+SC_stamen_mapS <- SC_stamen_mapS + ggsn::scalebar(x.min = -111.005, x.max = -110.998,
+                                                  y.min = 32.461, y.max = 32.463, 
+                                                  dist = 250, 
+                                                  dist_unit="m", 
+                                                  height=0.19,
+                                                  st.bottom=FALSE, 
+                                                  st.dist=0.3,
+                                                  st.size=3,
+                                                  transform = TRUE, 
+                                                  model = 'WGS84') 
+# SC_stamen_mapS
+
+SC_stamen_mapS + north2(SC_stamen_mapS, x = 0.36, y = 0.30, scale = 0.1, symbol = 16)
+```
+
+
+
+```{r}
+MCP.Shift.Yearly <- ggmap(Season.Map) +
+  # geom_point(data = proj_lat.lon, aes(x=x, y=y), size = 0.3, alpha = 0.8, color = "black") +
+  geom_polygon(data = fortify(F114_latlon.08), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F114_latlon.09), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F114_latlon.10), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F114_latlon.11), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F114_latlon.12), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  # geom_polygon(data = fortify(F137_latlon.09), aes(long, lat, group=group), colour = "red", 
+  #              linetype=1, fill = NA) +
+  # geom_polygon(data = fortify(F137_latlon.10), aes(long, lat, group=group), colour = "red", 
+  #              linetype=1, fill = NA) +
+  # geom_polygon(data = fortify(F137_latlon.11), aes(long, lat, group=group), colour = "red", 
+  #              linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F147_latlon.09), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F147_latlon.10), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F147_latlon.11), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F147_latlon.12), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F66_latlon.08), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F66_latlon.09), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(F66_latlon.10), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(M119_latlon.08), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(M119_latlon.09), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  geom_polygon(data = fortify(M119_latlon.10), aes(long, lat, group=group), colour = "red", 
+               linetype=1, fill = NA) +
+  # geom_polygon(data = fortify(M112_latlon.07), aes(long, lat, group=group), colour = "red", 
+  #              linetype=6, fill = NA) +
+  # geom_polygon(data = fortify(M112_latlon.09), aes(long, lat, group=group), colour = "red",
+  #              linetype=6, fill = NA) +
+  # geom_polygon(data = fortify(M112_latlon.10), aes(long, lat, group=group), colour = "red",
+  #              linetype=6, fill = NA) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  theme(axis.title.x = element_text(size=15), 
+        axis.title.y = element_text(size=15))
+
+MCP.Shift.Yearly <- MCP.Shift.Yearly + ggsn::scalebar(x.min = -111.005, x.max = -110.998,
+                                                  y.min = 32.461, y.max = 32.463, 
+                                                  dist = 250, 
+                                                  dist_unit="m", 
+                                                  height=0.19,
+                                                  st.bottom=FALSE, 
+                                                  st.dist=0.3,
+                                                  st.size=3,
+                                                  transform = TRUE, 
+                                                  model = 'WGS84') 
+# MCP.Shift.Yearly
+
+MCP.Shift.Yearly + north2(MCP.Shift.Yearly, x = 0.36, y = 0.30, scale = 0.1, symbol = 16)
+```
 
 
 
@@ -1259,12 +1505,12 @@ raw.seasonal<-ggplot(SEAS_GRP_TEST,aes(x=Environment, y=Home_Range_100mcp, shape
                 width=0.3, size=0.5, lty=1) +
   facet_grid(~Season, labeller=labeller(Season=season.labs)) +
    theme_bw() +
-  theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
+  theme(legend.position = c(.10,.85), legend.background = element_rect(colour = "black"),
         plot.title = element_text(lineheight=1.5, face="bold", size=rel(1.5), hjust = 0.5),
         # axis.text.x  = element_text(vjust=0.5, size=8),
         axis.text.x=element_blank(),
         axis.text.y  = element_text(vjust=0.5, size=12),
-        axis.title.y  = element_text(size=16),
+        axis.title.y  = element_text(size=18),
         axis.title.x  = element_blank(),
         legend.title = element_blank(),
         legend.text = element_text(size = 12, face = "bold"),
@@ -1282,9 +1528,9 @@ Figures Adjusted EMMs of seasonal home range between the two populations
 ```{r}
 RM.mod.Season <- lmer(Home_Range_100mcp~Environment+Season+Sex+N+Environment*Season+(1|Gila), data=seasonal)
 
-# RM.marginal <- lsmeans(RM.mod.Season, 
+# RM.marginal.seas <- lsmeans(RM.mod.Season,
 #                     ~ Environment)
-# RM.marginal
+# RM.marginal.seas
 
 ## CATAGORIZE LSM GRAPH BY SEX BETWEEN ENVIRONMENT:
 refRM_season <- lsmeans(RM.mod.Season, specs = c("Environment","Season","Sex"))
@@ -1311,9 +1557,9 @@ adj.seasonal<-ggplot(ref_dfRM_season,aes(x=Environment, y=lsmean, shape=Sex)) +
   facet_grid(~Season, labeller=labeller(Season=season.labs)) +
   theme_bw()+
   theme(legend.position = c(.87,.85), legend.background = element_rect(colour = "black"),
-        axis.text.x  = element_text(vjust=0.5, size=16),
+        axis.text.x  = element_text(vjust=0.5, size=18),
         axis.text.y  = element_text(vjust=0.5, size=12),
-        axis.title.y  = element_text(size=16),
+        axis.title.y  = element_text(size=18),
         axis.title.x  = element_text(size=10),
         # legend.text = element_text(size = 12, face = "bold"),
         strip.text = element_blank()) +

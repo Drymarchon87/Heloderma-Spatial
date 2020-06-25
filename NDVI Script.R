@@ -225,14 +225,22 @@ vi <- function(img, k, i) {
 
 ndvi.SC <- vi(landsatcrop.B, 1, 2)
 # plot(ndvi.SC, col = rev(terrain.colors(6)))
+# ndvi.SC
+# vegc
 ndvi.raster.SC<-gplot(ndvi.SC) + geom_tile(aes(fill = value)) +
-  facet_wrap(~ variable) +
-  scale_fill_gradient(low = 'white', high = 'green') +
+  ggtitle("Subsidized") +
+  # facet_wrap(~ variable, labeller=labeller(Season=env.labs)) +
+  scale_fill_continuous(low = 'yellow', high = 'blue') +
   coord_equal() +
   theme_bw() +
-  labs(x="Easting (m)", y="Northing (m)") +
-  theme(legend.position = c(.11,.73), legend.background = element_rect(colour = "black"),
-        strip.text = element_blank())
+  labs(main="Subsidized",x="Easting (m)", y="Northing (m)") +
+  theme(legend.position = c(.12,.69), legend.background = element_rect(colour = "black"),
+        plot.title = element_text(size = 18,hjust = 0.5),
+        axis.text.x=element_text(vjust=0.5, size=12),
+        axis.text.y  = element_text(angle = 45, size=12),
+        axis.title.y  = element_blank(),
+        axis.title.x  = element_text(size=13))
+
 
 # OWL HEAD:
 
@@ -240,13 +248,18 @@ ndvi.OH <- vi(landsatcrop.B2, 1, 2)
 # plot(ndvi.OH, col = rev(terrain.colors(5)))
 
 ndvi.raster.OH<-gplot(ndvi.OH) + geom_tile(aes(fill = value)) +
-  facet_wrap(~ variable) +
-  scale_fill_gradient(low = 'white', high = 'yellow') +
+  ggtitle("Non-Subsidized") +
+  # facet_wrap(~ variable) +
+  scale_fill_gradient(low = 'yellow', high = 'pink') +
   coord_equal() +
   theme_bw() +
   labs(x="Easting (m)", y="Northing (m)") +
-  theme(legend.position = c(.11,.73), legend.background = element_rect(colour = "black"),
-        strip.text = element_blank())
+  theme(legend.position = c(.12,.69), legend.background = element_rect(colour = "black"),
+        plot.title = element_text(size = 18,hjust = 0.5),
+        axis.text.x=element_text(vjust=0.5, size=12),
+        axis.text.y  = element_text(angle = 45, size=12),
+        axis.title.y  = element_text(size=13),
+        axis.title.x  = element_text(size=13))
 
 ggarrange(ndvi.raster.OH, ndvi.raster.SC,  labels = c("A", "B"),
           ncol = 1, nrow = 2)
@@ -267,26 +280,37 @@ par(mfrow = c(2,2))
 
 # view histogram of data
 # STONE CANYON
-Hist1<-hist(ndvi.SC,
-     main = "",
-     xlab = "NDVI",
-     ylab= "Frequency",
-     col = "wheat",
-     xlim = c(0.05, 0.7),
-     breaks = 30,
-     xaxt = 'n') 
-axis(side=1, at = seq(0.05,0.7, 0.05), labels = seq(0.05,0.7, 0.05))
+# hist(ndvi.SC,
+#      main = "",
+#      xlab = "NDVI",
+#      ylab= "Frequency",
+#      col = "wheat",
+#      xlim = c(0.05, 0.7),
+#      breaks = 30,
+#      xaxt = 'n') +
+# axis(side=1, at = seq(0.05,0.7, 0.05), labels = seq(0.05,0.7, 0.05))
+
+ndvi.hist.SC<-histogram(ndvi.SC, nint=18, xlim = c(0.05, 0.6), xlab="NDVI", ylim=c(0,70)) 
+ndvi.hist.SC
+
 
 # OWL HEAD
-non.NDVI.hist <- hist(ndvi.OH,
-     main = "",
-     xlab = "NDVI",
-     ylab= "Frequency",
-     col = "wheat",
-     xlim = c(0.05, 0.25),
-     breaks = 30,
-     xaxt = 'n')
-non.NDVI.hist <- axis(side=1, at = seq(0.05, 0.25, 0.05), labels = seq(0.05, 0.25, 0.05))
+# non.NDVI.hist <- hist(ndvi.OH,
+#      main = "",
+#      xlab = "NDVI",
+#      ylab= "Frequency",
+#      col = "wheat",
+#      xlim = c(0.05, 0.25),
+#      breaks = 30,
+#      xaxt = 'n') +
+# axis(side=1, at = seq(0.05, 0.25, 0.05), labels = seq(0.05, 0.25, 0.05))
+
+non.NDVI.hist<-histogram(ndvi.OH, nint=4, xlim = c(0.05, 0.6), xlab="NDVI",
+                         ylim=c(0,70), ylab="Frequency") 
+non.NDVI.hist
+
+ggarrange(ndvi.raster.OH, ndvi.raster.SC,non.NDVI.hist, ndvi.hist.SC,  labels = c("A", "B"),
+          ncol = 2, nrow = 2)
 
 # xlim = c(0.05, 0.7),
 # breaks = 30,
